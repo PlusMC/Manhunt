@@ -1,0 +1,5 @@
+name: ManHunt
+version: '${project.version}'
+main: dev.oakleycord.manhunt.ManHunt
+api-version: 1.18
+depend: [ PlusLib ]
