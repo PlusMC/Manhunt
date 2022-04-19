@@ -1,6 +1,7 @@
-package dev.oakleycord.manhunt.game.logic;
+package dev.oakleycord.manhunt.game.logic.handlers;
 
-import dev.oakleycord.manhunt.game.ManHuntGame;
+import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.logic.Logic;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
@@ -11,16 +12,15 @@ import org.bukkit.inventory.meta.CompassMeta;
 
 import javax.annotation.Nullable;
 
-public class CompassHandler {
-    public ManHuntGame game;
+public class CompassHandler extends Logic {
 
-    public CompassHandler(ManHuntGame game) {
-        this.game = game;
+    public CompassHandler(MHGame game) {
+        super(game);
     }
 
-    public void updateCompass(long tick) {
+    public void update(long tick) {
         if (tick % 10 != 0) return;
-        for (Player player : game.getPlayers()) {
+        for (Player player : getGame().getPlayers()) {
             Player nearestPlayer = getNearestPlayer(player);
 
             if (nearestPlayer == null) continue;
@@ -58,7 +58,7 @@ public class CompassHandler {
         Player nearestPlayer = null;
 
         for (Player otherPlayer : player.getWorld().getPlayers()) {
-            if (!game.getRunners().hasEntry(otherPlayer.getName())) continue;
+            if (!getGame().getRunners().hasEntry(otherPlayer.getName())) continue;
 
             if (otherPlayer.equals(player)) continue;
 

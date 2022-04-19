@@ -1,22 +1,25 @@
 package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.logic.CompassHandler;
 import dev.oakleycord.manhunt.game.logic.GameLoop;
-import dev.oakleycord.manhunt.game.logic.ScoreboardHandler;
+import dev.oakleycord.manhunt.game.logic.Logic;
+import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
+import dev.oakleycord.manhunt.game.logic.handlers.ScoreboardHandler;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ManHuntGame {
+public class MHGame {
 
     private final long seed;
     private final World[] worlds;
@@ -25,12 +28,15 @@ public class ManHuntGame {
     private final Scoreboard scoreboard;
     private final Team hunters, runners, spectators;
     private final long timeStamp;
-    private GameState state;
 
+    private final GameMode gamemode;
+    private Logic gameModeLogic;
+    private GameState state;
     private GameLoop gameLoop;
 
-    public ManHuntGame() {
-        state = GameState.LOADING;
+    public MHGame() {
+        this.state = GameState.LOADING;
+        this.gamemode = GameMode.CLASSIC;
 
         this.timeStamp = System.currentTimeMillis();
 
@@ -74,7 +80,7 @@ public class ManHuntGame {
             world.setDifficulty(Difficulty.PEACEFUL);
         }
         freeze();
-        scoreboardHandler.updateScoreboard(0);
+        scoreboardHandler.update(0);
     }
 
     public void postGame(GameTeam winningTeam) {
@@ -127,6 +133,7 @@ public class ManHuntGame {
 
         unfreeze();
 
+        this.gameModeLogic = gamemode.getLogic(this);
         if (gameLoop == null) {
             gameLoop = new GameLoop(this);
             ManHunt.getTickingManager().register(gameLoop);
@@ -203,15 +210,15 @@ public class ManHuntGame {
         switch (team) {
             case HUNTERS -> {
                 hunters.addEntry(player.getName());
-                player.setGameMode(GameMode.SURVIVAL);
+                player.setGameMode(org.bukkit.GameMode.SURVIVAL);
             }
             case RUNNERS -> {
                 runners.addEntry(player.getName());
-                player.setGameMode(GameMode.SURVIVAL);
+                player.setGameMode(org.bukkit.GameMode.SURVIVAL);
             }
             case SPECTATORS -> {
                 spectators.addEntry(player.getName());
-                player.setGameMode(GameMode.SPECTATOR);
+                player.setGameMode(org.bukkit.GameMode.SPECTATOR);
             }
         }
     }
@@ -223,24 +230,22 @@ public class ManHuntGame {
         return players;
     }
 
+    @Nullable
+    public Logic getGameModeLogic() {
+        return gameModeLogic;
+    }
+
 
     public boolean hasTeam(Player player) {
         return scoreboard.getEntryTeam(player.getName()) != null;
     }
 
-
     public GameState getState() {
         return state;
     }
 
-    public enum GameTeam {
-        HUNTERS, RUNNERS, SPECTATORS
-    }
-
-    public enum GameState {
-        LOADING,
-        PREGAME,
-        INGAME,
-        POSTGAME
+    @NotNull
+    public GameMode getGameMode() {
+        return gamemode;
     }
 }

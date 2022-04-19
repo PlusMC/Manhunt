@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.events;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.ManHuntGame;
+import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,7 +17,7 @@ public class PortalEvents implements Listener {
 
         if (from == null) return;
         if (!OtherUtil.isManHunt(from)) return;
-        ManHuntGame game = ManHunt.GAME;
+        MHGame game = ManHunt.GAME;
         if (game == null) return;
 
         Location fromLoc = e.getFrom();

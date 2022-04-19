@@ -1,7 +1,8 @@
 package dev.oakleycord.manhunt.game.events;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.ManHuntGame;
+import dev.oakleycord.manhunt.game.GameState;
+import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class PlayerEvents implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
         if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() == ManHuntGame.GameState.PREGAME) event.setCancelled(true);
+        if (ManHunt.GAME.getState() == GameState.PREGAME) event.setCancelled(true);
 
         if (event.getEntity() instanceof Player player) {
             if (player.getHealth() - event.getFinalDamage() > 0) return;
@@ -52,7 +53,7 @@ public class PlayerEvents implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (!OtherUtil.isManHunt(event.getBlock().getWorld())) return;
         if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() != ManHuntGame.GameState.PREGAME) return;
+        if (ManHunt.GAME.getState() != GameState.PREGAME) return;
         event.setCancelled(true);
     }
 
@@ -60,7 +61,7 @@ public class PlayerEvents implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (!OtherUtil.isManHunt(event.getBlock().getWorld())) return;
         if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() != ManHuntGame.GameState.PREGAME) return;
+        if (ManHunt.GAME.getState() != GameState.PREGAME) return;
         event.setCancelled(true);
     }
 
@@ -70,7 +71,7 @@ public class PlayerEvents implements Listener {
         assert event.getTo().getWorld() != null;
         if (!OtherUtil.isManHunt(event.getTo().getWorld())) return;
         if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() != ManHuntGame.GameState.PREGAME) return;
+        if (ManHunt.GAME.getState() != GameState.PREGAME) return;
 
         if (!isOutsideOfBorder(event.getPlayer()))
             return;
@@ -93,11 +94,11 @@ public class PlayerEvents implements Listener {
         if (!ManHunt.GAME.hasTeam(player)) {
             resetAdvancements(player);
             PlayerUtil.resetPlayer(player, false);
-            if (ManHunt.GAME.getState() == ManHuntGame.GameState.PREGAME)
-                ManHunt.GAME.setTeam(player, ManHuntGame.GameTeam.HUNTERS);
-            else ManHunt.GAME.setTeam(player, ManHuntGame.GameTeam.SPECTATORS);
+            if (ManHunt.GAME.getState() == GameState.PREGAME)
+                ManHunt.GAME.setTeam(player, GameTeam.HUNTERS);
+            else ManHunt.GAME.setTeam(player, GameTeam.SPECTATORS);
         }
-        ManHunt.GAME.getScoreboardHandler().updateScoreboard(0);
+        ManHunt.GAME.getScoreboardHandler().update(0);
     }
 
     @EventHandler
@@ -115,21 +116,21 @@ public class PlayerEvents implements Listener {
         if (!ManHunt.GAME.hasTeam(player)) {
             resetAdvancements(player);
             PlayerUtil.resetPlayer(player, false);
-            if (ManHunt.GAME.getState() == ManHuntGame.GameState.PREGAME)
-                ManHunt.GAME.setTeam(player, ManHuntGame.GameTeam.HUNTERS);
-            else ManHunt.GAME.setTeam(player, ManHuntGame.GameTeam.SPECTATORS);
+            if (ManHunt.GAME.getState() == GameState.PREGAME)
+                ManHunt.GAME.setTeam(player, GameTeam.HUNTERS);
+            else ManHunt.GAME.setTeam(player, GameTeam.SPECTATORS);
         }
-        ManHunt.GAME.getScoreboardHandler().updateScoreboard(0);
+        ManHunt.GAME.getScoreboardHandler().update(0);
     }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
         if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() != ManHuntGame.GameState.INGAME) return;
+        if (ManHunt.GAME.getState() != GameState.INGAME) return;
 
         if (!(event.getEntityType() == EntityType.ENDER_DRAGON)) return;
 
-        ManHunt.GAME.postGame(ManHuntGame.GameTeam.RUNNERS);
+        ManHunt.GAME.postGame(GameTeam.RUNNERS);
     }
 }

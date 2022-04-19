@@ -1,6 +1,6 @@
 package dev.oakleycord.manhunt;
 
-import dev.oakleycord.manhunt.game.ManHuntGame;
+import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.commands.InitGame;
 import dev.oakleycord.manhunt.game.commands.MHDebug;
 import dev.oakleycord.manhunt.game.commands.SetTeam;
@@ -24,7 +24,7 @@ public final class ManHunt extends JavaPlugin {
             new StartGame(),
             new MHDebug()
     );
-    public static ManHuntGame GAME;
+    public static MHGame GAME;
     private static PlusCommandManager cmdManager;
     private static TickingManager tickManager;
 

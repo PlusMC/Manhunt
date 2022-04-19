@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.commands;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.ManHuntGame;
+import dev.oakleycord.manhunt.game.MHGame;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -51,7 +51,7 @@ public class InitGame implements PlusCommand {
             return false;
         }
 
-        ManHunt.GAME = new ManHuntGame();
+        ManHunt.GAME = new MHGame();
         ManHunt.GAME.pregame();
         for (Player player : Bukkit.getOnlinePlayers()) {
             World world = ManHunt.GAME.getOverworld();

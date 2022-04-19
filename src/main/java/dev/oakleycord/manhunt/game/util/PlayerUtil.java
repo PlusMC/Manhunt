@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.util;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.ManHuntGame;
+import dev.oakleycord.manhunt.game.GameTeam;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -55,7 +55,7 @@ public class PlayerUtil {
 
         if (ManHunt.GAME != null) {
             if (ManHunt.GAME.getRunners().hasEntry(player.getName())) {
-                ManHunt.GAME.setTeam(player, ManHuntGame.GameTeam.SPECTATORS);
+                ManHunt.GAME.setTeam(player, GameTeam.SPECTATORS);
                 player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1, 0.5f);
             }
 

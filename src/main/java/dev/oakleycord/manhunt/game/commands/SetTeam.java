@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.commands;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.ManHuntGame;
+import dev.oakleycord.manhunt.game.GameTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -45,7 +45,7 @@ public class SetTeam implements PlusCommand {
     public List<String> getCompletions(int index) {
         return switch (index) {
             case 1 -> BukkitUtil.allPlayers();
-            case 2 -> Arrays.stream(ManHuntGame.GameTeam.values()).map(Enum::name).collect(Collectors.toList());
+            case 2 -> Arrays.stream(GameTeam.values()).map(Enum::name).collect(Collectors.toList());
             default -> null;
         };
     }
@@ -66,9 +66,9 @@ public class SetTeam implements PlusCommand {
             return true;
         }
         try {
-            ManHuntGame.GameTeam team = ManHuntGame.GameTeam.valueOf(args[1].toUpperCase());
+            GameTeam team = GameTeam.valueOf(args[1].toUpperCase());
             ManHunt.GAME.setTeam(p, team);
-            ManHunt.GAME.getScoreboardHandler().updateScoreboard(0);
+            ManHunt.GAME.getScoreboardHandler().update(0);
         } catch (IllegalArgumentException e) {
             sender.sendMessage("§cThat team does not exist!");
         }
