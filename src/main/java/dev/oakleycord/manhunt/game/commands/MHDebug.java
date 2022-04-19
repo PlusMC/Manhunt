@@ -10,8 +10,9 @@ import org.plusmc.pluslib.managed.PlusCommand;
 
 import java.util.List;
 
-public class MHDebug implements PlusCommand {
 
+//i have no idea why i made this class maybe i can rename it and change it into an "admin" command
+public class MHDebug implements PlusCommand {
 
     @Override
     public String getName() {

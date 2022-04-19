@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.logic;
 
-import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.ManHuntGame;
+import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -30,7 +30,7 @@ public class ScoreboardHandler {
         objective.getScore("Runners Alive: §b" + game.getRunners().getSize()).setScore(4);
 
         if (game.getState() == ManHuntGame.GameState.INGAME)
-            objective.getScore("Time: §b" + ManHunt.formatTime(System.currentTimeMillis() - game.getTimeStamp())).setScore(3);
+            objective.getScore("Time: §b" + OtherUtil.formatTime(System.currentTimeMillis() - game.getTimeStamp())).setScore(3);
 
         objective.getScore("§b").setScore(2);
 

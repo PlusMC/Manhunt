@@ -4,6 +4,8 @@ import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.logic.CompassHandler;
 import dev.oakleycord.manhunt.game.logic.GameLoop;
 import dev.oakleycord.manhunt.game.logic.ScoreboardHandler;
+import dev.oakleycord.manhunt.game.util.OtherUtil;
+import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -61,10 +63,6 @@ public class ManHuntGame {
         spectators.setColor(ChatColor.DARK_GRAY);
     }
 
-    public static boolean isManHuntWorld(World world) {
-        return world.getName().startsWith("mh_world_");
-    }
-
     //i fucking love my boyfriend
     //public long howMuchILoveNiko() {return Long.MAX_VALUE;}
 
@@ -75,32 +73,29 @@ public class ManHuntGame {
             world.getWorldBorder().setSize(30);
             world.setDifficulty(Difficulty.PEACEFUL);
         }
-        freezeGame();
+        freeze();
         scoreboardHandler.updateScoreboard(0);
     }
 
     public void postGame(GameTeam winningTeam) {
         state = GameState.POSTGAME;
-        freezeGame();
+        freeze();
         switch (winningTeam) {
-            case HUNTERS -> getPlayers().forEach(player -> {
-                player.sendTitle(ChatColor.RED + "The Hunters Win!", "", 10, 20, 10);
-                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
-            });
-            case RUNNERS -> getPlayers().forEach(player -> {
-                player.sendTitle(ChatColor.GREEN + "The Runners Win!", "", 10, 20, 10);
-                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
-            });
+            case HUNTERS -> getPlayers().forEach(player -> player.sendTitle(ChatColor.RED + "The Hunters Win!", "", 10, 20, 10));
+            case RUNNERS -> getPlayers().forEach(player -> player.sendTitle(ChatColor.GREEN + "The Runners Win!", "", 10, 20, 10));
         }
 
-
-        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), this::destroy, 100);
+        getPlayers().forEach(player -> {
+            player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
+            player.sendMessage("Returning to lobby in 10 seconds...");
+        });
+        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), this::destroy, 200);
     }
 
     public void destroy() {
         ManHunt.getTickingManager().unregister(gameLoop);
 
-        String time = ManHunt.formatTime(System.currentTimeMillis() - this.timeStamp);
+        String time = OtherUtil.formatTime(System.currentTimeMillis() - this.timeStamp);
         String[] summary = {
                 "§e§l<---§6§lGAME SUMMARY§e§l--->",
                 "§e§lGame lasted: §b" + time,
@@ -110,41 +105,40 @@ public class ManHuntGame {
         this.getPlayers().forEach(player -> {
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
             player.sendMessage(summary);
-            ManHunt.resetPlayer(player, false);
+            PlayerUtil.resetPlayer(player, false);
         });
 
         for (World world : worlds) {
             String name = world.getName();
             Bukkit.unloadWorld(world, false);
-            deleteDir(new File(Bukkit.getWorldContainer(), name));
+            OtherUtil.deleteDir(new File(Bukkit.getWorldContainer(), name));
         }
 
         ManHunt.GAME = null;
     }
 
-    private void deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            for (File file : dir.listFiles()) {
-                deleteDir(file);
-            }
-        }
-        dir.delete();
-    }
-
-    public void resume() {
+    public void startGame() {
         state = GameState.INGAME;
+
         for (World world : worlds) {
             world.getWorldBorder().setSize(300000000);
             world.setDifficulty(Difficulty.HARD);
         }
-        unFreezeGame();
+
+        unfreeze();
+
         if (gameLoop == null) {
             gameLoop = new GameLoop(this);
             ManHunt.getTickingManager().register(gameLoop);
         }
+
+        getPlayers().forEach(player -> {
+            player.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + "The Game Has Started!", "", 10, 20, 10);
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+        });
     }
 
-    private void freezeGame() {
+    private void freeze() {
         for (World world : worlds) {
             world.setSpawnFlags(false, false);
             world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
@@ -153,7 +147,7 @@ public class ManHuntGame {
         }
     }
 
-    private void unFreezeGame() {
+    private void unfreeze() {
         for (World world : worlds) {
             world.setSpawnFlags(true, true);
             world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
@@ -230,7 +224,7 @@ public class ManHuntGame {
     }
 
 
-    public boolean inTeam(Player player) {
+    public boolean hasTeam(Player player) {
         return scoreboard.getEntryTeam(player.getName()) != null;
     }
 

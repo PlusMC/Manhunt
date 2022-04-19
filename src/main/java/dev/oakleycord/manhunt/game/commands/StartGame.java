@@ -49,7 +49,7 @@ public class StartGame implements PlusCommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (ManHunt.GAME != null && ManHunt.GAME.getState() == ManHuntGame.GameState.PREGAME) {
-            ManHunt.GAME.resume();
+            ManHunt.GAME.startGame();
             ManHunt.GAME.getHunters().getEntries().forEach(hunter -> {
                 Player player = Bukkit.getPlayer(hunter);
                 if (player != null) player.getInventory().addItem(new ItemStack(Material.COMPASS));

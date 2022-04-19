@@ -13,7 +13,6 @@ public class GameLoop implements Tickable {
 
     @Override
     public void tick(long tick) {
-
         if (game.getState() != ManHuntGame.GameState.INGAME) return;
         game.getScoreboardHandler().updateScoreboard(tick);
         game.getCompassHandler().updateCompass(tick);
