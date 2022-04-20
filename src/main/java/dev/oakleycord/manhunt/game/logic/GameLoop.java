@@ -1,8 +1,8 @@
 package dev.oakleycord.manhunt.game.logic;
 
-import dev.oakleycord.manhunt.game.GameState;
-import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.enums.GameState;
+import dev.oakleycord.manhunt.game.enums.GameTeam;
 import org.bukkit.Bukkit;
 import org.plusmc.pluslib.managed.Tickable;
 
@@ -22,8 +22,9 @@ public class GameLoop implements Tickable {
 
         if (game.getGameModeLogic() != null) {
             game.getGameModeLogic().update(tick);
+            for (Logic modifiers : game.getModifierLogic()) modifiers.update(tick);
         } else {
-            Bukkit.broadcastMessage("ERROR LOADING GAMEMODE ENDING GAME...");
+            Bukkit.broadcastMessage("ERROR RUNNING GAMEMODE ENDING GAME...");
             game.postGame(GameTeam.SPECTATORS);
         }
     }

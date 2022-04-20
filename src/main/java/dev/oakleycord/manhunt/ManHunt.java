@@ -1,10 +1,7 @@
 package dev.oakleycord.manhunt;
 
 import dev.oakleycord.manhunt.game.MHGame;
-import dev.oakleycord.manhunt.game.commands.InitGame;
-import dev.oakleycord.manhunt.game.commands.MHDebug;
-import dev.oakleycord.manhunt.game.commands.SetTeam;
-import dev.oakleycord.manhunt.game.commands.StartGame;
+import dev.oakleycord.manhunt.game.commands.*;
 import dev.oakleycord.manhunt.game.events.PlayerEvents;
 import dev.oakleycord.manhunt.game.events.PortalEvents;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,8 +18,11 @@ public final class ManHunt extends JavaPlugin {
     private static final List<PlusCommand> COMMANDS = List.of(
             new InitGame(),
             new SetTeam(),
+            new SetGameMode(),
             new StartGame(),
-            new MHDebug()
+            new MHDebug(),
+            new AddModifier(),
+            new RemoveModifier()
     );
     public static MHGame GAME;
     private static PlusCommandManager cmdManager;

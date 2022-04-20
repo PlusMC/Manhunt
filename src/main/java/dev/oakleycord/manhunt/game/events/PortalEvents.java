@@ -30,7 +30,6 @@ public class PortalEvents implements Listener {
                         fromLoc.multiply(1 / 8D);
                         fromLoc.setWorld(game.getNether());
                         e.setTo(fromLoc);
-                        System.out.println(game.getNether().getName());
                     }
                     case NETHER -> {
                         fromLoc.multiply(8.0D);

@@ -1,6 +1,10 @@
 package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.game.enums.GameState;
+import dev.oakleycord.manhunt.game.enums.GameTeam;
+import dev.oakleycord.manhunt.game.enums.Mode;
+import dev.oakleycord.manhunt.game.enums.Modifier;
 import dev.oakleycord.manhunt.game.logic.GameLoop;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
@@ -27,16 +31,23 @@ public class MHGame {
     private final CompassHandler compassHandler;
     private final Scoreboard scoreboard;
     private final Team hunters, runners, spectators;
-    private final long timeStamp;
-
-    private final GameMode gamemode;
+    private final List<Logic> modifierLogic;
+    private final List<Modifier> modifiers;
+    private long timeStamp;
+    private Mode gamemode;
     private Logic gameModeLogic;
     private GameState state;
     private GameLoop gameLoop;
+    private boolean dragonKilled;
 
     public MHGame() {
         this.state = GameState.LOADING;
-        this.gamemode = GameMode.CLASSIC;
+        this.gamemode = Mode.CLASSIC;
+
+        this.modifierLogic = new ArrayList<>();
+
+        this.modifiers = new ArrayList<>();
+        this.dragonKilled = false;
 
         this.timeStamp = System.currentTimeMillis();
 
@@ -87,8 +98,8 @@ public class MHGame {
         state = GameState.POSTGAME;
         freeze();
         switch (winningTeam) {
-            case HUNTERS -> getPlayers().forEach(player -> player.sendTitle(ChatColor.RED + "The Hunters Win!", "", 10, 20, 10));
-            case RUNNERS -> getPlayers().forEach(player -> player.sendTitle(ChatColor.GREEN + "The Runners Win!", "", 10, 20, 10));
+            case HUNTERS -> getPlayers().forEach(player -> player.sendTitle(ChatColor.RED + "Hunters Win!", "", 10, 20, 10));
+            case RUNNERS -> getPlayers().forEach(player -> player.sendTitle(ChatColor.GREEN + "Runners Win!", "", 10, 20, 10));
         }
 
         getPlayers().forEach(player -> {
@@ -125,6 +136,7 @@ public class MHGame {
 
     public void startGame() {
         state = GameState.INGAME;
+        this.timeStamp = System.currentTimeMillis();
 
         for (World world : worlds) {
             world.getWorldBorder().setSize(300000000);
@@ -134,13 +146,16 @@ public class MHGame {
         unfreeze();
 
         this.gameModeLogic = gamemode.getLogic(this);
+        for (Modifier modifier : this.modifiers)
+            this.modifierLogic.add(modifier.getLogic(this));
+
         if (gameLoop == null) {
             gameLoop = new GameLoop(this);
             ManHunt.getTickingManager().register(gameLoop);
         }
 
         getPlayers().forEach(player -> {
-            player.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + "The Game Has Started!", "", 10, 20, 10);
+            player.sendTitle(ChatColor.GOLD + "" + ChatColor.BOLD + "Game Started!", "", 10, 20, 10);
             player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
         });
     }
@@ -240,12 +255,33 @@ public class MHGame {
         return scoreboard.getEntryTeam(player.getName()) != null;
     }
 
+    public boolean hasDragonBeenKilled() {
+        return dragonKilled;
+    }
+
+    public void setDragonKilled(boolean dragonKilled) {
+        this.dragonKilled = dragonKilled;
+    }
+
     public GameState getState() {
         return state;
     }
 
     @NotNull
-    public GameMode getGameMode() {
+    public Mode getGameMode() {
         return gamemode;
+    }
+
+    public void setGameMode(Mode mode) {
+        this.gamemode = mode;
+    }
+
+    public List<Modifier> getModifiers() {
+        return modifiers;
+    }
+
+
+    public List<Logic> getModifierLogic() {
+        return List.copyOf(modifierLogic);
     }
 }

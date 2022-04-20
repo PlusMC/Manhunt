@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.logic.handlers;
 
-import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.enums.GameState;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -24,20 +24,27 @@ public class ScoreboardHandler extends Logic {
         board.getEntries().forEach(board::resetScores);
         Objective objective = board.getObjective("manhunt");
 
-        objective.getScore("§l").setScore(7);
+        objective.getScore("§l").setScore(8);
 
-        objective.getScore("Players: §b" + game.getPlayers().size()).setScore(6);
+        objective.getScore("Players: §b" + game.getPlayers().size()).setScore(7);
 
-        objective.getScore("Hunters: §b" + game.getHunters().getSize()).setScore(5);
+        objective.getScore("Hunters: §b" + game.getHunters().getSize()).setScore(6);
 
-        objective.getScore("Runners Alive: §b" + game.getRunners().getSize()).setScore(4);
+        objective.getScore("Runners Alive: §b" + game.getRunners().getSize()).setScore(5);
 
         if (game.getState() == GameState.INGAME)
-            objective.getScore("Time: §b" + OtherUtil.formatTime(System.currentTimeMillis() - game.getTimeStamp())).setScore(3);
+            objective.getScore("Time: §b" + OtherUtil.formatTime(System.currentTimeMillis() - game.getTimeStamp())).setScore(4);
 
-        objective.getScore("§b").setScore(2);
+        objective.getScore("Mode: §b" + game.getGameMode().name() + "%").setScore(3);
 
-        objective.getScore("GameMode: §b" + game.getGameMode().name() + "%").setScore(0);
+        if (game.getModifiers().size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            game.getModifiers().forEach(modifier -> sb.append(modifier.sortName).append(", "));
+            sb.delete(sb.length() - 2, sb.length());
+            objective.getScore("Modifiers: §b" + sb).setScore(2);
+        }
+
+        objective.getScore("§b").setScore(1);
 
         objective.getScore("§8§lGameState: " + game.getState()).setScore(0);
     }

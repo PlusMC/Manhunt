@@ -5,7 +5,7 @@ import dev.oakleycord.manhunt.game.MHGame;
 public abstract class Logic {
     private final MHGame game;
 
-    protected Logic(MHGame game) {
+    public Logic(MHGame game) {
         this.game = game;
     }
 
@@ -13,5 +13,5 @@ public abstract class Logic {
         return game;
     }
 
-    protected abstract void update(long tick);
+    public abstract void update(long tick);
 }

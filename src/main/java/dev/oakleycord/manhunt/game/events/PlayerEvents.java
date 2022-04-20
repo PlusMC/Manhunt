@@ -1,8 +1,8 @@
 package dev.oakleycord.manhunt.game.events;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.GameState;
-import dev.oakleycord.manhunt.game.GameTeam;
+import dev.oakleycord.manhunt.game.enums.GameState;
+import dev.oakleycord.manhunt.game.enums.GameTeam;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
@@ -105,10 +105,12 @@ public class PlayerEvents implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
+
         if (ManHunt.GAME == null) return;
         if (!OtherUtil.isManHunt(event.getPlayer().getWorld())) {
             assert Bukkit.getScoreboardManager() != null;
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+            player.teleport(player.getWorld().getSpawnLocation().add(0, 1, 0));
             return;
         }
 
@@ -131,6 +133,6 @@ public class PlayerEvents implements Listener {
 
         if (!(event.getEntityType() == EntityType.ENDER_DRAGON)) return;
 
-        ManHunt.GAME.postGame(GameTeam.RUNNERS);
+        ManHunt.GAME.setDragonKilled(true);
     }
 }
