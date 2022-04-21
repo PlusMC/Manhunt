@@ -1,4 +1,4 @@
-package dev.oakleycord.manhunt.game.logic.gamemodes;
+package dev.oakleycord.manhunt.game.logic.modes;
 
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.enums.GameTeam;

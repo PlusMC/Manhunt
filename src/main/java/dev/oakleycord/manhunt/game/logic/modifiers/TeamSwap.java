@@ -21,7 +21,7 @@ public class TeamSwap extends Logic {
         MHGame game = getGame();
 
         if (triggerTime == 0) {
-            long delay = (long) ((Math.random() + 0.1) * 20) * 20;
+            long delay = (long) ((Math.random() + 0.1) * 120) * 20;
             triggerTime = tick + delay;
             game.getPlayers().forEach(p -> {
                 p.sendMessage("§6The teams will swap in §e" + (delay / 20) + " §6seconds!");
@@ -30,7 +30,7 @@ public class TeamSwap extends Logic {
         }
         long seconds = (triggerTime - tick) / 20;
 
-        if (seconds < 5 && tick % 20 == 0) {
+        if (seconds < 10 && tick % 20 == 0) {
             game.getPlayers().forEach(p -> {
                 p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§6Teams swapping in §e" + seconds + " §6seconds!"));
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE, 1, 1);

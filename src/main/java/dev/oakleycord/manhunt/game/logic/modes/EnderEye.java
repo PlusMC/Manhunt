@@ -1,4 +1,4 @@
-package dev.oakleycord.manhunt.game.logic.gamemodes;
+package dev.oakleycord.manhunt.game.logic.modes;
 
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.enums.GameTeam;
@@ -7,9 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class Portal extends Logic {
-
-    public Portal(MHGame game) {
+public class EnderEye extends Logic {
+    public EnderEye(MHGame game) {
         super(game);
     }
 
@@ -20,11 +19,12 @@ public class Portal extends Logic {
         if (game.getRunners().getSize() == 0)
             game.postGame(GameTeam.HUNTERS);
 
+
         if (tick % 5 != 0) return;
         for (String entry : game.getRunners().getEntries()) {
             Player player = Bukkit.getPlayerExact(entry);
             if (player == null) continue;
-            if (player.getLocation().getBlock().getType() == Material.NETHER_PORTAL) {
+            if (player.getInventory().contains(Material.ENDER_EYE)) {
                 game.postGame(GameTeam.RUNNERS);
                 return;
             }
