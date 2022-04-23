@@ -18,7 +18,7 @@ public class BlockRain extends Logic {
     public BlockRain(MHGame game) {
         super(game);
         this.random = new Random();
-        this.blocks = Arrays.stream(Material.values()).filter(material -> material.isBlock() && material != Material.END_PORTAL && material != Material.END_GATEWAY).toList();
+        this.blocks = Arrays.stream(Material.values()).filter(material -> material.isBlock() && material != Material.END_PORTAL && material != Material.END_GATEWAY && material != Material.NETHER_PORTAL).toList();
     }
 
     @Override

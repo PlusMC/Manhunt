@@ -19,7 +19,6 @@ public class EnderEye extends Logic {
         if (game.getRunners().getSize() == 0)
             game.postGame(GameTeam.HUNTERS);
 
-
         if (tick % 5 != 0) return;
         for (String entry : game.getRunners().getEntries()) {
             Player player = Bukkit.getPlayerExact(entry);

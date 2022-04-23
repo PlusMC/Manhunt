@@ -4,7 +4,11 @@ import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 
@@ -21,7 +25,7 @@ public class TeamSwap extends Logic {
         MHGame game = getGame();
 
         if (triggerTime == 0) {
-            long delay = (long) ((Math.random() + 0.1) * 120) * 20;
+            long delay = (long) ((Math.random() + 0.3) * 120) * 20;
             triggerTime = tick + delay;
             game.getPlayers().forEach(p -> {
                 p.sendMessage("§6The teams will swap in §e" + (delay / 20) + " §6seconds!");
@@ -49,6 +53,10 @@ public class TeamSwap extends Logic {
             if (!hunters.contains(e)) {
                 game.getRunners().removeEntry(e);
                 game.getHunters().addEntry(e);
+                Player p = Bukkit.getPlayer(e);
+                if (p != null)
+                    if (!p.getInventory().contains(Material.COMPASS))
+                        p.getInventory().addItem(new ItemStack(Material.COMPASS));
             }
         });
 
