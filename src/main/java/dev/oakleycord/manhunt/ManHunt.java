@@ -4,6 +4,7 @@ import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.commands.*;
 import dev.oakleycord.manhunt.game.events.PlayerEvents;
 import dev.oakleycord.manhunt.game.events.PortalEvents;
+import dev.oakleycord.manhunt.game.events.WorldEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.plusmc.pluslib.managed.PlusCommand;
 import org.plusmc.pluslib.managing.BaseManager;
@@ -40,6 +41,7 @@ public final class ManHunt extends JavaPlugin {
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        getServer().getPluginManager().registerEvents(new WorldEvents(), this);
         getServer().getPluginManager().registerEvents(new PortalEvents(), this);
         cmdManager = BaseManager.createManager(PlusCommandManager.class, this);
         tickManager = BaseManager.createManager(TickingManager.class, this);

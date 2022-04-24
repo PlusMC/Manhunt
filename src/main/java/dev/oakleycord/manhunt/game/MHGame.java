@@ -61,6 +61,7 @@ public class MHGame {
             world.setAutoSave(false);
             world.getSpawnLocation().getChunk().load();
             world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
+            world.setGameRule(GameRule.DO_INSOMNIA, false);
         }
 
         assert Bukkit.getScoreboardManager() != null;
