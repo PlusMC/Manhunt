@@ -6,6 +6,8 @@ import dev.oakleycord.manhunt.game.enums.GameTeam;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
@@ -18,11 +20,11 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 
-import static dev.oakleycord.manhunt.game.util.PlayerUtil.isOutsideOfBorder;
-import static dev.oakleycord.manhunt.game.util.PlayerUtil.resetAdvancements;
+import static dev.oakleycord.manhunt.game.util.PlayerUtil.*;
 
 public class PlayerEvents implements Listener {
 
@@ -69,6 +71,19 @@ public class PlayerEvents implements Listener {
     public void onMove(PlayerMoveEvent event) {
         if (event.getTo() == null) return;
         assert event.getTo().getWorld() != null;
+
+        if (Bukkit.getWorlds().get(0).equals(event.getTo().getWorld()) && event.getTo().getY() <= 0) {
+            Location teleport = event.getPlayer().getLocation();
+            Location spawn = Bukkit.getWorlds().get(0).getSpawnLocation();
+            Vector velocity = event.getPlayer().getVelocity();
+            teleport.setX(spawn.getX());
+            teleport.setY(spawn.getY() + 100 - event.getPlayer().getVelocity().getY());
+            teleport.setZ(spawn.getZ());
+            event.getPlayer().teleport(teleport);
+            event.getPlayer().setVelocity(velocity);
+            return;
+        }
+
         if (!OtherUtil.isManHunt(event.getTo().getWorld())) return;
         if (ManHunt.GAME == null) return;
         if (ManHunt.GAME.getState() != GameState.PREGAME) return;
@@ -87,6 +102,8 @@ public class PlayerEvents implements Listener {
         if (!OtherUtil.isManHunt(event.getPlayer().getWorld())) {
             assert Bukkit.getScoreboardManager() != null;
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+            resetPlayer(player, false);
+            player.setGameMode(GameMode.SURVIVAL);
             return;
         }
 
@@ -105,12 +122,12 @@ public class PlayerEvents implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-
-        if (ManHunt.GAME == null) return;
-        if (!OtherUtil.isManHunt(event.getPlayer().getWorld())) {
+        if (!OtherUtil.isManHunt(event.getPlayer().getWorld()) || ManHunt.GAME == null) {
             assert Bukkit.getScoreboardManager() != null;
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-            player.teleport(player.getWorld().getSpawnLocation().add(0, 1, 0));
+            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
+            PlayerUtil.resetPlayer(player, false);
+            player.setGameMode(GameMode.SURVIVAL);
             return;
         }
 

@@ -6,7 +6,7 @@
 
     <groupId>dev.oakleycord</groupId>
     <artifactId>ManHunt</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-INDEV</version>
     <packaging>jar</packaging>
 
     <name>ManHunt</name>
