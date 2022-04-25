@@ -17,6 +17,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.plusmc.pluslib.managing.BaseManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -114,7 +115,7 @@ public class MHGame {
     }
 
     public void destroy() {
-        ManHunt.getTickingManager().unregister(gameLoop);
+        BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
 
         String time = OtherUtil.formatTime(System.currentTimeMillis() - this.timeStamp);
         String[] summary = {
@@ -155,7 +156,7 @@ public class MHGame {
 
         if (gameLoop == null) {
             gameLoop = new GameLoop(this);
-            ManHunt.getTickingManager().register(gameLoop);
+            BaseManager.registerAny(gameLoop, ManHunt.getInstance());
         }
 
         getPlayers().forEach(player -> {
@@ -283,7 +284,7 @@ public class MHGame {
     public List<Modifier> getModifiers() {
         return modifiers;
     }
-    
+
     public List<Logic> getModifierLogic() {
         return List.copyOf(modifierLogic);
     }

@@ -27,10 +27,10 @@ public final class ManHunt extends JavaPlugin {
             new RemoveModifier()
     );
 
-    private static final  List<Listener> LISTENERS = List.of(
-        new PlayerEvents(),
-        new WorldEvents(),
-        new PortalEvents()
+    private static final List<Listener> LISTENERS = List.of(
+            new PlayerEvents(),
+            new WorldEvents(),
+            new PortalEvents()
     );
 
     public static MHGame GAME;
@@ -50,11 +50,11 @@ public final class ManHunt extends JavaPlugin {
     public void onEnable() {
         for (Listener listener : LISTENERS)
             getServer().getPluginManager().registerEvents(listener, this);
-            
+
         cmdManager = BaseManager.createManager(PlusCommandManager.class, this);
         tickManager = BaseManager.createManager(TickingManager.class, this);
         for (PlusCommand cmd : COMMANDS)
-            cmdManager.register(cmd);
+            BaseManager.registerAny(cmd, this);
 
     }
 
