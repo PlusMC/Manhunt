@@ -7,7 +7,6 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.plusmc.pluslib.managed.PlusCommand;
 
@@ -35,11 +34,6 @@ public class InitGame implements PlusCommand {
     }
 
     @Override
-    public JavaPlugin getPlugin() {
-        return ManHunt.getInstance();
-    }
-
-    @Override
     public List<String> getCompletions(int index) {
         return null;
     }
@@ -60,15 +54,5 @@ public class InitGame implements PlusCommand {
         }
 
         return true;
-    }
-
-    @Override
-    public void load() {
-
-    }
-
-    @Override
-    public void unload() {
-
     }
 }

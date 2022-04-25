@@ -4,7 +4,6 @@ import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.enums.Modifier;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.plusmc.pluslib.managed.PlusCommand;
 
@@ -29,11 +28,6 @@ public class RemoveModifier implements PlusCommand {
     @Override
     public String getDescription() {
         return "Removes a modifier from the game";
-    }
-
-    @Override
-    public JavaPlugin getPlugin() {
-        return ManHunt.getInstance();
     }
 
     @Override
@@ -63,15 +57,5 @@ public class RemoveModifier implements PlusCommand {
         sender.sendMessage("§aRemoved modifier §e" + args[0].toUpperCase() + "§a!");
         ManHunt.GAME.getScoreboardHandler().update(0);
         return true;
-    }
-
-    @Override
-    public void load() {
-
-    }
-
-    @Override
-    public void unload() {
-
     }
 }

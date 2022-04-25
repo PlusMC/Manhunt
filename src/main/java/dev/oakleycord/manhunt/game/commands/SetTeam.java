@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.plusmc.pluslib.managed.PlusCommand;
 import org.plusmc.pluslib.util.BukkitUtil;
@@ -34,11 +33,6 @@ public class SetTeam implements PlusCommand {
     @Override
     public String getDescription() {
         return "Sets a player to a team";
-    }
-
-    @Override
-    public JavaPlugin getPlugin() {
-        return ManHunt.getInstance();
     }
 
     @Override
@@ -75,13 +69,5 @@ public class SetTeam implements PlusCommand {
         }
 
         return true;
-    }
-
-    @Override
-    public void load() {
-    }
-
-    @Override
-    public void unload() {
     }
 }

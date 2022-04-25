@@ -5,6 +5,7 @@ import dev.oakleycord.manhunt.game.commands.*;
 import dev.oakleycord.manhunt.game.events.PlayerEvents;
 import dev.oakleycord.manhunt.game.events.PortalEvents;
 import dev.oakleycord.manhunt.game.events.WorldEvents;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.plusmc.pluslib.managed.PlusCommand;
 import org.plusmc.pluslib.managing.BaseManager;

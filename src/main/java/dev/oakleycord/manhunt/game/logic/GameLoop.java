@@ -28,14 +28,4 @@ public class GameLoop implements Tickable {
             game.postGame(GameTeam.SPECTATORS);
         }
     }
-
-    @Override
-    public void load() {
-
-    }
-
-    @Override
-    public void unload() {
-
-    }
 }

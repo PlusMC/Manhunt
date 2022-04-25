@@ -4,7 +4,6 @@ import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.enums.Modifier;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.plusmc.pluslib.managed.PlusCommand;
 
@@ -33,11 +32,6 @@ public class AddModifier implements PlusCommand {
     }
 
     @Override
-    public JavaPlugin getPlugin() {
-        return ManHunt.getInstance();
-    }
-
-    @Override
     public List<String> getCompletions(int index) {
         return Arrays.stream(Modifier.values()).map(Enum::name).toList();
     }
@@ -60,15 +54,5 @@ public class AddModifier implements PlusCommand {
         sender.sendMessage("§aAdded modifier §e" + args[0].toUpperCase() + "§a!");
         ManHunt.GAME.getScoreboardHandler().update(0);
         return true;
-    }
-
-    @Override
-    public void load() {
-
-    }
-
-    @Override
-    public void unload() {
-
     }
 }

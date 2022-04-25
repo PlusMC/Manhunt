@@ -4,7 +4,6 @@ import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.enums.Mode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.plusmc.pluslib.managed.PlusCommand;
 
@@ -35,11 +34,6 @@ public class SetGameMode implements PlusCommand {
     }
 
     @Override
-    public JavaPlugin getPlugin() {
-        return ManHunt.getInstance();
-    }
-
-    @Override
     public List<String> getCompletions(int index) {
         if (index == 1) return Arrays.stream(Mode.values()).map(Mode::name).collect(Collectors.toList());
         return null;
@@ -62,15 +56,5 @@ public class SetGameMode implements PlusCommand {
             return true;
         }
         return true;
-    }
-
-    @Override
-    public void load() {
-
-    }
-
-    @Override
-    public void unload() {
-
     }
 }
