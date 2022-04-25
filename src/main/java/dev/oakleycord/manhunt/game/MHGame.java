@@ -54,11 +54,12 @@ public class MHGame {
 
         this.worlds = new World[3];
         this.seed = new Random().nextLong();
-        System.out.println("§6Loading worlds (§e1§6/§e3§6)...");
+
+        Bukkit.broadcastMessage("§6Loading worlds (§e1§6/§e3§6)...");
         worlds[0] = new WorldCreator("mh_world_1").seed(seed).createWorld();
-        System.out.println("§6Loading worlds (§e2§6/§e3§6)...");
+        Bukkit.broadcastMessage("§6Loading worlds (§e2§6/§e3§6)...");
         worlds[1] = new WorldCreator("mh_world_2").seed(seed).environment(World.Environment.NETHER).createWorld();
-        System.out.println("§6Loading worlds (§e3§6/§e3§6)...");
+        Bukkit.broadcastMessage("§6Loading worlds (§e3§6/§e3§6)...");
         worlds[2] = new WorldCreator("mh_world_3").seed(seed).environment(World.Environment.THE_END).createWorld();
 
         for (World world : worlds) {
@@ -137,6 +138,7 @@ public class MHGame {
         }
 
         ManHunt.GAME = null;
+        System.gc();
     }
 
     public void startGame() {
