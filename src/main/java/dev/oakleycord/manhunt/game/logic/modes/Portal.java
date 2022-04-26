@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.logic.modes;
 
+import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.MHGame;
-import dev.oakleycord.manhunt.game.enums.GameTeam;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

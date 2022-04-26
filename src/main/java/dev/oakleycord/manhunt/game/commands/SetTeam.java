@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.commands;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.enums.GameTeam;
+import dev.oakleycord.manhunt.game.GameTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

@@ -1,8 +1,9 @@
 package dev.oakleycord.manhunt.game.events;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.enums.Modifier;
 import dev.oakleycord.manhunt.game.logic.modifiers.BlockRain;
+import dev.oakleycord.manhunt.game.logic.modifiers.GodlySlime;
+import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
@@ -41,8 +42,14 @@ public class WorldEvents implements Listener {
     @EventHandler
     public void onBlockPlace(EntityChangeBlockEvent event) {
         if (ManHunt.GAME == null) return;
-        if (!ManHunt.GAME.getModifiers().contains(Modifier.BLOCKRAIN)) return;
+        if (!ManHunt.GAME.getModifiers().contains(Modifier.BLOCKRAIN) && !ManHunt.GAME.getModifiers().contains(Modifier.GODLYSLIME))
+            return;
         if (!(event.getEntity() instanceof FallingBlock blockEntity)) return;
+        if (GodlySlime.fallingBlocks.contains(blockEntity)) {
+            event.setCancelled(true);
+            GodlySlime.fallingBlocks.remove(blockEntity);
+            return;
+        }
         if (!BlockRain.blocks.contains(blockEntity)) return;
         Block block = event.getBlock();
 

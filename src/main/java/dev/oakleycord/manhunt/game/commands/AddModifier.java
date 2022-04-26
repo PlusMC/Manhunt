@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.commands;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.enums.Modifier;
+import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;

@@ -1,10 +1,7 @@
-package dev.oakleycord.manhunt.game.enums;
+package dev.oakleycord.manhunt.game.logic.modes;
 
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
-import dev.oakleycord.manhunt.game.logic.modes.Classic;
-import dev.oakleycord.manhunt.game.logic.modes.EnderEye;
-import dev.oakleycord.manhunt.game.logic.modes.Portal;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Constructor;

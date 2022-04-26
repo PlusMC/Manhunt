@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.util;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.enums.GameTeam;
+import dev.oakleycord.manhunt.game.GameTeam;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;

@@ -1,14 +1,12 @@
 package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.enums.GameState;
-import dev.oakleycord.manhunt.game.enums.GameTeam;
-import dev.oakleycord.manhunt.game.enums.Mode;
-import dev.oakleycord.manhunt.game.enums.Modifier;
 import dev.oakleycord.manhunt.game.logic.GameLoop;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
 import dev.oakleycord.manhunt.game.logic.handlers.ScoreboardHandler;
+import dev.oakleycord.manhunt.game.logic.modes.Mode;
+import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.*;

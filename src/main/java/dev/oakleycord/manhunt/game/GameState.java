@@ -1,4 +1,4 @@
-package dev.oakleycord.manhunt.game.enums;
+package dev.oakleycord.manhunt.game;
 
 public enum GameState {
     LOADING,

@@ -1,8 +1,8 @@
 package dev.oakleycord.manhunt.game.events;
 
 import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.enums.GameState;
-import dev.oakleycord.manhunt.game.enums.GameTeam;
+import dev.oakleycord.manhunt.game.GameState;
+import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
@@ -20,7 +20,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 
@@ -73,14 +72,12 @@ public class PlayerEvents implements Listener {
         assert event.getTo().getWorld() != null;
 
         if (Bukkit.getWorlds().get(0).equals(event.getTo().getWorld()) && event.getTo().getY() <= 0) {
-            Location teleport = event.getPlayer().getLocation();
-            Location spawn = Bukkit.getWorlds().get(0).getSpawnLocation();
-            Vector velocity = event.getPlayer().getVelocity();
-            teleport.setX(spawn.getX());
-            teleport.setY(spawn.getY() + 100 - event.getPlayer().getVelocity().getY());
-            teleport.setZ(spawn.getZ());
-            event.getPlayer().teleport(teleport);
-            event.getPlayer().setVelocity(velocity);
+            Location to = event.getTo();
+            Location spawn = event.getPlayer().getWorld().getSpawnLocation();
+            to.setX(spawn.getX());
+            to.setY(spawn.getY() + 100 + event.getPlayer().getVelocity().getY());
+            to.setZ(spawn.getZ());
+            event.setTo(to);
             return;
         }
 

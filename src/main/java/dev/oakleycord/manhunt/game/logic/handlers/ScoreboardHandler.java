@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.logic.handlers;
 
+import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.MHGame;
-import dev.oakleycord.manhunt.game.enums.GameState;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.scoreboard.DisplaySlot;

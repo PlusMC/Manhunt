@@ -1,6 +1,9 @@
 package dev.oakleycord.manhunt.game.commands;
 
 import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.game.util.ParticleUtil;
+import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,17 +38,20 @@ public class MHDebug implements PlusCommand {
 
     @Override
     public List<String> getCompletions(int index) {
-        return List.of("tpWorld");
+        return List.of("tpWorld", "testParticle");
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) return false;
         if (!(sender instanceof Player p)) return false;
-        if (ManHunt.GAME == null) return false;
 
         switch (args[0]) {
             case "tpWorld" -> p.teleport(ManHunt.GAME.getOverworld().getSpawnLocation());
+            case "testParticle" -> {
+                p.getLocation().add(4, 4, 4).getBlock().setType(Material.BEDROCK);
+                ParticleUtil.playGrabEffect(p, p.getLocation().add(4, 4, 4), Color.RED);
+            }
         }
         return true;
     }

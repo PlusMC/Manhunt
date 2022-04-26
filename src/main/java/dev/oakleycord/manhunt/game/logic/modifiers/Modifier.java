@@ -1,16 +1,13 @@
-package dev.oakleycord.manhunt.game.enums;
+package dev.oakleycord.manhunt.game.logic.modifiers;
 
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
-import dev.oakleycord.manhunt.game.logic.modifiers.BlockRain;
-import dev.oakleycord.manhunt.game.logic.modifiers.Empty;
-import dev.oakleycord.manhunt.game.logic.modifiers.TeamSwap;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Constructor;
 
 public enum Modifier {
-    TEAMSWAP(TeamSwap.class, "TS"), BLOCKRAIN(BlockRain.class, "BR");
+    TEAMSWAP(TeamSwap.class, "TS"), BLOCKRAIN(BlockRain.class, "BR"), GODLYSLIME(GodlySlime.class, "GS");
 
     public final String sortName;
     private final Class<? extends Logic> logic;
