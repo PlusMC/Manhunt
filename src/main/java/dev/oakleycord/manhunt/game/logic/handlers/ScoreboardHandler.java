@@ -16,7 +16,7 @@ public class ScoreboardHandler extends Logic {
         game.getScoreboard().getObjective("manhunt").setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
-    public void update(long tick) {
+    public void tick(long tick) {
         MHGame game = getGame();
         if (tick % 10 != 0) return;
 

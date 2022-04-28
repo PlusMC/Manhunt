@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.commands;
 
 import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.game.gui.MHSettings;
 import dev.oakleycord.manhunt.game.util.ParticleUtil;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -38,7 +39,7 @@ public class MHDebug implements PlusCommand {
 
     @Override
     public List<String> getCompletions(int index) {
-        return List.of("tpWorld", "testParticle");
+        return List.of("tpWorld", "testParticle", "openInv");
     }
 
     @Override
@@ -54,6 +55,7 @@ public class MHDebug implements PlusCommand {
                     ParticleUtil.helixTicked(p, Color.fromRGB(15, 200, 15), i);
                 }
             }
+            case "openInv" -> p.openInventory(new MHSettings().getInventory());
         }
         return true;
     }

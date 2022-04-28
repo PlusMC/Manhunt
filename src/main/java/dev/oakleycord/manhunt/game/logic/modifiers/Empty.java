@@ -10,7 +10,7 @@ public class Empty extends Logic {
     }
 
     @Override
-    public void update(long tick) {
+    public void tick(long tick) {
         // Do nothing lollll
     }
 }

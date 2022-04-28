@@ -10,7 +10,7 @@ public class Classic extends Logic {
         super(game);
     }
 
-    public void update(long tick) {
+    public void tick(long tick) {
         MHGame game = getGame();
         if (game.getRunners().getSize() == 0)
             game.postGame(GameTeam.HUNTERS);

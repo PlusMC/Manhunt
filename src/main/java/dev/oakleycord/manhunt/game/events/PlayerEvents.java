@@ -112,7 +112,7 @@ public class PlayerEvents implements Listener {
                 ManHunt.GAME.setTeam(player, GameTeam.HUNTERS);
             else ManHunt.GAME.setTeam(player, GameTeam.SPECTATORS);
         }
-        ManHunt.GAME.getScoreboardHandler().update(0);
+        ManHunt.GAME.getScoreboardHandler().tick(0);
     }
 
     @EventHandler
@@ -136,7 +136,7 @@ public class PlayerEvents implements Listener {
                 ManHunt.GAME.setTeam(player, GameTeam.HUNTERS);
             else ManHunt.GAME.setTeam(player, GameTeam.SPECTATORS);
         }
-        ManHunt.GAME.getScoreboardHandler().update(0);
+        ManHunt.GAME.getScoreboardHandler().tick(0);
     }
 
     @EventHandler

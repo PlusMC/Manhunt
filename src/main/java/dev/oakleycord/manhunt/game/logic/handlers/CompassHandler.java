@@ -18,7 +18,7 @@ public class CompassHandler extends Logic {
         super(game);
     }
 
-    public void update(long tick) {
+    public void tick(long tick) {
         if (tick % 10 != 0) return;
         for (Player player : getGame().getPlayers()) {
             Player nearestPlayer = getNearestPlayer(player);

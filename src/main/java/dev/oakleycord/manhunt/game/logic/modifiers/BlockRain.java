@@ -40,7 +40,7 @@ public class BlockRain extends Logic {
     }
 
     @Override
-    public void update(long tick) {
+    public void tick(long tick) {
         MHGame game = getGame();
 
         blocks.removeIf(block -> {

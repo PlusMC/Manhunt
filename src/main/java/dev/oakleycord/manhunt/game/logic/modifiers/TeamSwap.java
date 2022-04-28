@@ -21,7 +21,7 @@ public class TeamSwap extends Logic {
     }
 
     @Override
-    public void update(long tick) {
+    public void tick(long tick) {
         MHGame game = getGame();
 
         if (triggerTime == 0) {

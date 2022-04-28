@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-public class GodlySlime extends Logic {
+public class KingSlime extends Logic {
     public final static List<FallingBlock> fallingBlocks = new ArrayList<>();
     private final Slime slime;
     private final int MAX_SIZE = 14;
@@ -21,7 +21,7 @@ public class GodlySlime extends Logic {
     private long startTime = -1;
     private int suckedUp = 0;
 
-    public GodlySlime(MHGame game) {
+    public KingSlime(MHGame game) {
         super(game);
         lastDamage = new HashMap<>();
 
@@ -34,9 +34,13 @@ public class GodlySlime extends Logic {
     }
 
     @Override
-    public void update(long tick) {
+    public void unload() {
+        slime.remove();
+        fallingBlocks.forEach(FallingBlock::remove);
+    }
 
-
+    @Override
+    public void tick(long tick) {
         MHGame game = getGame();
         for (Iterator<FallingBlock> iterator = fallingBlocks.iterator(); iterator.hasNext(); ) {
             FallingBlock fallingBlock = iterator.next();
@@ -50,8 +54,8 @@ public class GodlySlime extends Logic {
         if (startTime == -1) {
             startTime = tick;
             game.getPlayers().forEach(player -> {
-                player.sendMessage("§6Godly Slime has appeared! It be released in §e" + (DELAY / 20) + "§6 seconds!");
-                player.sendMessage("§6It will suck up everything and grow in size!");
+                player.sendMessage("§6King Slime has appeared! It be released in §e" + (DELAY / 20) + "§6 seconds!");
+                player.sendMessage("§6It will suck up everything in it's and grow in size!");
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
             });
         }

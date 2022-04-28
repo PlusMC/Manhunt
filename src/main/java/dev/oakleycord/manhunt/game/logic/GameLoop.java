@@ -17,12 +17,12 @@ public class GameLoop implements Tickable {
     @Override
     public void tick(long tick) {
         if (game.getState() != GameState.INGAME) return;
-        game.getScoreboardHandler().update(tick);
-        game.getCompassHandler().update(tick);
+        game.getScoreboardHandler().tick(tick);
+        game.getCompassHandler().tick(tick);
 
         if (game.getGameModeLogic() != null) {
-            game.getGameModeLogic().update(tick);
-            for (Logic modifiers : game.getModifierLogic()) modifiers.update(tick);
+            game.getGameModeLogic().tick(tick);
+            for (Logic modifiers : game.getModifierLogic()) modifiers.tick(tick);
         } else {
             Bukkit.broadcastMessage("ERROR RUNNING GAMEMODE ENDING GAME...");
             game.postGame(GameTeam.SPECTATORS);

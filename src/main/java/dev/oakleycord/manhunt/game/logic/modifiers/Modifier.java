@@ -3,16 +3,26 @@ package dev.oakleycord.manhunt.game.logic.modifiers;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 
 import java.lang.reflect.Constructor;
 
 public enum Modifier {
-    TEAMSWAP(TeamSwap.class, "TS"), BLOCKRAIN(BlockRain.class, "BR"), GODLYSLIME(GodlySlime.class, "GS");
+    TEAMSWAP(TeamSwap.class, Material.HEART_OF_THE_SEA, "TS", "Team Swap", "§fEvery 1 to 3 minutes, everyone will swap teams!"),
+    BLOCKRAIN(BlockRain.class, Material.ANVIL, "BR", "Block Rain", "§fIt's raining blocks! How fun!", "§fContainers will have random loot, keep a look out!"),
+    KINGSLIME(KingSlime.class, Material.SLIME_BLOCK, "KS", "King Slime", "§fKing Slime appears!", "§fYou better watch out! It'll destroy everything in its path!");
 
     public final String sortName;
-    private final Class<? extends Logic> logic;
+    public final String name;
+    public final String[] description;
+    public final Material icon;
 
-    Modifier(Class<? extends Logic> logic, String sortName) {
+    public final Class<? extends Logic> logic;
+
+    Modifier(Class<? extends Logic> logic, Material icon, String sortName, String name, String... description) {
+        this.icon = icon;
+        this.name = name;
+        this.description = description;
         this.logic = logic;
         this.sortName = sortName;
     }

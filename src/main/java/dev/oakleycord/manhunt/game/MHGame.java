@@ -42,6 +42,7 @@ public class MHGame {
     public MHGame() {
         this.state = GameState.LOADING;
         this.gamemode = Mode.CLASSIC;
+        this.gameModeLogic = gamemode.getLogic(this);
 
         this.modifierLogic = new ArrayList<>();
 
@@ -81,6 +82,7 @@ public class MHGame {
         runners.setPrefix(ChatColor.GREEN + "" + ChatColor.BOLD + "[Runner] ");
 
         this.spectators = scoreboard.registerNewTeam("Spectators");
+        spectators.setPrefix(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[Spectator] ");
         spectators.setColor(ChatColor.DARK_GRAY);
     }
 
@@ -95,7 +97,7 @@ public class MHGame {
             world.setDifficulty(Difficulty.PEACEFUL);
         }
         freeze();
-        scoreboardHandler.update(0);
+        scoreboardHandler.tick(0);
     }
 
     public void postGame(GameTeam winningTeam) {
@@ -149,10 +151,6 @@ public class MHGame {
         }
 
         unfreeze();
-
-        this.gameModeLogic = gamemode.getLogic(this);
-        for (Modifier modifier : this.modifiers)
-            this.modifierLogic.add(modifier.getLogic(this));
 
         if (gameLoop == null) {
             gameLoop = new GameLoop(this);
@@ -243,6 +241,14 @@ public class MHGame {
         }
     }
 
+    public boolean hasTeam(Player player) {
+        return scoreboard.getEntryTeam(player.getName()) != null;
+    }
+
+    public Team getTeam(Player player) {
+        return scoreboard.getEntryTeam(player.getName());
+    }
+
     public List<Player> getPlayers() {
         List<Player> players = new ArrayList<>();
         for (World world : worlds)
@@ -253,11 +259,6 @@ public class MHGame {
     @Nullable
     public Logic getGameModeLogic() {
         return gameModeLogic;
-    }
-
-
-    public boolean hasTeam(Player player) {
-        return scoreboard.getEntryTeam(player.getName()) != null;
     }
 
     public boolean hasDragonBeenKilled() {
@@ -279,10 +280,29 @@ public class MHGame {
 
     public void setGameMode(Mode mode) {
         this.gamemode = mode;
+        this.gameModeLogic = mode.getLogic(this);
     }
 
     public List<Modifier> getModifiers() {
         return modifiers;
+    }
+
+    public void addModifier(Modifier modifier) {
+        if (modifiers.contains(modifier)) return;
+        modifiers.add(modifier);
+        modifierLogic.add(modifier.getLogic(this));
+    }
+
+    public void removeModifier(Modifier modifier) {
+        if (!modifiers.contains(modifier)) return;
+        modifiers.remove(modifier);
+        modifierLogic.removeIf(logic -> {
+            if (logic.getClass() == modifier.logic) {
+                logic.unload();
+                return true;
+            }
+            return false;
+        });
     }
 
     public List<Logic> getModifierLogic() {

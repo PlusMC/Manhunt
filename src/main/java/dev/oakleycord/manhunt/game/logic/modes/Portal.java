@@ -14,7 +14,7 @@ public class Portal extends Logic {
     }
 
     @Override
-    public void update(long tick) {
+    public void tick(long tick) {
         MHGame game = getGame();
 
         if (game.getRunners().getSize() == 0)
