@@ -47,4 +47,35 @@ public class ParticleUtil {
             length += space;
         }
     }
+
+    public static void helix(Entity entity, Color color) {
+        double startingHeight = entity.getBoundingBox().getMinY();
+        double maxHeight = entity.getBoundingBox().getMaxY();
+        double radius = entity.getBoundingBox().getWidthX() + entity.getBoundingBox().getWidthZ();
+        radius = radius / 2;
+        double centerX = entity.getBoundingBox().getCenterX();
+        double centerZ = entity.getBoundingBox().getCenterZ();
+        for (double i = startingHeight; i < maxHeight; i += entity.getHeight() / 100) {
+            double x = radius * Math.cos(i * 5);
+            double z = radius * Math.sin(i * 5);
+            Location loc = new Location(entity.getWorld(), centerX + x, i, centerZ + z);
+            entity.getWorld().spawnParticle(Particle.REDSTONE, loc, 0, new Particle.DustOptions(color, 1));
+        }
+    }
+
+    public static void helixTicked(Entity entity, Color color, double tick) {
+        double startingHeight = entity.getBoundingBox().getMinY();
+        double maxHeight = entity.getBoundingBox().getMaxY();
+        double radius = entity.getBoundingBox().getWidthX() + entity.getBoundingBox().getWidthZ();
+        radius = radius / 2;
+        double centerX = entity.getBoundingBox().getCenterX();
+        double centerZ = entity.getBoundingBox().getCenterZ();
+
+
+        double height = startingHeight + ((entity.getHeight() / maxHeight) * (tick % maxHeight));
+        double x = radius * Math.cos(tick * 5);
+        double z = radius * Math.sin(tick * 5);
+        Location loc = new Location(entity.getWorld(), centerX + x, height, centerZ + z);
+        entity.getWorld().spawnParticle(Particle.REDSTONE, loc, 0, new Particle.DustOptions(color, 1));
+    }
 }

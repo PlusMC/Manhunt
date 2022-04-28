@@ -50,7 +50,9 @@ public class MHDebug implements PlusCommand {
             case "tpWorld" -> p.teleport(ManHunt.GAME.getOverworld().getSpawnLocation());
             case "testParticle" -> {
                 p.getLocation().add(4, 4, 4).getBlock().setType(Material.BEDROCK);
-                ParticleUtil.playGrabEffect(p, p.getLocation().add(4, 4, 4), Color.RED);
+                for (int i = 0; i < 200; i++) {
+                    ParticleUtil.helixTicked(p, Color.fromRGB(15, 200, 15), i);
+                }
             }
         }
         return true;

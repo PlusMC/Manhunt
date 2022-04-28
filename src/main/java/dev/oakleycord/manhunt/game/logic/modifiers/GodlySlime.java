@@ -25,7 +25,7 @@ public class GodlySlime extends Logic {
         super(game);
         lastDamage = new HashMap<>();
 
-        slime = game.getOverworld().spawn(game.getOverworld().getSpawnLocation(), Slime.class);
+        slime = game.getOverworld().spawn(game.getOverworld().getSpawnLocation().add(0, 1, 0), Slime.class);
         slime.setAI(false);
         slime.setGravity(false);
         slime.setInvulnerable(true);
@@ -35,8 +35,9 @@ public class GodlySlime extends Logic {
 
     @Override
     public void update(long tick) {
+
+
         MHGame game = getGame();
-        //get nearby blocks in a radius of 10
         for (Iterator<FallingBlock> iterator = fallingBlocks.iterator(); iterator.hasNext(); ) {
             FallingBlock fallingBlock = iterator.next();
             if (!fallingBlock.isValid() || fallingBlock.getTicksLived() > 200) {
@@ -65,14 +66,25 @@ public class GodlySlime extends Logic {
         }
 
         if (timeLeft <= 0) {
+            for (int i = 0; i < slime.getSize() * 2; i++) {
+                ParticleUtil.helixTicked(slime, Color.fromRGB(15, 200, 15), tick + i);
+            }
+
             suck(tick);
             moveTowards();
         }
     }
 
     public void moveTowards() {
-        Player nearest = getNearestPlayer(slime.getLocation());
-        if (nearest != null) {
+        Entity nearest = getNearestPlayer(slime.getLocation());
+        if (nearest != null && nearest.getLocation().distance(slime.getLocation()) > slime.getSize() * 0.25) {
+            Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
+            vector.normalize();
+            vector.multiply(0.25 * nearest.getLocation().distance(slime.getLocation()));
+            slime.teleport(slime.getLocation().setDirection(vector).add(vector));
+        } else {
+            nearest = getNearestLiving(slime, slime.getSize() * 2);
+            if (nearest == null) return;
             Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
             vector.normalize();
             vector.multiply(0.0025 * nearest.getLocation().distance(slime.getLocation()));
@@ -85,19 +97,29 @@ public class GodlySlime extends Logic {
         center.setY(slime.getBoundingBox().getCenterY());
 
         for (Entity entity : slime.getNearbyEntities(slime.getSize(), slime.getSize(), slime.getSize())) {
+            if (entity.equals(slime)) continue;
             if (entity instanceof Player player) {
                 if (player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.CREATIVE)
                     continue;
             }
 
             if (entity instanceof LivingEntity) {
-                if (tick - lastDamage.getOrDefault(entity, 0L) < 20)
+                if (tick - lastDamage.getOrDefault(entity, 0L) < 100) {
+                    if (tick % 12 == 0) {
+                        entity.getWorld().playSound(entity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.75f);
+                        ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(25, 0, 0));
+                    }
                     continue;
+                }
             }
 
             if (slime.getBoundingBox().overlaps(entity.getBoundingBox())) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.damage(2.5);
+                    livingEntity.damage(slime.getSize(), slime);
+                    Vector vector = livingEntity.getLocation().toVector().subtract(center.toVector());
+                    vector.normalize();
+                    livingEntity.setVelocity(vector);
+                    livingEntity.getWorld().playSound(livingEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.5f);
                     lastDamage.put(livingEntity, tick);
                     suckedUp++;
                     continue;
@@ -159,17 +181,32 @@ public class GodlySlime extends Logic {
         double distance = Double.MAX_VALUE;
         for (Player player : getGame().getPlayers()) {
             double d = location.distance(player.getLocation());
-            if (!getGame().getRunners().hasEntry(player.getName()) && !getGame().getRunners().hasEntry(player.getName()))
+            if (!getGame().getRunners().hasEntry(player.getName()) && !getGame().getHunters().hasEntry(player.getName()))
+                if (d < distance) {
+                    distance = d;
+                    nearest = player;
+                }
+        }
+        return nearest;
+    }
+
+    private LivingEntity getNearestLiving(Entity entity, double searchRadius) {
+        LivingEntity nearest = null;
+        double distance = Double.MAX_VALUE;
+        for (Entity e : entity.getNearbyEntities(searchRadius, searchRadius, searchRadius)) {
+            if (!(e instanceof LivingEntity))
                 continue;
+
+            double d = entity.getLocation().distance(e.getLocation());
             if (d < distance) {
                 distance = d;
-                nearest = player;
+                nearest = (LivingEntity) e;
             }
         }
         return nearest;
     }
 
-    public List<Block> getBlocks(Location start, int radius) {
+    private List<Block> getBlocks(Location start, int radius) {
         ArrayList<Block> blocks = new ArrayList<>();
         for (double x = start.getX() - radius; x <= start.getX() + radius; x++) {
             for (double y = start.getY() - radius; y <= start.getY() + radius; y++) {
