@@ -4,7 +4,9 @@ import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -15,10 +17,10 @@ import org.plusmc.pluslib.managed.PlusGUI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Modifers extends PlusGUI {
+public class Modifiers extends PlusGUI {
     @Override
     protected Inventory createInventory() {
-        return Bukkit.createInventory(this, 9, "Modifiers");
+        return Bukkit.createInventory(this, 18, "Modifiers");
     }
 
     @Override
@@ -57,6 +59,14 @@ public class Modifers extends PlusGUI {
             }), i);
             i += 3;
         }
+
+        ItemStack close = new ItemBuilder(Material.BARRIER).setName("§cClose").build();
+
+        setElement(new GUIElement(close, event -> {
+            HumanEntity human = event.getWhoClicked();
+            Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> human.openInventory(new MHSettings().getInventory()));
+            if (human instanceof Player p) p.playSound(p.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1, 1.25f);
+        }), 13);
         super.draw();
     }
 }

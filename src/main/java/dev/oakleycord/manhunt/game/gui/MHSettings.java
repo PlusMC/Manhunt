@@ -41,7 +41,7 @@ public class MHSettings extends PlusGUI {
             if (event.getWhoClicked() instanceof Player p)
                 p.playSound(p.getLocation(), Sound.ENTITY_WANDERING_TRADER_DRINK_MILK, 1, 1);
 
-            Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> event.getWhoClicked().openInventory(new Modifers().getInventory()));
+            Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> event.getWhoClicked().openInventory(new Modifiers().getInventory()));
         }), 7);
 
         return Bukkit.createInventory(this, 9, "Manhunt Settings");

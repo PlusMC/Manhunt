@@ -46,6 +46,7 @@ public class PlayerUtil {
         player.setGlowing(false);
         player.getInventory().clear();
         player.setVelocity(new Vector(0, 0, 0));
+        player.getActivePotionEffects().forEach(potion -> player.removePotionEffect(potion.getType()));
 
         if (respawn) {
             if (player.getBedSpawnLocation() != null)

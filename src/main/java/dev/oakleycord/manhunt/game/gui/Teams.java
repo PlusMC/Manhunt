@@ -83,18 +83,21 @@ public class Teams extends PaginatedGUI {
 
             ItemStack back = new ItemBuilder(Material.ARROW).setName("§cBack").build();
             ItemStack next = new ItemBuilder(Material.ARROW).setName("§cNext").build();
-            ItemStack Close = new ItemBuilder(Material.BARRIER).setName("§cClose").build();
+            ItemStack close = new ItemBuilder(Material.BARRIER).setName("§cClose").build();
+
+
             page.put(30, new GUIElement(back, event -> {
                 if (getPage() - 1 < 0) return;
                 setPage(getPage() - 1, true);
-                if (event.getWhoClicked() instanceof Player p)
+                if (event.getWhoClicked() instanceof Player p) {
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 0.75f);
+                }
             }));
 
-            page.put(31, new GUIElement(Close, event -> {
+            page.put(31, new GUIElement(close, event -> {
                 HumanEntity human = event.getWhoClicked();
-                Bukkit.getScheduler().runTask(ManHunt.getInstance(), human::closeInventory);
-                if (human instanceof Player p) p.playSound(p.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1, 0.5f);
+                Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> human.openInventory(new MHSettings().getInventory()));
+                if (human instanceof Player p) p.playSound(p.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1, 1.25f);
             }));
 
             page.put(32, new GUIElement(next, event -> {
