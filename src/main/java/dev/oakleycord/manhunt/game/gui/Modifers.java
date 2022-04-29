@@ -8,17 +8,21 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.plusmc.pluslib.gui.GUIElement;
 import org.plusmc.pluslib.gui.ItemBuilder;
 import org.plusmc.pluslib.managed.PlusGUI;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Modifers extends PlusGUI {
     @Override
     protected Inventory createInventory() {
+        return Bukkit.createInventory(this, 9, "Modifiers");
+    }
+
+    @Override
+    public void draw() {
         int i = 1;
         for (Modifier modifier : Modifier.values()) {
             if (ManHunt.GAME == null)
@@ -26,14 +30,12 @@ public class Modifers extends PlusGUI {
 
             boolean hasModifier = ManHunt.GAME.getModifiers().contains(modifier);
 
-            String[] lore = new String[]{
+            List<String> lore = new ArrayList<>(List.of(
                     hasModifier ? "§a§lEnabled" : "§c§lDisabled",
                     "§7Click to toggle."
-            };
-            String[] description = modifier.description;
-            if (description.length > 0)
-                lore = Arrays.copyOf(lore, lore.length + description.length);
-            System.arraycopy(description, 0, lore, lore.length - description.length, description.length);
+            ));
+
+            lore.addAll(List.of(modifier.description));
 
             ItemStack item = new ItemBuilder(modifier.icon).setName(modifier.name).addEnchant(OtherUtil.EMPTY_ENCHANT, 0).setLore(lore).build();
 
@@ -50,22 +52,11 @@ public class Modifers extends PlusGUI {
                 if (event.getWhoClicked() instanceof Player p)
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_GUITAR, 1, hasMod ? 0.75f : 1.25f);
 
-                ItemMeta meta = item.getItemMeta();
-                assert meta != null;
-                List<String> loreList = meta.getLore();
-                assert loreList != null;
-                loreList.set(0, hasMod ? "§c§lDisabled" : "§a§lEnabled");
-                meta.setLore(loreList);
-                item.setItemMeta(meta);
-
                 ManHunt.GAME.getScoreboardHandler().tick(0);
-
                 draw();
             }), i);
             i += 3;
         }
-
-
-        return Bukkit.createInventory(this, 9, "Modifiers");
+        super.draw();
     }
 }

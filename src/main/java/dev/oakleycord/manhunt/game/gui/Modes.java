@@ -8,11 +8,11 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.plusmc.pluslib.gui.GUIElement;
 import org.plusmc.pluslib.gui.ItemBuilder;
 import org.plusmc.pluslib.managed.PlusGUI;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,16 +32,11 @@ public class Modes extends PlusGUI {
 
             boolean isGameMode = ManHunt.GAME.getGameMode() == mode;
 
-            String[] lore = isGameMode ? new String[]{
-                    "§7Click to set Game Mode.",
-                    "§a§lCurrent Game Mode"
-            } : new String[]{
-                    "§7Click to set Game Mode.",
-            };
-            String[] description = mode.description;
-            if (description.length > 0)
-                lore = Arrays.copyOf(lore, lore.length + description.length);
-            System.arraycopy(description, 0, lore, lore.length - description.length, description.length);
+            List<String> lore = new ArrayList<>(List.of("", "&7Click to select this mode."));
+            if (isGameMode)
+                lore.set(0, "&7Click to select this mode.");
+            else lore.remove(0);
+            lore.addAll(Arrays.asList(mode.description));
 
             ItemStack item = new ItemBuilder(mode.icon).setName(mode.name() + "%").addEnchant(OtherUtil.EMPTY_ENCHANT, 0).setLore(lore).build();
 
@@ -51,23 +46,10 @@ public class Modes extends PlusGUI {
                     return;
 
                 boolean isGameMode2 = ManHunt.GAME.getGameMode() == mode;
-
                 ManHunt.GAME.setGameMode(mode);
 
                 if (event.getWhoClicked() instanceof Player p)
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_GUITAR, 1, isGameMode2 ? 0.75f : 1.25f);
-
-                isGameMode2 = ManHunt.GAME.getGameMode() == mode;
-
-                ItemMeta meta = item.getItemMeta();
-                assert meta != null;
-                List<String> lore2 = meta.getLore();
-                assert lore2 != null;
-                if (isGameMode2)
-                    lore2.set(1, "§a§lCurrent Game Mode");
-                else lore2.removeIf(s -> s.contains("§a§lCurrent Game Mode"));
-                meta.setLore(lore2);
-                item.setItemMeta(meta);
 
                 ManHunt.GAME.getScoreboardHandler().tick(0);
 

@@ -8,16 +8,18 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import java.util.*;
 
 public class KingSlime extends Logic {
     public final static List<FallingBlock> fallingBlocks = new ArrayList<>();
-    private final Slime slime;
     private final int MAX_SIZE = 14;
     private final long DELAY = 200;
     private final Map<LivingEntity, Long> lastDamage;
+    private Slime slime;
     private long startTime = -1;
     private int suckedUp = 0;
 
@@ -25,11 +27,24 @@ public class KingSlime extends Logic {
         super(game);
         lastDamage = new HashMap<>();
 
-        slime = game.getOverworld().spawn(game.getOverworld().getSpawnLocation().add(0, 1, 0), Slime.class);
+        spawnSlime();
+    }
+
+    public void spawnSlime() {
+        Scoreboard board = getGame().getScoreboard();
+        Team team = board.getTeam("blueTeam");
+        if (team == null)
+            team = board.registerNewTeam("blueTeam");
+        team.setColor(ChatColor.GREEN);
+
+
+        slime = getGame().getOverworld().spawn(getGame().getOverworld().getSpawnLocation().add(0, 1, 0), Slime.class);
+        team.addEntry(slime.getUniqueId().toString());
         slime.setAI(false);
         slime.setGravity(false);
         slime.setInvulnerable(true);
         slime.setSize(2);
+        slime.setGlowing(true);
         slime.setRemoveWhenFarAway(false);
     }
 
@@ -49,6 +64,10 @@ public class KingSlime extends Logic {
                 iterator.remove();
                 fallingBlocks.remove(fallingBlock);
             }
+        }
+
+        if (!slime.isValid()) {
+            spawnSlime();
         }
 
         if (startTime == -1) {
@@ -81,19 +100,27 @@ public class KingSlime extends Logic {
 
     public void moveTowards() {
         Entity nearest = getNearestPlayer(slime.getLocation());
-        if (nearest != null && nearest.getLocation().distance(slime.getLocation()) > slime.getSize() * 0.25) {
+        if (nearest != null && nearest.getLocation().distance(slime.getLocation()) > 15 * slime.getSize()) {
             Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
             vector.normalize();
             vector.multiply(0.25 * nearest.getLocation().distance(slime.getLocation()));
             slime.teleport(slime.getLocation().setDirection(vector).add(vector));
         } else {
             nearest = getNearestLiving(slime, slime.getSize() * 2);
-            if (nearest == null) return;
+            if (nearest == null) wonder();
+            if (nearest == slime) return;
             Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
             vector.normalize();
             vector.multiply(0.0025 * nearest.getLocation().distance(slime.getLocation()));
             slime.teleport(slime.getLocation().setDirection(vector).add(vector));
         }
+    }
+
+    public void wonder() {
+        Vector vector = new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
+        vector.normalize();
+        vector.multiply(0.25);
+        slime.teleport(slime.getLocation().setDirection(vector).add(vector));
     }
 
     public void suck(long tick) {
@@ -186,10 +213,11 @@ public class KingSlime extends Logic {
         for (Player player : getGame().getPlayers()) {
             double d = location.distance(player.getLocation());
             if (!getGame().getRunners().hasEntry(player.getName()) && !getGame().getHunters().hasEntry(player.getName()))
-                if (d < distance) {
-                    distance = d;
-                    nearest = player;
-                }
+                continue;
+            if (d < distance) {
+                distance = d;
+                nearest = player;
+            }
         }
         return nearest;
     }
