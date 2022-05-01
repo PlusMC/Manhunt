@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
-import org.plusmc.pluslib.managed.PlusCommand;
+import org.plusmc.pluslib.bukkit.managed.PlusCommand;
 
 import java.util.List;
 

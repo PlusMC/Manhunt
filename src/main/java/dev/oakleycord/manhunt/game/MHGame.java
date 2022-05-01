@@ -15,7 +15,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.plusmc.pluslib.managing.BaseManager;
+import org.plusmc.pluslib.bukkit.managing.BaseManager;
 
 import java.io.File;
 import java.util.*;

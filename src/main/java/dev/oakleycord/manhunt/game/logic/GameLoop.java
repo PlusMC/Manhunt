@@ -4,7 +4,7 @@ import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.MHGame;
 import org.bukkit.Bukkit;
-import org.plusmc.pluslib.managed.Tickable;
+import org.plusmc.pluslib.bukkit.managed.Tickable;
 
 public class GameLoop implements Tickable {
 

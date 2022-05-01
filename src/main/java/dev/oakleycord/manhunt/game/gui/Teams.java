@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.plusmc.pluslib.gui.GUIElement;
-import org.plusmc.pluslib.gui.ItemBuilder;
-import org.plusmc.pluslib.managed.PaginatedGUI;
+import org.plusmc.pluslib.bukkit.gui.GUIElement;
+import org.plusmc.pluslib.bukkit.gui.ItemBuilder;
+import org.plusmc.pluslib.bukkit.managed.PaginatedGUI;
 
 import java.util.ArrayList;
 import java.util.HashMap;

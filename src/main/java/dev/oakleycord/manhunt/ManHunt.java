@@ -12,11 +12,11 @@ import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.plusmc.pluslib.managed.PlusCommand;
-import org.plusmc.pluslib.managing.BaseManager;
-import org.plusmc.pluslib.managing.GUIManager;
-import org.plusmc.pluslib.managing.PlusCommandManager;
-import org.plusmc.pluslib.managing.TickingManager;
+import org.plusmc.pluslib.bukkit.managed.PlusCommand;
+import org.plusmc.pluslib.bukkit.managing.BaseManager;
+import org.plusmc.pluslib.bukkit.managing.GUIManager;
+import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
+import org.plusmc.pluslib.bukkit.managing.TickingManager;
 
 import java.lang.reflect.Field;
 import java.util.List;
