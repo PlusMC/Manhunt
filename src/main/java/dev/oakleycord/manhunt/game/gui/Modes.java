@@ -48,7 +48,9 @@ public class Modes extends PlusGUI {
                     return;
 
                 boolean isGameMode2 = ManHunt.GAME.getGameMode() == mode;
-                ManHunt.GAME.setGameMode(mode);
+
+                if (!isGameMode2)
+                    ManHunt.GAME.setGameMode(mode);
 
                 if (event.getWhoClicked() instanceof Player p)
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_GUITAR, 1, isGameMode2 ? 0.75f : 1.25f);

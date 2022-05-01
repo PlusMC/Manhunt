@@ -20,7 +20,7 @@ import java.util.List;
 public class Modifiers extends PlusGUI {
     @Override
     protected Inventory createInventory() {
-        return Bukkit.createInventory(this, 18, "Modifiers");
+        return Bukkit.createInventory(this, 27, "Modifiers");
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Modifiers extends PlusGUI {
             HumanEntity human = event.getWhoClicked();
             Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> human.openInventory(new MHSettings().getInventory()));
             if (human instanceof Player p) p.playSound(p.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1, 1.25f);
-        }), 13);
+        }), 22);
         super.draw();
     }
 }

@@ -18,9 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.plusmc.pluslib.managing.BaseManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class MHGame {
 
@@ -118,6 +116,9 @@ public class MHGame {
             BaseManager.registerAny(gameLoop, ManHunt.getInstance());
         }
 
+        modifierLogic.forEach(Logic::load);
+        gameModeLogic.load();
+
         getPlayers().forEach(player -> {
             player.sendTitle(ChatColor.GOLD + "" + ChatColor.BOLD + "Game Started!", "", 10, 20, 10);
             player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
@@ -144,15 +145,22 @@ public class MHGame {
         BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
 
         String time = OtherUtil.formatTime(endTimeStamp - this.timeStamp);
-        String[] summary = {
-                "§e§l<---§6§lGAME SUMMARY§e§l--->",
-                "§e§lGame lasted: §b" + time,
-                "§e§lWorld Seed: §b" + this.seed
-        };
+        String[] summary = new String[5];
+        summary[0] = "§e§l<---§6§lGAME SUMMARY§e§l--->";
+        summary[1] = "§e§lGame lasted: §b" + time;
+        summary[2] = "§e§lWorld Seed: §b" + this.seed;
+        summary[3] = "§e§lMode: §b" + this.gamemode.name() + "%";
+
+        if (modifiers.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            modifiers.forEach(modifier -> sb.append(modifier.sortName).append(", "));
+            sb.delete(sb.length() - 2, sb.length());
+            summary[4] = "§e§lModifiers: §b" + sb;
+        }
 
         this.getPlayers().forEach(player -> {
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
-            player.sendMessage(summary);
+            player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
             PlayerUtil.resetPlayer(player, false);
         });
 
@@ -285,15 +293,19 @@ public class MHGame {
     }
 
     public void setGameMode(Mode mode) {
+        if (this.gameModeLogic != null)
+            this.gameModeLogic.unload(); // unload old logic
         this.gamemode = mode;
         this.gameModeLogic = mode.getLogic(this);
+        if (state == GameState.INGAME)
+            this.gameModeLogic.load();
     }
-
 
     @Nullable
     public Logic getGameModeLogic() {
         return gameModeLogic;
     }
+
 
     public List<Modifier> getModifiers() {
         return modifiers;
@@ -302,7 +314,10 @@ public class MHGame {
     public void addModifier(Modifier modifier) {
         if (modifiers.contains(modifier)) return;
         modifiers.add(modifier);
-        modifierLogic.add(modifier.getLogic(this));
+        Logic logic = modifier.getLogic(this);
+        modifierLogic.add(logic);
+        if (state == GameState.INGAME)
+            logic.load();
     }
 
     public void removeModifier(Modifier modifier) {

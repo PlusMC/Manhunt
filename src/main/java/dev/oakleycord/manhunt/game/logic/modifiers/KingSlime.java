@@ -100,27 +100,19 @@ public class KingSlime extends Logic {
 
     public void moveTowards() {
         Entity nearest = getNearestPlayer(slime.getLocation());
-        if (nearest != null && nearest.getLocation().distance(slime.getLocation()) > 15 * slime.getSize()) {
+        if (nearest != null) {
             Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
             vector.normalize();
-            vector.multiply(0.25 * nearest.getLocation().distance(slime.getLocation()));
+            vector.multiply(0.0035 * nearest.getLocation().distance(slime.getLocation()));
             slime.teleport(slime.getLocation().setDirection(vector).add(vector));
-        } else {
+        } else if (false) {
             nearest = getNearestLiving(slime, slime.getSize() * 2);
-            if (nearest == null) wonder();
             if (nearest == slime) return;
             Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
             vector.normalize();
             vector.multiply(0.0025 * nearest.getLocation().distance(slime.getLocation()));
             slime.teleport(slime.getLocation().setDirection(vector).add(vector));
         }
-    }
-
-    public void wonder() {
-        Vector vector = new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
-        vector.normalize();
-        vector.multiply(0.25);
-        slime.teleport(slime.getLocation().setDirection(vector).add(vector));
     }
 
     public void suck(long tick) {

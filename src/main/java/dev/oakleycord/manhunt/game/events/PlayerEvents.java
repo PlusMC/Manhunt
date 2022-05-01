@@ -3,6 +3,7 @@ package dev.oakleycord.manhunt.game.events;
 import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.GameTeam;
+import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
@@ -37,11 +38,16 @@ public class PlayerEvents implements Listener {
             if (player.getHealth() - event.getFinalDamage() > 0) return;
             event.setCancelled(true);
 
+            boolean isQuickGame = ManHunt.GAME.getModifiers().contains(Modifier.QUICK_GAME);
+            if (isQuickGame)
+                player.getInventory().clear();
+
             Arrays.stream(player.getInventory().getContents()).forEach(item -> {
                 if (item != null)
                     player.getWorld().dropItem(player.getLocation(), item);
             });
             player.getWorld().spawn(player.getLocation(), ExperienceOrb.class).setExperience(player.getLevel());
+
 
             player.getWorld().strikeLightningEffect(player.getLocation());
             Bukkit.broadcastMessage("§c" + player.getDisplayName() + " has died!");

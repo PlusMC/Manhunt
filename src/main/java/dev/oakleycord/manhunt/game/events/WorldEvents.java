@@ -42,7 +42,7 @@ public class WorldEvents implements Listener {
     @EventHandler
     public void onBlockPlace(EntityChangeBlockEvent event) {
         if (ManHunt.GAME == null) return;
-        if (!ManHunt.GAME.getModifiers().contains(Modifier.BLOCKRAIN) && !ManHunt.GAME.getModifiers().contains(Modifier.KINGSLIME))
+        if (!ManHunt.GAME.getModifiers().contains(Modifier.BLOCK_RAIN) && !ManHunt.GAME.getModifiers().contains(Modifier.KING_SLIME))
             return;
         if (!(event.getEntity() instanceof FallingBlock blockEntity)) return;
         if (KingSlime.fallingBlocks.contains(blockEntity)) {
