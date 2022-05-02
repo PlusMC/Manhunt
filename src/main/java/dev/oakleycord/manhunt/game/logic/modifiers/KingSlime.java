@@ -31,14 +31,15 @@ public class KingSlime extends Logic {
     }
 
     public void spawnSlime() {
-        Scoreboard board = getGame().getScoreboard();
+        MHGame game = getGame();
+        Scoreboard board = game.getScoreboard();
         Team team = board.getTeam("blueTeam");
         if (team == null)
             team = board.registerNewTeam("blueTeam");
         team.setColor(ChatColor.GREEN);
 
 
-        slime = getGame().getOverworld().spawn(getGame().getOverworld().getSpawnLocation().add(0, 1, 0), Slime.class);
+        slime = game.getOverworld().spawn(game.getOverworld().getSpawnLocation().add(0, 1, 0), Slime.class);
         team.addEntry(slime.getUniqueId().toString());
         slime.setAI(false);
         slime.setGravity(false);
@@ -202,9 +203,10 @@ public class KingSlime extends Logic {
     private Player getNearestPlayer(Location location) {
         Player nearest = null;
         double distance = Double.MAX_VALUE;
-        for (Player player : getGame().getPlayers()) {
+        MHGame game = getGame();
+        for (Player player : game.getPlayers()) {
             double d = location.distance(player.getLocation());
-            if (!getGame().getRunners().hasEntry(player.getName()) && !getGame().getHunters().hasEntry(player.getName()))
+            if (!game.getRunners().hasEntry(player.getName()) && !game.getHunters().hasEntry(player.getName()))
                 continue;
             if (d < distance) {
                 distance = d;

@@ -18,7 +18,7 @@ public class PortalEvents implements Listener {
 
         if (from == null) return;
         if (!OtherUtil.isManHunt(from)) return;
-        MHGame game = ManHunt.GAME;
+        MHGame game = ManHunt.getGame();
         if (game == null) return;
 
         Location fromLoc = e.getFrom();
@@ -61,7 +61,7 @@ public class PortalEvents implements Listener {
 
         if (from == null) return;
         if (!OtherUtil.isManHunt(from)) return;
-        MHGame game = ManHunt.GAME;
+        MHGame game = ManHunt.getGame();
         if (game == null) return;
 
         Location fromLoc = e.getFrom();

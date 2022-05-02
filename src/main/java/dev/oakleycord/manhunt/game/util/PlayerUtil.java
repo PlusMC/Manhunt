@@ -2,6 +2,7 @@ package dev.oakleycord.manhunt.game.util;
 
 import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameTeam;
+import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.logic.modifiers.QuickGame;
 import org.bukkit.*;
@@ -50,25 +51,26 @@ public class PlayerUtil {
         player.setVelocity(new Vector(0, 0, 0));
         player.getActivePotionEffects().forEach(potion -> player.removePotionEffect(potion.getType()));
 
+        MHGame game = ManHunt.getGame();
         if (respawn) {
             if (player.getBedSpawnLocation() != null)
                 player.teleport(player.getBedSpawnLocation());
-            else player.teleport(ManHunt.GAME.getOverworld().getSpawnLocation().add(0, 1, 0));
+            else player.teleport(game.getOverworld().getSpawnLocation().add(0, 1, 0));
         }
 
-        if (ManHunt.GAME != null) {
-            if (ManHunt.GAME.getRunners().hasEntry(player.getName())) {
-                ManHunt.GAME.setTeam(player, GameTeam.SPECTATORS);
+        if (ManHunt.hasGame()) {
+            if (game.getRunners().hasEntry(player.getName())) {
+                game.setTeam(player, GameTeam.SPECTATORS);
                 player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1, 0.5f);
             }
 
-            if (ManHunt.GAME.getModifiers().contains(Modifier.QUICK_GAME)) {
+            if (game.getModifiers().contains(Modifier.QUICK_GAME)) {
                 player.getInventory().setContents(QuickGame.getItems());
                 player.getInventory().setArmorContents(QuickGame.getArmor());
                 player.getInventory().setItemInOffHand(new ItemStack(Material.SHIELD));
             }
 
-            if (ManHunt.GAME.getHunters().hasEntry(player.getName()))
+            if (game.getHunters().hasEntry(player.getName()))
                 player.getInventory().addItem(new ItemStack(Material.COMPASS));
         }
     }

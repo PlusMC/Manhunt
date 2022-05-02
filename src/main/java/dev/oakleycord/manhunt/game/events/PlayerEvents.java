@@ -3,6 +3,7 @@ package dev.oakleycord.manhunt.game.events;
 import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.GameTeam;
+import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
@@ -31,14 +32,15 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
-        if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() == GameState.PREGAME) event.setCancelled(true);
+        if (!ManHunt.hasGame()) return;
+        MHGame game = ManHunt.getGame();
+        if (game.getState() == GameState.PREGAME) event.setCancelled(true);
 
         if (event.getEntity() instanceof Player player) {
             if (player.getHealth() - event.getFinalDamage() > 0) return;
             event.setCancelled(true);
 
-            boolean isQuickGame = ManHunt.GAME.getModifiers().contains(Modifier.QUICK_GAME);
+            boolean isQuickGame = game.getModifiers().contains(Modifier.QUICK_GAME);
             if (isQuickGame)
                 player.getInventory().clear();
 
@@ -59,16 +61,16 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         if (!OtherUtil.isManHunt(event.getBlock().getWorld())) return;
-        if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() != GameState.PREGAME) return;
+        if (!ManHunt.hasGame()) return;
+        if (ManHunt.getGame().getState() != GameState.PREGAME) return;
         event.setCancelled(true);
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         if (!OtherUtil.isManHunt(event.getBlock().getWorld())) return;
-        if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() != GameState.PREGAME) return;
+        if (!ManHunt.hasGame()) return;
+        if (ManHunt.getGame().getState() != GameState.PREGAME) return;
         event.setCancelled(true);
     }
 
@@ -88,8 +90,8 @@ public class PlayerEvents implements Listener {
         }
 
         if (!OtherUtil.isManHunt(event.getTo().getWorld())) return;
-        if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() != GameState.PREGAME) return;
+        if (!ManHunt.hasGame()) return;
+        if (ManHunt.getGame().getState() != GameState.PREGAME) return;
 
         if (!isOutsideOfBorder(event.getPlayer()))
             return;
@@ -101,7 +103,7 @@ public class PlayerEvents implements Listener {
     public void onWorldChange(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
 
-        if (ManHunt.GAME == null) return;
+        if (!ManHunt.hasGame()) return;
         if (!OtherUtil.isManHunt(event.getPlayer().getWorld())) {
             assert Bukkit.getScoreboardManager() != null;
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
@@ -110,22 +112,23 @@ public class PlayerEvents implements Listener {
             return;
         }
 
-        player.setScoreboard(ManHunt.GAME.getScoreboard());
-        if (!ManHunt.GAME.hasTeam(player)) {
+        MHGame game = ManHunt.getGame();
+        player.setScoreboard(game.getScoreboard());
+        if (!game.hasTeam(player)) {
             resetAdvancements(player);
             PlayerUtil.resetPlayer(player, false);
-            if (ManHunt.GAME.getState() == GameState.PREGAME)
-                ManHunt.GAME.setTeam(player, GameTeam.HUNTERS);
-            else ManHunt.GAME.setTeam(player, GameTeam.SPECTATORS);
+            if (game.getState() == GameState.PREGAME)
+                game.setTeam(player, GameTeam.HUNTERS);
+            else game.setTeam(player, GameTeam.SPECTATORS);
         }
-        ManHunt.GAME.getScoreboardHandler().tick(0);
+        game.getScoreboardHandler().tick(0);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!OtherUtil.isManHunt(event.getPlayer().getWorld()) || ManHunt.GAME == null) {
+        if (!OtherUtil.isManHunt(event.getPlayer().getWorld()) || !ManHunt.hasGame()) {
             assert Bukkit.getScoreboardManager() != null;
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
@@ -134,25 +137,27 @@ public class PlayerEvents implements Listener {
             return;
         }
 
-        player.setScoreboard(ManHunt.GAME.getScoreboard());
-        if (!ManHunt.GAME.hasTeam(player)) {
+        MHGame game = ManHunt.getGame();
+        player.setScoreboard(game.getScoreboard());
+        if (!game.hasTeam(player)) {
             resetAdvancements(player);
             PlayerUtil.resetPlayer(player, false);
-            if (ManHunt.GAME.getState() == GameState.PREGAME)
-                ManHunt.GAME.setTeam(player, GameTeam.HUNTERS);
-            else ManHunt.GAME.setTeam(player, GameTeam.SPECTATORS);
+            if (game.getState() == GameState.PREGAME)
+                game.setTeam(player, GameTeam.HUNTERS);
+            else game.setTeam(player, GameTeam.SPECTATORS);
         }
-        ManHunt.GAME.getScoreboardHandler().tick(0);
+        game.getScoreboardHandler().tick(0);
     }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
-        if (ManHunt.GAME == null) return;
-        if (ManHunt.GAME.getState() != GameState.INGAME) return;
+        if (!ManHunt.hasGame()) return;
+        MHGame game = ManHunt.getGame();
+        if (game.getState() != GameState.INGAME) return;
 
         if (!(event.getEntityType() == EntityType.ENDER_DRAGON)) return;
 
-        ManHunt.GAME.setDragonKilled(true);
+        game.setDragonKilled(true);
     }
 }

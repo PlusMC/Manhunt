@@ -48,7 +48,7 @@ public class MHDebug implements PlusCommand {
         if (!(sender instanceof Player p)) return false;
 
         switch (args[0]) {
-            case "tpWorld" -> p.teleport(ManHunt.GAME.getOverworld().getSpawnLocation());
+            case "tpWorld" -> p.teleport(ManHunt.getGame().getOverworld().getSpawnLocation());
             case "testParticle" -> {
                 p.getLocation().add(4, 4, 4).getBlock().setType(Material.BEDROCK);
                 for (int i = 0; i < 200; i++) {

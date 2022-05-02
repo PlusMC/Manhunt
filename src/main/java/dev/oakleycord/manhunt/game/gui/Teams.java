@@ -29,8 +29,8 @@ public class Teams extends PaginatedGUI {
 
     @Override
     protected void createPages() {
-        if (ManHunt.GAME == null) return;
-        MHGame game = ManHunt.GAME;
+        if (!ManHunt.hasGame()) return;
+        MHGame game = ManHunt.getGame();
         List<Map<Integer, GUIElement>> pages = new ArrayList<>();
         for (int i = 0; i < (game.getPlayers().size() / 27) + 1; i++) {
             Map<Integer, GUIElement> page = new HashMap<>();
@@ -66,7 +66,7 @@ public class Teams extends PaginatedGUI {
                         }
                     }
 
-                    ManHunt.GAME.getScoreboardHandler().tick(0);
+                    game.getScoreboardHandler().tick(0);
 
                     ItemMeta meta = head.getItemMeta();
                     assert meta != null;

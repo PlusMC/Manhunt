@@ -17,6 +17,7 @@ import org.plusmc.pluslib.bukkit.managing.BaseManager;
 import org.plusmc.pluslib.bukkit.managing.GUIManager;
 import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
+import org.plusmc.pluslib.mongo.DatabaseHandler;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -37,8 +38,35 @@ public final class ManHunt extends JavaPlugin {
             new PortalEvents()
     );
 
-    public static MHGame GAME;
+    private static MHGame GAME;
+    private static DatabaseHandler db;
 
+    public static MHGame getGame() {
+        return GAME;
+    }
+
+    public static void createGame() {
+        if (!hasGame())
+            GAME = new MHGame();
+    }
+
+    public static void removeGame() {
+        if (!hasGame()) return;
+        GAME = null;
+        System.gc();
+    }
+
+    public static DatabaseHandler getDatabase() {
+        return db;
+    }
+
+    public static boolean hasDB() {
+        return db != null;
+    }
+
+    public static boolean hasGame() {
+        return getGame() != null;
+    }
 
     public static ManHunt getInstance() {
         return JavaPlugin.getPlugin(ManHunt.class);
@@ -66,6 +94,9 @@ public final class ManHunt extends JavaPlugin {
 
         for (PlusCommand cmd : COMMANDS)
             BaseManager.registerAny(cmd, this);
+
+        if (db == null)
+            db = new DatabaseHandler();
 
         registerEnchant(OtherUtil.EMPTY_ENCHANT);
     }

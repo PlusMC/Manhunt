@@ -2,6 +2,7 @@ package dev.oakleycord.manhunt.game.commands;
 
 import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameState;
+import dev.oakleycord.manhunt.game.MHGame;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -42,9 +43,10 @@ public class StartGame implements PlusCommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (ManHunt.GAME != null && ManHunt.GAME.getState() == GameState.PREGAME) {
-            ManHunt.GAME.startGame();
-            ManHunt.GAME.getHunters().getEntries().forEach(hunter -> {
+        MHGame game = ManHunt.getGame();
+        if (ManHunt.hasGame() && game.getState() == GameState.PREGAME) {
+            game.startGame();
+            game.getHunters().getEntries().forEach(hunter -> {
                 Player player = Bukkit.getPlayer(hunter);
                 if (player != null) player.getInventory().addItem(new ItemStack(Material.COMPASS));
             });

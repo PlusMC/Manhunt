@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.events;
 
 import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.modifiers.BlockRain;
 import dev.oakleycord.manhunt.game.logic.modifiers.KingSlime;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
@@ -41,8 +42,9 @@ public class WorldEvents implements Listener {
 
     @EventHandler
     public void onBlockPlace(EntityChangeBlockEvent event) {
-        if (ManHunt.GAME == null) return;
-        if (!ManHunt.GAME.getModifiers().contains(Modifier.BLOCK_RAIN) && !ManHunt.GAME.getModifiers().contains(Modifier.KING_SLIME))
+        if (!ManHunt.hasGame()) return;
+        MHGame game = ManHunt.getGame();
+        if (!game.getModifiers().contains(Modifier.BLOCK_RAIN) && !game.getModifiers().contains(Modifier.KING_SLIME))
             return;
         if (!(event.getEntity() instanceof FallingBlock blockEntity)) return;
         if (KingSlime.fallingBlocks.contains(blockEntity)) {

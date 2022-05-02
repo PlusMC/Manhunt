@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.gui;
 
 import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.modes.Mode;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.Bukkit;
@@ -29,10 +30,11 @@ public class Modes extends PlusGUI {
     public void draw() {
         int i = 1;
         for (Mode mode : Mode.values()) {
-            if (ManHunt.GAME == null)
+            if (!ManHunt.hasGame())
                 continue;
 
-            boolean isGameMode = ManHunt.GAME.getGameMode() == mode;
+            MHGame game = ManHunt.getGame();
+            boolean isGameMode = game.getGameMode() == mode;
 
             List<String> lore = new ArrayList<>(List.of("", "§7Click to select this mode."));
             if (isGameMode)
@@ -44,18 +46,18 @@ public class Modes extends PlusGUI {
 
 
             setElement(new GUIElement(item, (event) -> {
-                if (ManHunt.GAME == null)
+                if (!ManHunt.hasGame())
                     return;
 
-                boolean isGameMode2 = ManHunt.GAME.getGameMode() == mode;
+                boolean isGameMode2 = game.getGameMode() == mode;
 
                 if (!isGameMode2)
-                    ManHunt.GAME.setGameMode(mode);
+                    game.setGameMode(mode);
 
                 if (event.getWhoClicked() instanceof Player p)
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_GUITAR, 1, isGameMode2 ? 0.75f : 1.25f);
 
-                ManHunt.GAME.getScoreboardHandler().tick(0);
+                game.getScoreboardHandler().tick(0);
 
                 draw();
             }), i);

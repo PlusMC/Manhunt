@@ -32,7 +32,7 @@ public class MHGame {
     private final List<Modifier> modifiers;
     private long timeStamp;
     private long endTimeStamp;
-    private Mode gamemode;
+    private Mode mode;
     private Logic gameModeLogic;
     private GameState state;
     private GameLoop gameLoop;
@@ -40,8 +40,8 @@ public class MHGame {
 
     public MHGame() {
         this.state = GameState.LOADING;
-        this.gamemode = Mode.CLASSIC;
-        this.gameModeLogic = gamemode.getLogic(this);
+        this.mode = Mode.CLASSIC;
+        this.gameModeLogic = mode.getLogic(this);
 
         this.modifierLogic = new ArrayList<>();
 
@@ -149,7 +149,7 @@ public class MHGame {
         summary[0] = "§e§l<---§6§lGAME SUMMARY§e§l--->";
         summary[1] = "§e§lGame lasted: §b" + time;
         summary[2] = "§e§lWorld Seed: §b" + this.seed;
-        summary[3] = "§e§lMode: §b" + this.gamemode.name() + "%";
+        summary[3] = "§e§lMode: §b" + this.mode.name() + "%";
 
         if (modifiers.size() > 0) {
             StringBuilder sb = new StringBuilder();
@@ -170,8 +170,7 @@ public class MHGame {
             OtherUtil.deleteDir(new File(Bukkit.getWorldContainer(), name));
         }
 
-        ManHunt.GAME = null;
-        System.gc();
+        ManHunt.removeGame();
     }
 
     private void freeze() {
@@ -289,13 +288,13 @@ public class MHGame {
 
     @NotNull
     public Mode getGameMode() {
-        return gamemode;
+        return mode;
     }
 
     public void setGameMode(Mode mode) {
         if (this.gameModeLogic != null)
             this.gameModeLogic.unload(); // unload old logic
-        this.gamemode = mode;
+        this.mode = mode;
         this.gameModeLogic = mode.getLogic(this);
         if (state == GameState.INGAME)
             this.gameModeLogic.load();

@@ -40,15 +40,16 @@ public class InitGame implements PlusCommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (ManHunt.GAME != null) {
+        if (ManHunt.hasGame()) {
             sender.sendMessage("Game already initialized");
             return false;
         }
 
-        ManHunt.GAME = new MHGame();
-        ManHunt.GAME.pregame();
+        ManHunt.createGame();
+        MHGame game = ManHunt.getGame();
+        game.pregame();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            World world = ManHunt.GAME.getOverworld();
+            World world = game.getOverworld();
             world.getSpawnLocation().getChunk().load();
             player.teleport(world.getSpawnLocation().add(0, 1, 0));
         }

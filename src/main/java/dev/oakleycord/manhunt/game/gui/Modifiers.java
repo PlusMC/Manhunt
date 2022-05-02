@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.gui;
 
 import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.Bukkit;
@@ -27,10 +28,11 @@ public class Modifiers extends PlusGUI {
     public void draw() {
         int i = 1;
         for (Modifier modifier : Modifier.values()) {
-            if (ManHunt.GAME == null)
+            if (!ManHunt.hasGame())
                 continue;
 
-            boolean hasModifier = ManHunt.GAME.getModifiers().contains(modifier);
+            MHGame game = ManHunt.getGame();
+            boolean hasModifier = game.getModifiers().contains(modifier);
 
             List<String> lore = new ArrayList<>(List.of(
                     hasModifier ? "§a§lEnabled" : "§c§lDisabled",
@@ -42,19 +44,19 @@ public class Modifiers extends PlusGUI {
             ItemStack item = new ItemBuilder(modifier.icon).setName(modifier.name).addEnchant(OtherUtil.EMPTY_ENCHANT, 0).setLore(lore).build();
 
             setElement(new GUIElement(item, (event) -> {
-                if (ManHunt.GAME == null)
+                if (!ManHunt.hasGame())
                     return;
 
-                boolean hasMod = ManHunt.GAME.getModifiers().contains(modifier);
+                boolean hasMod = game.getModifiers().contains(modifier);
 
                 if (hasMod)
-                    ManHunt.GAME.removeModifier(modifier);
-                else ManHunt.GAME.addModifier(modifier);
+                    game.removeModifier(modifier);
+                else game.addModifier(modifier);
 
                 if (event.getWhoClicked() instanceof Player p)
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_GUITAR, 1, hasMod ? 0.75f : 1.25f);
 
-                ManHunt.GAME.getScoreboardHandler().tick(0);
+                game.getScoreboardHandler().tick(0);
                 draw();
             }), i);
             i += 3;
