@@ -35,7 +35,7 @@ public class OtherUtil {
     }
 
 
-    public static class EmptyEnchant extends Enchantment {
+    private static class EmptyEnchant extends Enchantment {
 
         public EmptyEnchant(@NotNull NamespacedKey key) {
             super(key);

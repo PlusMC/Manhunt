@@ -9,6 +9,7 @@ import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.plusmc.pluslib.mongo.User;
 
 import java.util.Iterator;
 
@@ -65,5 +66,40 @@ public class PlayerUtil {
             if (game.getHunters().hasEntry(player.getName()))
                 player.getInventory().addItem(new ItemStack(Material.COMPASS));
         }
+    }
+
+    public static void incrementDeaths(Player player) {
+        if (!ManHunt.hasDB()) return;
+        User user = ManHunt.getUser(player.getUniqueId().toString());
+        user.getUserMH().addDeath();
+        ManHunt.getDatabase().saveUser(user);
+    }
+
+    public static void incrementKills(Player player) {
+        if (!ManHunt.hasDB()) return;
+        User user = ManHunt.getUser(player.getUniqueId().toString());
+        user.getUserMH().addKill();
+        ManHunt.getDatabase().saveUser(user);
+    }
+
+    public static void incrementWins(Player player) {
+        if (!ManHunt.hasDB()) return;
+        User user = ManHunt.getUser(player.getUniqueId().toString());
+        user.getUserMH().addWin();
+        ManHunt.getDatabase().saveUser(user);
+    }
+
+    public static void incrementLoses(Player player) {
+        if (!ManHunt.hasDB()) return;
+        User user = ManHunt.getUser(player.getUniqueId().toString());
+        user.getUserMH().addLoss();
+        ManHunt.getDatabase().saveUser(user);
+    }
+
+    public static void rewardPoints(Player player, long points, String reason) {
+        if (!ManHunt.hasDB()) return;
+        User user = ManHunt.getUser(player.getUniqueId().toString());
+        user.addPoints(points, reason);
+        ManHunt.getDatabase().saveUser(user);
     }
 }

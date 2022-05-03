@@ -145,11 +145,11 @@ public class MHGame {
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
             player.sendMessage("§8§lReturning to lobby in 10 seconds...");
         });
-        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), this::destroy, 200);
+        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> this.destroy(winningTeam), 200);
     }
 
 
-    public void destroy() {
+    public void destroy(GameTeam winningTeam) {
         BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
 
         String time = OtherUtil.formatTime(endTimeStamp - this.timeStamp);
@@ -168,6 +168,13 @@ public class MHGame {
 
         this.getPlayers().forEach(player -> {
             player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
+            if (winningTeam.getTeam(this).hasEntry(player.getName())) {
+                PlayerUtil.incrementWins(player);
+                PlayerUtil.rewardPoints(player, getTeam(player).equals(hunters) ? 75 : 200, "§aGame Won");
+            } else if (!getTeam(player).equals(spectators)) {
+                PlayerUtil.incrementLoses(player);
+                PlayerUtil.rewardPoints(player, 25, "§aParticipation");
+            }
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
             PlayerUtil.resetPlayer(player, false);
         });

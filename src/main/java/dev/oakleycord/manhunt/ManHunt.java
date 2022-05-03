@@ -18,6 +18,7 @@ import org.plusmc.pluslib.bukkit.managing.GUIManager;
 import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
 import org.plusmc.pluslib.mongo.DatabaseHandler;
+import org.plusmc.pluslib.mongo.User;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -58,6 +59,10 @@ public final class ManHunt extends JavaPlugin {
 
     public static DatabaseHandler getDatabase() {
         return db;
+    }
+
+    public static User getUser(String uuid) {
+        return db.getUser(uuid);
     }
 
     public static boolean hasDB() {

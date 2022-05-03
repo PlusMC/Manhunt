@@ -66,6 +66,7 @@ public class PlayerEvents implements Listener {
 
         player.getWorld().strikeLightningEffect(player.getLocation());
         PlayerUtil.resetPlayer(player, true);
+        PlayerUtil.incrementDeaths(player);
 
         if (!lastDamaged.containsKey(player)) {
             Bukkit.broadcastMessage("§c" + player.getDisplayName() + " has died!");
@@ -74,6 +75,10 @@ public class PlayerEvents implements Listener {
 
         Entity lastDamager = lastDamaged.get(player);
         Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + lastDamager.getName() + "!");
+
+        if (!(lastDamager instanceof Player playerKiller) || !ManHunt.hasDB()) return;
+        PlayerUtil.incrementKills(playerKiller);
+        PlayerUtil.rewardPoints(playerKiller, 25, "§aKill");
     }
 
 
