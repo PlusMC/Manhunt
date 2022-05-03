@@ -24,19 +24,20 @@ public class MHGame {
 
     private final long seed;
     private final World[] worlds;
+
     private final ScoreboardHandler scoreboardHandler;
     private final CompassHandler compassHandler;
+
     private final Scoreboard scoreboard;
     private final Team hunters, runners, spectators;
-    private final List<Logic> modifierLogic;
     private final List<Modifier> modifiers;
-    private long timeStamp;
-    private long endTimeStamp;
+    private final List<Logic> modifierLogic;
+    private long timeStamp, endTimeStamp;
     private Mode mode;
     private Logic gameModeLogic;
+
     private GameState state;
     private GameLoop gameLoop;
-    private boolean dragonKilled;
 
     public MHGame() {
         this.state = GameState.LOADING;
@@ -46,7 +47,6 @@ public class MHGame {
         this.modifierLogic = new ArrayList<>();
 
         this.modifiers = new ArrayList<>();
-        this.dragonKilled = false;
 
         this.timeStamp = System.currentTimeMillis();
 
@@ -130,9 +130,16 @@ public class MHGame {
         endTimeStamp = System.currentTimeMillis();
         freeze();
         switch (winningTeam) {
-            case HUNTERS -> getPlayers().forEach(player -> player.sendTitle(ChatColor.RED + "Hunters Win!", "", 10, 20, 10));
-            case RUNNERS -> getPlayers().forEach(player -> player.sendTitle(ChatColor.GREEN + "Runners Win!", "", 10, 20, 10));
+            case HUNTERS -> getPlayers().forEach(player ->
+                    player.sendTitle(ChatColor.RED + "Hunters Win!", "", 10, 20, 10)
+            );
+            case RUNNERS -> getPlayers().forEach(player ->
+                    player.sendTitle(ChatColor.GREEN + "Runners Win!", "", 10, 20, 10)
+            );
         }
+
+        modifierLogic.forEach(Logic::unload);
+        gameModeLogic.unload();
 
         getPlayers().forEach(player -> {
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
@@ -140,6 +147,7 @@ public class MHGame {
         });
         Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), this::destroy, 200);
     }
+
 
     public void destroy() {
         BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
@@ -159,8 +167,8 @@ public class MHGame {
         }
 
         this.getPlayers().forEach(player -> {
-            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
             player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
+            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
             PlayerUtil.resetPlayer(player, false);
         });
 
@@ -270,16 +278,6 @@ public class MHGame {
             players.addAll(world.getPlayers());
         return players;
     }
-
-
-    public boolean hasDragonBeenKilled() {
-        return dragonKilled;
-    }
-
-    public void setDragonKilled(boolean dragonKilled) {
-        this.dragonKilled = dragonKilled;
-    }
-
 
     public GameState getState() {
         return state;

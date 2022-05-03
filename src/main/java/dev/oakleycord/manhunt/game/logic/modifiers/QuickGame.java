@@ -1,17 +1,29 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
+import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class QuickGame extends Logic {
 
+    private final DeathListener deathListener;
+
     protected QuickGame(MHGame game) {
         super(game);
+        deathListener = new DeathListener();
     }
 
-    public static ItemStack[] getArmor() {
+    private ItemStack[] getArmor() {
         return new ItemStack[]{
                 new ItemStack(Material.IRON_BOOTS),
                 new ItemStack(Material.IRON_LEGGINGS),
@@ -20,7 +32,7 @@ public class QuickGame extends Logic {
         };
     }
 
-    public static ItemStack[] getItems() {
+    private ItemStack[] getItems() {
         ItemStack[] items = new ItemStack[9];
         items[0] = new ItemStack(Material.IRON_SWORD);
         items[1] = new ItemStack(Material.IRON_PICKAXE);
@@ -39,15 +51,38 @@ public class QuickGame extends Logic {
         return items;
     }
 
+    private void giveItems(Player player) {
+        player.getInventory().setContents(getItems());
+        player.getInventory().setArmorContents(getArmor());
+        player.getInventory().setItemInOffHand(new ItemStack(Material.SHIELD));
+    }
+
     @Override
     public void tick(long tick) {
     }
 
+    @Override
     public void load() {
-        getGame().getPlayers().forEach(player -> {
-            player.getInventory().setContents(getItems());
-            player.getInventory().setArmorContents(getArmor());
-            player.getInventory().setItemInOffHand(new ItemStack(Material.SHIELD));
-        });
+        getGame().getPlayers().forEach(this::giveItems);
+        Bukkit.getPluginManager().registerEvents(deathListener, ManHunt.getInstance());
+    }
+
+    @Override
+    public void unload() {
+        HandlerList.unregisterAll(deathListener);
+        if (getGame().getState().equals(GameState.PREGAME))
+            getGame().getPlayers().stream().map(Player::getInventory).forEach(Inventory::clear);
+    }
+
+    private class DeathListener implements org.bukkit.event.Listener {
+
+        //low priority so we can give the player the items after resetting their inventory
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+        public void onEntityDamage(EntityDamageEvent event) {
+            if (!(event.getEntity() instanceof Player player)) return;
+            if (!getGame().getPlayers().contains(player)) return;
+            if (player.getHealth() - event.getFinalDamage() <= 0)
+                giveItems(player);
+        }
     }
 }

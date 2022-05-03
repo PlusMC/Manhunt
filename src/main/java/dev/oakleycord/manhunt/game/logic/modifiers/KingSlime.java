@@ -1,5 +1,6 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
+import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.util.ParticleUtil;
@@ -8,6 +9,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -15,10 +19,11 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 public class KingSlime extends Logic {
-    public final static List<FallingBlock> fallingBlocks = new ArrayList<>();
+    private final List<FallingBlock> fallingBlocks = new ArrayList<>();
     private final int MAX_SIZE = 14;
     private final long DELAY = 200;
     private final Map<LivingEntity, Long> lastDamage;
+    private final BlockListener blockListener;
     private Slime slime;
     private long startTime = -1;
     private int suckedUp = 0;
@@ -28,6 +33,7 @@ public class KingSlime extends Logic {
         lastDamage = new HashMap<>();
 
         spawnSlime();
+        blockListener = new BlockListener();
     }
 
     public void spawnSlime() {
@@ -53,6 +59,7 @@ public class KingSlime extends Logic {
     public void unload() {
         slime.remove();
         fallingBlocks.forEach(FallingBlock::remove);
+        HandlerList.unregisterAll(blockListener);
     }
 
     @Override
@@ -246,4 +253,22 @@ public class KingSlime extends Logic {
         }
         return blocks;
     }
+
+    @Override
+    public void load() {
+        Bukkit.getPluginManager().registerEvents(blockListener, ManHunt.getInstance());
+    }
+
+
+    private class BlockListener implements org.bukkit.event.Listener {
+        @EventHandler
+        public void onBlockLand(EntityChangeBlockEvent event) {
+            if (!(event.getEntity() instanceof FallingBlock blockEntity))
+                return;
+            if (!fallingBlocks.contains(blockEntity)) return;
+            event.setCancelled(true);
+            fallingBlocks.remove(blockEntity);
+        }
+    }
+
 }

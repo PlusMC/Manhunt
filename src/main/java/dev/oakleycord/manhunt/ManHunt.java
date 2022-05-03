@@ -95,13 +95,19 @@ public final class ManHunt extends JavaPlugin {
         for (PlusCommand cmd : COMMANDS)
             BaseManager.registerAny(cmd, this);
 
-        if (db == null)
+        try {
             db = new DatabaseHandler();
+            getLogger().info("Database Loaded!");
+        } catch (Exception ex) {
+            db = null;
+        }
 
         registerEnchant(OtherUtil.EMPTY_ENCHANT);
     }
 
     @Override
     public void onDisable() {
+        if (db != null)
+            db.shutdown();
     }
 }

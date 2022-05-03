@@ -4,30 +4,46 @@ import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.MHGame;
-import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static dev.oakleycord.manhunt.game.util.PlayerUtil.*;
 
 public class PlayerEvents implements Listener {
+
+    HashMap<Player, Entity> lastDamaged = new HashMap<>();
+
+
+    @EventHandler
+    public void onDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
+        if (!ManHunt.hasGame()) return;
+
+        //todo: fix this: onEntityDamage is called before this event thus the player could be cleared out before this event is called
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        lastDamaged.put(player, event.getDamager());
+        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> lastDamaged.remove(player), 30);
+
+    }
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
@@ -36,25 +52,28 @@ public class PlayerEvents implements Listener {
         MHGame game = ManHunt.getGame();
         if (game.getState() == GameState.PREGAME) event.setCancelled(true);
 
-        if (event.getEntity() instanceof Player player) {
-            if (player.getHealth() - event.getFinalDamage() > 0) return;
-            event.setCancelled(true);
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (player.getHealth() - event.getFinalDamage() > 0) return;
 
-            boolean isQuickGame = game.getModifiers().contains(Modifier.QUICK_GAME);
-            if (isQuickGame)
-                player.getInventory().clear();
+        event.setCancelled(true);
 
-            Arrays.stream(player.getInventory().getContents()).forEach(item -> {
-                if (item != null)
-                    player.getWorld().dropItem(player.getLocation(), item);
-            });
-            player.getWorld().spawn(player.getLocation(), ExperienceOrb.class).setExperience(player.getLevel());
+        Arrays.stream(player.getInventory().getContents()).forEach(item -> {
+            if (item != null)
+                player.getWorld().dropItem(player.getLocation(), item);
+        });
 
+        player.getWorld().spawn(player.getLocation(), ExperienceOrb.class).setExperience(player.getLevel());
 
-            player.getWorld().strikeLightningEffect(player.getLocation());
+        player.getWorld().strikeLightningEffect(player.getLocation());
+        PlayerUtil.resetPlayer(player, true);
+
+        if (!lastDamaged.containsKey(player)) {
             Bukkit.broadcastMessage("§c" + player.getDisplayName() + " has died!");
-            PlayerUtil.resetPlayer(player, true);
+            return;
         }
+
+        Entity lastDamager = lastDamaged.get(player);
+        Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + lastDamager.getName() + "!");
     }
 
 
@@ -147,17 +166,5 @@ public class PlayerEvents implements Listener {
             else game.setTeam(player, GameTeam.SPECTATORS);
         }
         game.getScoreboardHandler().tick(0);
-    }
-
-    @EventHandler
-    public void onEntityDeath(EntityDeathEvent event) {
-        if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
-        if (!ManHunt.hasGame()) return;
-        MHGame game = ManHunt.getGame();
-        if (game.getState() != GameState.INGAME) return;
-
-        if (!(event.getEntityType() == EntityType.ENDER_DRAGON)) return;
-
-        game.setDragonKilled(true);
     }
 }

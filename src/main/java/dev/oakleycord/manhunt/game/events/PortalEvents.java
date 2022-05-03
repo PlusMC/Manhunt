@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 
 public class PortalEvents implements Listener {
 
+    //surprisingly, this worked first try
     @EventHandler
     public void onPortalTeleport(PlayerPortalEvent e) {
         World from = e.getFrom().getWorld();

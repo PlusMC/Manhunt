@@ -3,8 +3,6 @@ package dev.oakleycord.manhunt.game.util;
 import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.MHGame;
-import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
-import dev.oakleycord.manhunt.game.logic.modifiers.QuickGame;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -62,12 +60,6 @@ public class PlayerUtil {
             if (game.getRunners().hasEntry(player.getName())) {
                 game.setTeam(player, GameTeam.SPECTATORS);
                 player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1, 0.5f);
-            }
-
-            if (game.getModifiers().contains(Modifier.QUICK_GAME)) {
-                player.getInventory().setContents(QuickGame.getItems());
-                player.getInventory().setArmorContents(QuickGame.getArmor());
-                player.getInventory().setItemInOffHand(new ItemStack(Material.SHIELD));
             }
 
             if (game.getHunters().hasEntry(player.getName()))
