@@ -4,5 +4,6 @@ public enum GameState {
     LOADING,
     PREGAME,
     INGAME,
-    POSTGAME
+    POSTGAME,
+    PAUSED
 }

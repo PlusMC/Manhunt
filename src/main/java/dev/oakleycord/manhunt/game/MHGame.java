@@ -168,15 +168,17 @@ public class MHGame {
 
         this.getPlayers().forEach(player -> {
             player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
-            if (winningTeam.getTeam(this).hasEntry(player.getName())) {
-                PlayerUtil.incrementWins(player);
+            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
+
+            if (getGameTeam(player) == winningTeam) {
+                PlayerUtil.incrementWins(player, winningTeam);
                 PlayerUtil.rewardPoints(player, getTeam(player).equals(hunters) ? 75 : 200, "§aGame Won");
-            } else if (!getTeam(player).equals(spectators)) {
-                PlayerUtil.incrementLoses(player);
+            } else if (getGameTeam(player) == winningTeam.getOpponent() || PlayerUtil.wasRunner(player)) {
+                PlayerUtil.incrementLoses(player, winningTeam.getOpponent());
                 PlayerUtil.rewardPoints(player, 25, "§aParticipation");
             }
-            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
-            PlayerUtil.resetPlayer(player, false);
+
+            PlayerUtil.resetPlayer(player);
         });
 
         for (World world : worlds) {
@@ -263,6 +265,14 @@ public class MHGame {
 
     public Team getTeam(Player player) {
         return scoreboard.getEntryTeam(player.getName());
+    }
+
+    public GameTeam getGameTeam(Player player) {
+        if (getTeam(player).equals(hunters))
+            return GameTeam.HUNTERS;
+        else if (getTeam(player).equals(runners))
+            return GameTeam.RUNNERS;
+        else return GameTeam.SPECTATORS;
     }
 
     public boolean hasTeam(Player player) {

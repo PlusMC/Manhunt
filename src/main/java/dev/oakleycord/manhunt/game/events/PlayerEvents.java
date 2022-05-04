@@ -41,8 +41,13 @@ public class PlayerEvents implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
 
         lastDamaged.put(player, event.getDamager());
-        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> lastDamaged.remove(player), 30);
+        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> lastDamaged.remove(player), 50);
+        if (player.getHealth() - event.getFinalDamage() > 0) return;
+        Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + event.getDamager().getName() + "!");
 
+        if (!(event.getDamager() instanceof Player damager)) return;
+        PlayerUtil.incrementKills(damager);
+        PlayerUtil.rewardPoints(damager, 25, "§aKill");
     }
 
     @EventHandler
@@ -65,18 +70,21 @@ public class PlayerEvents implements Listener {
         player.getWorld().spawn(player.getLocation(), ExperienceOrb.class).setExperience(player.getLevel());
 
         player.getWorld().strikeLightningEffect(player.getLocation());
-        PlayerUtil.resetPlayer(player, true);
-        PlayerUtil.incrementDeaths(player);
+        PlayerUtil.resetPlayer(player, true, true);
 
         if (!lastDamaged.containsKey(player)) {
             Bukkit.broadcastMessage("§c" + player.getDisplayName() + " has died!");
             return;
         }
 
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)
+                || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
+                || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) return;
+
         Entity lastDamager = lastDamaged.get(player);
         Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + lastDamager.getName() + "!");
 
-        if (!(lastDamager instanceof Player playerKiller) || !ManHunt.hasDB()) return;
+        if (!(lastDamager instanceof Player playerKiller)) return;
         PlayerUtil.incrementKills(playerKiller);
         PlayerUtil.rewardPoints(playerKiller, 25, "§aKill");
     }
@@ -131,7 +139,7 @@ public class PlayerEvents implements Listener {
         if (!OtherUtil.isManHunt(event.getPlayer().getWorld())) {
             assert Bukkit.getScoreboardManager() != null;
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-            resetPlayer(player, false);
+            resetPlayer(player);
             player.setGameMode(GameMode.SURVIVAL);
             return;
         }
@@ -140,7 +148,7 @@ public class PlayerEvents implements Listener {
         player.setScoreboard(game.getScoreboard());
         if (!game.hasTeam(player)) {
             resetAdvancements(player);
-            PlayerUtil.resetPlayer(player, false);
+            PlayerUtil.resetPlayer(player);
             if (game.getState() == GameState.PREGAME)
                 game.setTeam(player, GameTeam.HUNTERS);
             else game.setTeam(player, GameTeam.SPECTATORS);
@@ -156,7 +164,7 @@ public class PlayerEvents implements Listener {
             assert Bukkit.getScoreboardManager() != null;
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
-            PlayerUtil.resetPlayer(player, false);
+            PlayerUtil.resetPlayer(player);
             player.setGameMode(GameMode.SURVIVAL);
             return;
         }
@@ -165,7 +173,7 @@ public class PlayerEvents implements Listener {
         player.setScoreboard(game.getScoreboard());
         if (!game.hasTeam(player)) {
             resetAdvancements(player);
-            PlayerUtil.resetPlayer(player, false);
+            PlayerUtil.resetPlayer(player);
             if (game.getState() == GameState.PREGAME)
                 game.setTeam(player, GameTeam.HUNTERS);
             else game.setTeam(player, GameTeam.SPECTATORS);
