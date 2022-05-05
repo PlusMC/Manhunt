@@ -56,13 +56,6 @@ public class KingSlime extends Logic {
     }
 
     @Override
-    public void unload() {
-        slime.remove();
-        fallingBlocks.forEach(FallingBlock::remove);
-        HandlerList.unregisterAll(blockListener);
-    }
-
-    @Override
     public void tick(long tick) {
         MHGame game = getGame();
         for (Iterator<FallingBlock> iterator = fallingBlocks.iterator(); iterator.hasNext(); ) {
@@ -106,6 +99,17 @@ public class KingSlime extends Logic {
         }
     }
 
+    private void suck(long tick) {
+        suckBlocks();
+        suckEntities(tick);
+
+        if (suckedUp > Math.pow(2, slime.getSize())) {
+            if (slime.getSize() <= MAX_SIZE)
+                slime.setSize(slime.getSize() + 1);
+            suckedUp = 0;
+        }
+    }
+
     public void moveTowards() {
         Entity nearest = getNearestPlayer(slime.getLocation());
         if (nearest != null) {
@@ -123,10 +127,21 @@ public class KingSlime extends Logic {
         }
     }
 
-    private Location getCenter() {
-        Location center = slime.getLocation();
-        center.setY(slime.getBoundingBox().getCenterY());
-        return center;
+    private void suckBlocks() {
+        Location center = getCenter();
+        for (Block block : getBlocks(center, slime.getSize())) {
+            double chance = ((double) slime.getSize() / 50) / center.distance(block.getLocation());
+            if (chance < Math.random()) continue;
+            BlockData data = block.getBlockData().clone();
+            block.setType(Material.AIR);
+            if (isBlockExposed(block) && fallingBlocks.size() < 50 && Math.random() < 0.75) {
+                FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), data);
+                fallingBlocks.add(fallingBlock);
+                fallingBlock.setDropItem(false);
+                fallingBlock.getWorld().playSound(fallingBlock.getLocation(), fallingBlock.getBlockData().getSoundGroup().getBreakSound(), 1, 1);
+            }
+            suckedUp++;
+        }
     }
 
     private void suckEntities(long tick) {
@@ -148,79 +163,6 @@ public class KingSlime extends Logic {
                 pullEntity(entity, center);
         }
     }
-
-    private void playGrabEffect(LivingEntity entity, long tick) {
-        if (tick % 12 != 0) return;
-        Location center = getCenter();
-        if (tick - lastDamage.getOrDefault(entity, 0L) < 100) {
-            entity.getWorld().playSound(entity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.75f);
-            ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(25, 0, 0));
-            return;
-        }
-
-        ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(0, 255, 0));
-        entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_SLIME_SQUISH, 1, 0.25f);
-
-    }
-
-    private void pullEntity(Entity entity, Location location) {
-        Vector vector = location.toVector().subtract(entity.getLocation().toVector());
-        double multiplier = location.distance(entity.getLocation()) * 10D / slime.getSize();
-
-        Vector velocity = entity.getVelocity();
-        velocity.setY(velocity.getY() * 0.5);
-
-        entity.setVelocity(velocity.add(vector.normalize().multiply(1 / multiplier)));
-    }
-
-    private void damageEntity(Entity entity, long tick) {
-        if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.damage(slime.getSize(), slime);
-            Vector vector = livingEntity.getLocation().toVector().subtract(getCenter().toVector());
-            vector.normalize();
-            livingEntity.setVelocity(vector);
-            livingEntity.getWorld().playSound(livingEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.5f);
-            lastDamage.put(livingEntity, tick);
-            suckedUp++;
-            return;
-        }
-
-        entity.remove();
-    }
-
-    private void suck(long tick) {
-        suckBlocks();
-        suckEntities(tick);
-
-        if (suckedUp > Math.pow(2, slime.getSize())) {
-            if (slime.getSize() <= MAX_SIZE)
-                slime.setSize(slime.getSize() + 1);
-            suckedUp = 0;
-        }
-    }
-
-    private void suckBlocks() {
-        Location center = getCenter();
-        for (Block block : getBlocks(center, slime.getSize())) {
-            double chance = ((double) slime.getSize() / 50) / center.distance(block.getLocation());
-            if (chance < Math.random()) continue;
-            BlockData data = block.getBlockData().clone();
-            block.setType(Material.AIR);
-            if (isBlockExposed(block) && fallingBlocks.size() < 50 && Math.random() < 0.75) {
-                FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), data);
-                fallingBlocks.add(fallingBlock);
-                fallingBlock.setDropItem(false);
-                fallingBlock.getWorld().playSound(fallingBlock.getLocation(), fallingBlock.getBlockData().getSoundGroup().getBreakSound(), 1, 1);
-            }
-            suckedUp++;
-        }
-    }
-
-
-    private boolean isBlockExposed(Block block) {
-        return block.getRelative(BlockFace.UP).getType() == Material.AIR || block.getRelative(BlockFace.DOWN).getType() == Material.AIR || block.getRelative(BlockFace.NORTH).getType() == Material.AIR || block.getRelative(BlockFace.SOUTH).getType() == Material.AIR || block.getRelative(BlockFace.EAST).getType() == Material.AIR || block.getRelative(BlockFace.WEST).getType() == Material.AIR;
-    }
-
 
     private Player getNearestPlayer(Location location) {
         Player nearest = null;
@@ -254,6 +196,12 @@ public class KingSlime extends Logic {
         return nearest;
     }
 
+    private Location getCenter() {
+        Location center = slime.getLocation();
+        center.setY(slime.getBoundingBox().getCenterY());
+        return center;
+    }
+
     private List<Block> getBlocks(Location start, int radius) {
         ArrayList<Block> blocks = new ArrayList<>();
         for (double x = start.getX() - radius; x <= start.getX() + radius; x++) {
@@ -269,11 +217,60 @@ public class KingSlime extends Logic {
         return blocks;
     }
 
+    private boolean isBlockExposed(Block block) {
+        return block.getRelative(BlockFace.UP).getType() == Material.AIR || block.getRelative(BlockFace.DOWN).getType() == Material.AIR || block.getRelative(BlockFace.NORTH).getType() == Material.AIR || block.getRelative(BlockFace.SOUTH).getType() == Material.AIR || block.getRelative(BlockFace.EAST).getType() == Material.AIR || block.getRelative(BlockFace.WEST).getType() == Material.AIR;
+    }
+
+    private void damageEntity(Entity entity, long tick) {
+        if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.damage(slime.getSize(), slime);
+            Vector vector = livingEntity.getLocation().toVector().subtract(getCenter().toVector());
+            vector.normalize();
+            livingEntity.setVelocity(vector);
+            livingEntity.getWorld().playSound(livingEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.5f);
+            lastDamage.put(livingEntity, tick);
+            suckedUp++;
+            return;
+        }
+
+        entity.remove();
+    }
+
+    private void playGrabEffect(LivingEntity entity, long tick) {
+        if (tick % 12 != 0) return;
+        Location center = getCenter();
+        if (tick - lastDamage.getOrDefault(entity, 0L) < 100) {
+            entity.getWorld().playSound(entity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.75f);
+            ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(25, 0, 0));
+            return;
+        }
+
+        ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(0, 255, 0));
+        entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_SLIME_SQUISH, 1, 0.25f);
+
+    }
+
+    private void pullEntity(Entity entity, Location location) {
+        Vector vector = location.toVector().subtract(entity.getLocation().toVector());
+        double multiplier = location.distance(entity.getLocation()) * 10D / slime.getSize();
+
+        Vector velocity = entity.getVelocity();
+        velocity.setY(velocity.getY() * 0.5);
+
+        entity.setVelocity(velocity.add(vector.normalize().multiply(1 / multiplier)));
+    }
+
     @Override
     public void load() {
         Bukkit.getPluginManager().registerEvents(blockListener, ManHunt.getInstance());
     }
 
+    @Override
+    public void unload() {
+        slime.remove();
+        fallingBlocks.forEach(FallingBlock::remove);
+        HandlerList.unregisterAll(blockListener);
+    }
 
     private class BlockListener implements org.bukkit.event.Listener {
         @EventHandler

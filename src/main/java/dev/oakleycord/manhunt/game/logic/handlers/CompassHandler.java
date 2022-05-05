@@ -32,22 +32,6 @@ public class CompassHandler extends Logic {
         }
     }
 
-
-    private void trackCompass(Player player, Player nearestPlayer) {
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item == null || item.getType() != Material.COMPASS || item.getItemMeta() == null) continue;
-
-            CompassMeta compassMeta = (CompassMeta) item.getItemMeta();
-
-            Location lodestoneLocation = nearestPlayer.getLocation();
-
-            compassMeta.setLodestoneTracked(false);
-            compassMeta.setLodestone(lodestoneLocation);
-
-            item.setItemMeta(compassMeta);
-        }
-    }
-
     @Nullable
     private Player getNearestPlayer(Player player) {
         Location playerLocation = player.getLocation();
@@ -67,6 +51,21 @@ public class CompassHandler extends Logic {
         }
 
         return nearestPlayer;
+    }
+
+    private void trackCompass(Player player, Player nearestPlayer) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item == null || item.getType() != Material.COMPASS || item.getItemMeta() == null) continue;
+
+            CompassMeta compassMeta = (CompassMeta) item.getItemMeta();
+
+            Location lodestoneLocation = nearestPlayer.getLocation();
+
+            compassMeta.setLodestoneTracked(false);
+            compassMeta.setLodestone(lodestoneLocation);
+
+            item.setItemMeta(compassMeta);
+        }
     }
 
 

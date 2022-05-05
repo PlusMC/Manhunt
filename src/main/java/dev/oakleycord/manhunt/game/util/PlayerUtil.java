@@ -44,6 +44,10 @@ public class PlayerUtil {
         return ((x > size || (-x) > size) || (z > size || (-z) > size));
     }
 
+    public static void resetPlayer(Player player, boolean respawn) {
+        resetPlayer(player, respawn, false);
+    }
+
     public static void resetPlayer(Player player, boolean respawn, boolean wasDeath) {
         player.setHealth(20);
         player.setFoodLevel(20);
@@ -81,8 +85,21 @@ public class PlayerUtil {
         }
     }
 
-    public static void resetPlayer(Player player, boolean respawn) {
-        resetPlayer(player, respawn, false);
+    public static void incrementLoses(Player player, GameTeam team) {
+        if (!ManHunt.hasDB()) return;
+        User user = ManHunt.getUser(player.getUniqueId().toString());
+        if (team == GameTeam.HUNTERS)
+            user.getUserMH().addLossHunter();
+        else if (team == GameTeam.RUNNERS)
+            user.getUserMH().addLossRunner();
+        ManHunt.getDatabase().saveUser(user);
+    }
+
+    public static void incrementDeaths(Player player) {
+        if (!ManHunt.hasDB()) return;
+        User user = ManHunt.getUser(player.getUniqueId().toString());
+        user.getUserMH().addDeath();
+        ManHunt.getDatabase().saveUser(user);
     }
 
     public static void resetPlayer(Player player) {
@@ -91,13 +108,6 @@ public class PlayerUtil {
 
     public static boolean wasRunner(Player player) {
         return wasRunner.contains(player.getUniqueId());
-    }
-
-    public static void incrementDeaths(Player player) {
-        if (!ManHunt.hasDB()) return;
-        User user = ManHunt.getUser(player.getUniqueId().toString());
-        user.getUserMH().addDeath();
-        ManHunt.getDatabase().saveUser(user);
     }
 
     public static void incrementKills(Player player) {
@@ -114,16 +124,6 @@ public class PlayerUtil {
             user.getUserMH().addWinHunter();
         else if (team == GameTeam.RUNNERS)
             user.getUserMH().addWinRunner();
-        ManHunt.getDatabase().saveUser(user);
-    }
-
-    public static void incrementLoses(Player player, GameTeam team) {
-        if (!ManHunt.hasDB()) return;
-        User user = ManHunt.getUser(player.getUniqueId().toString());
-        if (team == GameTeam.HUNTERS)
-            user.getUserMH().addLossHunter();
-        else if (team == GameTeam.RUNNERS)
-            user.getUserMH().addLossRunner();
         ManHunt.getDatabase().saveUser(user);
     }
 

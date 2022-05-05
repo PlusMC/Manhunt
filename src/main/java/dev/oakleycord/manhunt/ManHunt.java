@@ -42,13 +42,17 @@ public final class ManHunt extends JavaPlugin {
     private static MHGame game;
     private static DatabaseHandler db;
 
-    public static MHGame getGame() {
-        return game;
-    }
-
     public static void createGame() {
         if (!hasGame())
             game = new MHGame();
+    }
+
+    public static boolean hasGame() {
+        return getGame() != null;
+    }
+
+    public static MHGame getGame() {
+        return game;
     }
 
     public static void removeGame() {
@@ -68,31 +72,10 @@ public final class ManHunt extends JavaPlugin {
         return db != null;
     }
 
-    public static boolean hasGame() {
-        return getGame() != null;
-    }
-
-    public static ManHunt getInstance() {
-        return JavaPlugin.getPlugin(ManHunt.class);
-    }
-
-    private static void registerEnchant() {
-        try {
-            Field f = Enchantment.class.getDeclaredField("acceptingNew");
-            f.set(null, true);
-            Enchantment.registerEnchantment(OtherUtil.EMPTY_ENCHANT);
-        } catch (Exception e) {
-            //ignore
-        }
-    }
-
-    private static void startDatabase() {
-        try {
-            db = new DatabaseHandler();
-            getInstance().getLogger().info("Database Loaded!");
-        } catch (Exception ex) {
-            db = null;
-        }
+    @Override
+    public void onDisable() {
+        if (db != null)
+            db.shutdown();
     }
 
     @Override
@@ -112,9 +95,26 @@ public final class ManHunt extends JavaPlugin {
         registerEnchant();
     }
 
-    @Override
-    public void onDisable() {
-        if (db != null)
-            db.shutdown();
+    private static void startDatabase() {
+        try {
+            db = new DatabaseHandler();
+            getInstance().getLogger().info("Database Loaded!");
+        } catch (Exception ex) {
+            db = null;
+        }
+    }
+
+    private static void registerEnchant() {
+        try {
+            Field f = Enchantment.class.getDeclaredField("acceptingNew");
+            f.set(null, true);
+            Enchantment.registerEnchantment(OtherUtil.EMPTY_ENCHANT);
+        } catch (Exception e) {
+            //ignore
+        }
+    }
+
+    public static ManHunt getInstance() {
+        return JavaPlugin.getPlugin(ManHunt.class);
     }
 }

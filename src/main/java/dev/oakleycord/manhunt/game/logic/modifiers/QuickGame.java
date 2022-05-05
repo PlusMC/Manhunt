@@ -23,13 +23,21 @@ public class QuickGame extends Logic {
         deathListener = new DeathListener();
     }
 
-    private ItemStack[] getArmor() {
-        return new ItemStack[]{
-                new ItemStack(Material.IRON_BOOTS),
-                new ItemStack(Material.IRON_LEGGINGS),
-                new ItemStack(Material.IRON_CHESTPLATE),
-                new ItemStack(Material.IRON_HELMET)
-        };
+    @Override
+    public void tick(long tick) {
+        //this modifier has nothing to tick
+    }
+
+    @Override
+    public void load() {
+        getGame().getPlayers().forEach(this::giveItems);
+        Bukkit.getPluginManager().registerEvents(deathListener, ManHunt.getInstance());
+    }
+
+    private void giveItems(Player player) {
+        player.getInventory().setContents(getItems());
+        player.getInventory().setArmorContents(getArmor());
+        player.getInventory().setItemInOffHand(new ItemStack(Material.SHIELD));
     }
 
     private ItemStack[] getItems() {
@@ -51,21 +59,13 @@ public class QuickGame extends Logic {
         return items;
     }
 
-    private void giveItems(Player player) {
-        player.getInventory().setContents(getItems());
-        player.getInventory().setArmorContents(getArmor());
-        player.getInventory().setItemInOffHand(new ItemStack(Material.SHIELD));
-    }
-
-    @Override
-    public void tick(long tick) {
-        //this modifier has nothing to tick
-    }
-
-    @Override
-    public void load() {
-        getGame().getPlayers().forEach(this::giveItems);
-        Bukkit.getPluginManager().registerEvents(deathListener, ManHunt.getInstance());
+    private ItemStack[] getArmor() {
+        return new ItemStack[]{
+                new ItemStack(Material.IRON_BOOTS),
+                new ItemStack(Material.IRON_LEGGINGS),
+                new ItemStack(Material.IRON_CHESTPLATE),
+                new ItemStack(Material.IRON_HELMET)
+        };
     }
 
     @Override

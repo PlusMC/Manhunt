@@ -100,6 +100,15 @@ public class MHGame {
         scoreboardHandler.tick(0);
     }
 
+    private void freeze() {
+        for (World world : worlds) {
+            world.setSpawnFlags(false, false);
+            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+            world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+            world.setGameRule(GameRule.DO_FIRE_TICK, false);
+        }
+    }
+
     public void startGame() {
 
         state = GameState.INGAME;
@@ -126,6 +135,22 @@ public class MHGame {
         });
     }
 
+    private void unfreeze() {
+        for (World world : worlds) {
+            world.setSpawnFlags(true, true);
+            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+            world.setGameRule(GameRule.DO_WEATHER_CYCLE, true);
+            world.setGameRule(GameRule.DO_FIRE_TICK, true);
+        }
+    }
+
+    public List<Player> getPlayers() {
+        List<Player> players = new ArrayList<>();
+        for (World world : worlds)
+            players.addAll(world.getPlayers());
+        return players;
+    }
+
     public void postGame(GameTeam winningTeam) {
         state = GameState.POSTGAME;
         endTimeStamp = System.currentTimeMillis();
@@ -150,7 +175,6 @@ public class MHGame {
         });
         Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> this.destroy(winningTeam), 200);
     }
-
 
     public void destroy(GameTeam winningTeam) {
         BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
@@ -193,29 +217,21 @@ public class MHGame {
         ManHunt.removeGame();
     }
 
-    private void freeze() {
-        for (World world : worlds) {
-            world.setSpawnFlags(false, false);
-            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-            world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
-            world.setGameRule(GameRule.DO_FIRE_TICK, false);
-        }
+    public GameTeam getGameTeam(Player player) {
+        if (getTeam(player).equals(hunters))
+            return GameTeam.HUNTERS;
+        else if (getTeam(player).equals(runners))
+            return GameTeam.RUNNERS;
+        else return GameTeam.SPECTATORS;
     }
 
-    private void unfreeze() {
-        for (World world : worlds) {
-            world.setSpawnFlags(true, true);
-            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
-            world.setGameRule(GameRule.DO_WEATHER_CYCLE, true);
-            world.setGameRule(GameRule.DO_FIRE_TICK, true);
-        }
+    public Team getTeam(Player player) {
+        return scoreboard.getEntryTeam(player.getName());
     }
-
 
     public long getTimeStamp() {
         return timeStamp;
     }
-
 
     public World getOverworld() {
         return worlds[0];
@@ -228,7 +244,6 @@ public class MHGame {
     public World getEnd() {
         return worlds[2];
     }
-
 
     public Team getHunters() {
         return hunters;
@@ -266,22 +281,9 @@ public class MHGame {
         }
     }
 
-    public Team getTeam(Player player) {
-        return scoreboard.getEntryTeam(player.getName());
-    }
-
-    public GameTeam getGameTeam(Player player) {
-        if (getTeam(player).equals(hunters))
-            return GameTeam.HUNTERS;
-        else if (getTeam(player).equals(runners))
-            return GameTeam.RUNNERS;
-        else return GameTeam.SPECTATORS;
-    }
-
     public boolean hasTeam(Player player) {
         return scoreboard.getEntryTeam(player.getName()) != null;
     }
-
 
     public ScoreboardHandler getScoreboardHandler() {
         return scoreboardHandler;
@@ -289,14 +291,6 @@ public class MHGame {
 
     public CompassHandler getCompassHandler() {
         return compassHandler;
-    }
-
-
-    public List<Player> getPlayers() {
-        List<Player> players = new ArrayList<>();
-        for (World world : worlds)
-            players.addAll(world.getPlayers());
-        return players;
     }
 
     public GameState getState() {
