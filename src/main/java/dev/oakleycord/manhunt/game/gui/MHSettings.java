@@ -26,18 +26,18 @@ public class MHSettings extends PlusGUI {
         meta.setColor(Color.RED);
         modifiers.setItemMeta(meta);
 
-        setElement(new GUIElement(teams, (event) -> {
+        setElement(new GUIElement(teams, event -> {
             if (event.getWhoClicked() instanceof Player p)
                 p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_CHAIN, 1, 1);
             Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> event.getWhoClicked().openInventory(new Teams().getInventory()));
         }), 1);
-        setElement(new GUIElement(mode, (event) -> {
+        setElement(new GUIElement(mode, event -> {
             if (event.getWhoClicked() instanceof Player p)
                 p.playSound(p.getLocation(), Sound.ENTITY_ENDER_EYE_DEATH, 1, 0.1f);
 
             Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> event.getWhoClicked().openInventory(new Modes().getInventory()));
         }), 4);
-        setElement(new GUIElement(modifiers, (event) -> {
+        setElement(new GUIElement(modifiers, event -> {
             if (event.getWhoClicked() instanceof Player p)
                 p.playSound(p.getLocation(), Sound.ENTITY_WANDERING_TRADER_DRINK_MILK, 1, 1);
 

@@ -59,6 +59,7 @@ public class QuickGame extends Logic {
 
     @Override
     public void tick(long tick) {
+        //this modifier has nothing to tick
     }
 
     @Override

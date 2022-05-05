@@ -65,10 +65,9 @@ public class BlockRain extends Logic {
             return !block.isValid();
         });
 
+        if (blocks.size() >= 100) return;
         for (Player player : game.getPlayers()) {
             if (game.getSpectators().hasEntry(player.getName())) continue;
-            if (blocks.size() >= 100) break;
-
 
             double max = 20;
             double min = -20;
@@ -103,7 +102,7 @@ public class BlockRain extends Logic {
         Bukkit.getPluginManager().registerEvents(blockListener, ManHunt.getInstance());
     }
 
-    @EventHandler
+    @Override
     public void unload() {
         HandlerList.unregisterAll(blockListener);
     }
@@ -130,7 +129,6 @@ public class BlockRain extends Logic {
                 event.setCancelled(true);
                 block.setBlockData(blockEntity.getBlockData());
                 if (block.getState() instanceof org.bukkit.block.Sign sign) {
-                    Random random = new Random();
                     sign.setLine(0, phrases[random.nextInt(phrases.length)].toUpperCase());
                     sign.setLine(1, phrases[random.nextInt(phrases.length)].toUpperCase());
                     sign.setLine(2, phrases[random.nextInt(phrases.length)].toUpperCase());
@@ -144,14 +142,13 @@ public class BlockRain extends Logic {
                 event.setCancelled(true);
                 block.setBlockData(blockEntity.getBlockData());
                 if (block.getState() instanceof CreatureSpawner spawner) {
-                    spawner.setSpawnedType(entities.get(new Random().nextInt(entities.size())));
+                    spawner.setSpawnedType(entities.get(random.nextInt(entities.size())));
                     spawner.update();
                 }
                 return;
             }
 
             if (containers.contains(blockEntity.getBlockData().getMaterial())) {
-                Random random = new Random();
                 event.setCancelled(true);
                 block.setBlockData(blockEntity.getBlockData());
                 if (block.getState() instanceof Container container) {

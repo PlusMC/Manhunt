@@ -9,9 +9,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.file.Files;
 
 public class OtherUtil {
-    public static Enchantment EMPTY_ENCHANT = new EmptyEnchant(new NamespacedKey(ManHunt.getInstance(), "empty"));
+    public static final Enchantment EMPTY_ENCHANT = new EmptyEnchant(new NamespacedKey(ManHunt.getInstance(), "empty"));
+
+    private OtherUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
 
     public static String formatTime(long time) {
         //format time (ms) to hh:mm:ss
@@ -31,7 +37,11 @@ public class OtherUtil {
                 deleteDir(file);
             }
         }
-        dir.delete();
+        try {
+            Files.delete(dir.toPath());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 

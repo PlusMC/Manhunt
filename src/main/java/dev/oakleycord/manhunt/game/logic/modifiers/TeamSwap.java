@@ -54,9 +54,8 @@ public class TeamSwap extends Logic {
                 game.getRunners().removeEntry(e);
                 game.getHunters().addEntry(e);
                 Player p = Bukkit.getPlayer(e);
-                if (p != null)
-                    if (!p.getInventory().contains(Material.COMPASS))
-                        p.getInventory().addItem(new ItemStack(Material.COMPASS));
+                if (p != null && !p.getInventory().contains(Material.COMPASS))
+                    p.getInventory().addItem(new ItemStack(Material.COMPASS));
             }
         });
 

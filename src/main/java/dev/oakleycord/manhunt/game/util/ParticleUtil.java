@@ -10,6 +10,10 @@ import org.bukkit.util.Vector;
 
 public class ParticleUtil {
 
+    private ParticleUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
 
     public static void playGrabEffect(Entity entity, Location target, Color color) {
         double radius = entity.getBoundingBox().getWidthX() + entity.getBoundingBox().getWidthZ();
@@ -28,13 +32,14 @@ public class ParticleUtil {
             entity.getWorld().spawnParticle(Particle.REDSTONE, loc, 0, new Particle.DustOptions(color, 1));
         }
 
-
         drawLine(closest, target, 0.1, color);
     }
 
 
     //random guy from spigot
     public static void drawLine(Location point1, Location point2, double space, Color color) {
+        Validate.notNull(point1, "Point1 cannot be null");
+        Validate.notNull(point1.getWorld(), "World cannot be null");
         World world = point1.getWorld();
         Validate.isTrue(point2.getWorld().equals(world), "Lines cannot be in different worlds!");
         double distance = point1.distance(point2);
@@ -63,7 +68,7 @@ public class ParticleUtil {
         }
     }
 
-    public static void helixTicked(Entity entity, Color color, double tick) {
+    public static void helixTicked(Entity entity, Color color, long tick) {
         double startingHeight = entity.getBoundingBox().getMinY();
         double maxHeight = entity.getBoundingBox().getMaxY();
         double radius = entity.getBoundingBox().getWidthX() + entity.getBoundingBox().getWidthZ();
@@ -73,8 +78,8 @@ public class ParticleUtil {
 
 
         double height = startingHeight + ((entity.getHeight() / maxHeight) * (tick % maxHeight));
-        double x = radius * Math.cos(tick * 5);
-        double z = radius * Math.sin(tick * 5);
+        double x = radius * Math.cos(tick * 5D);
+        double z = radius * Math.sin(tick * 5D);
         Location loc = new Location(entity.getWorld(), centerX + x, height, centerZ + z);
         entity.getWorld().spawnParticle(Particle.REDSTONE, loc, 0, new Particle.DustOptions(color, 1));
     }

@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.plusmc.pluslib.bukkit.managed.PlusCommand;
 
+import java.util.Collections;
 import java.util.List;
 
 public class StartGame implements PlusCommand {
@@ -38,7 +39,7 @@ public class StartGame implements PlusCommand {
 
     @Override
     public List<String> getCompletions(int index) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

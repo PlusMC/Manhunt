@@ -14,15 +14,14 @@ public enum Modifier {
     QUICK_GAME(QuickGame.class, Material.SUGAR, "QG", "Quick Game", "§fEveryone will get tools and armor!");
 
     public final String sortName;
-    public final String name;
-    public final String[] description;
+    public final String itemName;
     public final Material icon;
-
     public final Class<? extends Logic> logic;
+    private final String[] description;
 
-    Modifier(Class<? extends Logic> logic, Material icon, String sortName, String name, String... description) {
+    Modifier(Class<? extends Logic> logic, Material icon, String sortName, String itemName, String... description) {
         this.icon = icon;
-        this.name = name;
+        this.itemName = itemName;
         this.description = description;
         this.logic = logic;
         this.sortName = sortName;
@@ -38,5 +37,9 @@ public enum Modifier {
             Bukkit.broadcastMessage("UNABLE TO GET LOGIC FOR MODIFIER USING EMPTY INSTEAD...");
             return new Empty(game);
         }
+    }
+
+    public String[] getDescription() {
+        return description.clone();
     }
 }

@@ -10,10 +10,12 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class ScoreboardHandler extends Logic {
 
+    public static final String MANHUNT = "manhunt";
+
     public ScoreboardHandler(MHGame game) {
         super(game);
-        game.getScoreboard().registerNewObjective("manhunt", "dummy", "§6§l§n§oManHunt");
-        game.getScoreboard().getObjective("manhunt").setDisplaySlot(DisplaySlot.SIDEBAR);
+        game.getScoreboard().registerNewObjective(MANHUNT, "dummy", "§6§l§n§oManHunt");
+        game.getScoreboard().getObjective(MANHUNT).setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
     public void tick(long tick) {
@@ -22,7 +24,7 @@ public class ScoreboardHandler extends Logic {
 
         Scoreboard board = game.getScoreboard();
         board.getEntries().forEach(board::resetScores);
-        Objective objective = board.getObjective("manhunt");
+        Objective objective = board.getObjective(MANHUNT);
 
         objective.getScore("§l").setScore(8);
 
@@ -37,7 +39,7 @@ public class ScoreboardHandler extends Logic {
 
         objective.getScore("Mode: §b" + game.getGameMode().name() + "%").setScore(3);
 
-        if (game.getModifiers().size() > 0) {
+        if (!game.getModifiers().isEmpty()) {
             StringBuilder sb = new StringBuilder();
             game.getModifiers().forEach(modifier -> sb.append(modifier.sortName).append(", "));
             sb.delete(sb.length() - 2, sb.length());

@@ -56,6 +56,10 @@ public class MHDebug implements PlusCommand {
                 }
             }
             case "openInv" -> p.openInventory(new MHSettings().getInventory());
+            default -> {
+                sender.sendMessage("");
+                return true;
+            }
         }
         return true;
     }

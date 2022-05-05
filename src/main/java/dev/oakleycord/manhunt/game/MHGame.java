@@ -29,10 +29,13 @@ public class MHGame {
     private final CompassHandler compassHandler;
 
     private final Scoreboard scoreboard;
-    private final Team hunters, runners, spectators;
+    private final Team hunters;
+    private final Team runners;
+    private final Team spectators;
     private final List<Modifier> modifiers;
     private final List<Logic> modifierLogic;
-    private long timeStamp, endTimeStamp;
+    private long timeStamp;
+    private long endTimeStamp;
     private Mode mode;
     private Logic gameModeLogic;
 
@@ -85,8 +88,6 @@ public class MHGame {
         spectators.setColor(ChatColor.DARK_GRAY);
     }
 
-    //i fucking love my boyfriend
-    //public long howMuchILoveNiko() {return Long.MAX_VALUE;}
 
     public void pregame() {
         state = GameState.PREGAME;
@@ -129,11 +130,13 @@ public class MHGame {
         state = GameState.POSTGAME;
         endTimeStamp = System.currentTimeMillis();
         freeze();
-        switch (winningTeam) {
-            case HUNTERS -> getPlayers().forEach(player ->
+
+        if (winningTeam == GameTeam.HUNTERS) {
+            getPlayers().forEach(player ->
                     player.sendTitle(ChatColor.RED + "Hunters Win!", "", 10, 20, 10)
             );
-            case RUNNERS -> getPlayers().forEach(player ->
+        } else if (winningTeam == GameTeam.RUNNERS) {
+            getPlayers().forEach(player ->
                     player.sendTitle(ChatColor.GREEN + "Runners Win!", "", 10, 20, 10)
             );
         }
@@ -159,7 +162,7 @@ public class MHGame {
         summary[2] = "§e§lWorld Seed: §b" + this.seed;
         summary[3] = "§e§lMode: §b" + this.mode.name() + "%";
 
-        if (modifiers.size() > 0) {
+        if (!modifiers.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             modifiers.forEach(modifier -> sb.append(modifier.sortName).append(", "));
             sb.delete(sb.length() - 2, sb.length());

@@ -37,7 +37,6 @@ public class PlayerEvents implements Listener {
         if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
         if (!ManHunt.hasGame()) return;
 
-        //todo: fix this: onEntityDamage is called before this event thus the player could be cleared out before this event is called
         if (!(event.getEntity() instanceof Player player)) return;
 
         lastDamaged.put(player, event.getDamager());
@@ -109,7 +108,7 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         if (event.getTo() == null) return;
-        assert event.getTo().getWorld() != null;
+        if (event.getTo().getWorld() == null) return;
 
         if (Bukkit.getWorlds().get(0).equals(event.getTo().getWorld()) && event.getTo().getY() <= 0) {
             Location to = event.getTo();

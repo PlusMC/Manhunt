@@ -19,10 +19,10 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 public class KingSlime extends Logic {
+    private static final int MAX_SIZE = 14;
+    private static final long DELAY = 200;
     private final List<FallingBlock> fallingBlocks = new ArrayList<>();
-    private final int MAX_SIZE = 14;
-    private final long DELAY = 200;
-    private final Map<LivingEntity, Long> lastDamage;
+    private final Map<Entity, Long> lastDamage;
     private final BlockListener blockListener;
     private Slime slime;
     private long startTime = -1;
@@ -97,9 +97,9 @@ public class KingSlime extends Logic {
         }
 
         if (timeLeft <= 0) {
-            for (int i = 0; i < slime.getSize() * 2; i++) {
+            for (int i = 0; i < slime.getSize() * 2; i++)
                 ParticleUtil.helixTicked(slime, Color.fromRGB(15, 200, 15), tick + i);
-            }
+
 
             suck(tick);
             moveTowards();
@@ -114,7 +114,7 @@ public class KingSlime extends Logic {
             vector.multiply(0.0035 * nearest.getLocation().distance(slime.getLocation()));
             slime.teleport(slime.getLocation().setDirection(vector).add(vector));
         } else if (false) {
-            nearest = getNearestLiving(slime, slime.getSize() * 2);
+            nearest = getNearestLiving(slime, slime.getSize() * 2D);
             if (nearest == slime) return;
             Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
             vector.normalize();
@@ -123,81 +123,96 @@ public class KingSlime extends Logic {
         }
     }
 
-    public void suck(long tick) {
+    private Location getCenter() {
         Location center = slime.getLocation();
         center.setY(slime.getBoundingBox().getCenterY());
+        return center;
+    }
+
+    private void suckEntities(long tick) {
+        Location center = getCenter();
 
         for (Entity entity : slime.getNearbyEntities(slime.getSize(), slime.getSize(), slime.getSize())) {
-            if (entity.equals(slime)) continue;
-            if (entity instanceof Player player) {
-                if (player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.CREATIVE)
-                    continue;
-            }
-
-            if (entity instanceof LivingEntity) {
-                if (tick - lastDamage.getOrDefault(entity, 0L) < 100) {
-                    if (tick % 12 == 0) {
-                        entity.getWorld().playSound(entity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.75f);
-                        ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(25, 0, 0));
-                    }
-                    continue;
-                }
-            }
-
-            if (slime.getBoundingBox().overlaps(entity.getBoundingBox())) {
-                if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.damage(slime.getSize(), slime);
-                    Vector vector = livingEntity.getLocation().toVector().subtract(center.toVector());
-                    vector.normalize();
-                    livingEntity.setVelocity(vector);
-                    livingEntity.getWorld().playSound(livingEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.5f);
-                    lastDamage.put(livingEntity, tick);
-                    suckedUp++;
-                    continue;
-                }
-
-                entity.remove();
+            if (entity.equals(slime) || entity instanceof Player player && (player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.CREATIVE))
                 continue;
+
+            if (slime.getBoundingBox().overlaps(entity.getBoundingBox()))
+                damageEntity(entity, tick);
+
+            if (entity instanceof LivingEntity living) {
+                playGrabEffect(living, tick);
             }
 
-            Vector vector = center.toVector().subtract(entity.getLocation().toVector());
-            double multiplier = center.distance(entity.getLocation()) * 10D / slime.getSize();
+            //use last damage as a pull cooldown
+            if (tick - lastDamage.getOrDefault(entity, 0L) > 100)
+                pullEntity(entity, center);
+        }
+    }
 
-            Vector velocity = entity.getVelocity();
-            velocity.setY(velocity.getY() * 0.5);
-
-            entity.setVelocity(velocity.add(vector.normalize().multiply(1 / multiplier)));
-
-            if (tick % 12 == 0) {
-                if (entity instanceof LivingEntity) {
-                    ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(0, 255, 0));
-                    entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_SLIME_SQUISH, 1, 0.25f);
-                }
-            }
+    private void playGrabEffect(LivingEntity entity, long tick) {
+        if (tick % 12 != 0) return;
+        Location center = getCenter();
+        if (tick - lastDamage.getOrDefault(entity, 0L) < 100) {
+            entity.getWorld().playSound(entity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.75f);
+            ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(25, 0, 0));
+            return;
         }
 
+        ParticleUtil.playGrabEffect(entity, center, Color.fromRGB(0, 255, 0));
+        entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_SLIME_SQUISH, 1, 0.25f);
 
-        List<Block> blocks = getBlocks(center, slime.getSize());
-        for (Block block : blocks) {
-            double chance = ((double) slime.getSize() / 50) / center.distance(block.getLocation());
-            if (chance > Math.random()) {
-                BlockData data = block.getBlockData().clone();
-                block.setType(Material.AIR);
-                if (isBlockExposed(block) && fallingBlocks.size() < 50 && Math.random() < 0.75) {
-                    FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), data);
-                    fallingBlocks.add(fallingBlock);
-                    fallingBlock.setDropItem(false);
-                    fallingBlock.getWorld().playSound(fallingBlock.getLocation(), fallingBlock.getBlockData().getSoundGroup().getBreakSound(), 1, 1);
-                }
-                suckedUp++;
+    }
 
-            }
+    private void pullEntity(Entity entity, Location location) {
+        Vector vector = location.toVector().subtract(entity.getLocation().toVector());
+        double multiplier = location.distance(entity.getLocation()) * 10D / slime.getSize();
+
+        Vector velocity = entity.getVelocity();
+        velocity.setY(velocity.getY() * 0.5);
+
+        entity.setVelocity(velocity.add(vector.normalize().multiply(1 / multiplier)));
+    }
+
+    private void damageEntity(Entity entity, long tick) {
+        if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.damage(slime.getSize(), slime);
+            Vector vector = livingEntity.getLocation().toVector().subtract(getCenter().toVector());
+            vector.normalize();
+            livingEntity.setVelocity(vector);
+            livingEntity.getWorld().playSound(livingEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.5f);
+            lastDamage.put(livingEntity, tick);
+            suckedUp++;
+            return;
         }
+
+        entity.remove();
+    }
+
+    private void suck(long tick) {
+        suckBlocks();
+        suckEntities(tick);
 
         if (suckedUp > Math.pow(2, slime.getSize())) {
             if (slime.getSize() <= MAX_SIZE)
                 slime.setSize(slime.getSize() + 1);
             suckedUp = 0;
+        }
+    }
+
+    private void suckBlocks() {
+        Location center = getCenter();
+        for (Block block : getBlocks(center, slime.getSize())) {
+            double chance = ((double) slime.getSize() / 50) / center.distance(block.getLocation());
+            if (chance < Math.random()) continue;
+            BlockData data = block.getBlockData().clone();
+            block.setType(Material.AIR);
+            if (isBlockExposed(block) && fallingBlocks.size() < 50 && Math.random() < 0.75) {
+                FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), data);
+                fallingBlocks.add(fallingBlock);
+                fallingBlock.setDropItem(false);
+                fallingBlock.getWorld().playSound(fallingBlock.getLocation(), fallingBlock.getBlockData().getSoundGroup().getBreakSound(), 1, 1);
+            }
+            suckedUp++;
         }
     }
 

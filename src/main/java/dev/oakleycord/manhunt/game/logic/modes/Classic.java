@@ -44,7 +44,7 @@ public class Classic extends Logic {
             if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
             MHGame game = getGame();
             if (game.getState() != GameState.INGAME) return;
-            if (!(event.getEntityType() == EntityType.ENDER_DRAGON)) return;
+            if (event.getEntityType() != EntityType.ENDER_DRAGON) return;
 
             game.postGame(GameTeam.RUNNERS);
         }

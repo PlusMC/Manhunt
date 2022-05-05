@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 
 public enum Mode {
     CLASSIC(Classic.class, Material.DRAGON_HEAD, "§fRunners must reach the end and kill the Ender Dragon before the Hunters kills them!", "§fTruly a classic."),
@@ -13,8 +14,8 @@ public enum Mode {
     ENDEREYE(EnderEye.class, Material.ENDER_EYE, "§fRunners must reach the nether and craft an Ender Eye before the Hunters kills them!", "§fWHAAAAAT?");
 
     public final Material icon;
-    public final String[] description;
     final Class<? extends Logic> logic;
+    private final String[] description;
 
     Mode(Class<? extends Logic> logic, Material icon, String... description) {
         this.icon = icon;
@@ -32,5 +33,9 @@ public enum Mode {
             Bukkit.broadcastMessage("UNABLE TO GET LOGIC FOR GAMEMODE USING CLASSIC% INSTEAD...");
             return new Classic(game);
         }
+    }
+
+    public String[] getDescription() {
+        return Arrays.copyOf(description, description.length);
     }
 }

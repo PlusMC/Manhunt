@@ -27,19 +27,17 @@ public class CompassHandler extends Logic {
 
             trackCompass(player, nearestPlayer);
 
-            if (!player.getInventory().getItemInMainHand().getType().equals(Material.COMPASS)) continue;
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aCompass is pointing to the nearest Runner."));
+            if (player.getInventory().getItemInMainHand().getType().equals(Material.COMPASS))
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aCompass is pointing to the nearest Runner."));
         }
     }
 
 
     private void trackCompass(Player player, Player nearestPlayer) {
         for (ItemStack item : player.getInventory().getContents()) {
-            if (item == null) continue;
-            if (item.getType() != Material.COMPASS) continue;
+            if (item == null || item.getType() != Material.COMPASS || item.getItemMeta() == null) continue;
 
             CompassMeta compassMeta = (CompassMeta) item.getItemMeta();
-            if (compassMeta == null) continue;
 
             Location lodestoneLocation = nearestPlayer.getLocation();
 
@@ -58,9 +56,7 @@ public class CompassHandler extends Logic {
         Player nearestPlayer = null;
 
         for (Player otherPlayer : player.getWorld().getPlayers()) {
-            if (!getGame().getRunners().hasEntry(otherPlayer.getName())) continue;
-
-            if (otherPlayer.equals(player)) continue;
+            if (!getGame().getRunners().hasEntry(otherPlayer.getName()) || otherPlayer.equals(player)) continue;
 
             double otherPlayerDistance = playerLocation.distance(otherPlayer.getLocation());
 

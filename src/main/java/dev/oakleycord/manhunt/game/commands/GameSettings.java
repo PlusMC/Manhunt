@@ -7,6 +7,7 @@ import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 import org.plusmc.pluslib.bukkit.managed.PlusCommand;
 
+import java.util.Collections;
 import java.util.List;
 
 public class GameSettings implements PlusCommand {
@@ -33,7 +34,7 @@ public class GameSettings implements PlusCommand {
 
     @Override
     public List<String> getCompletions(int index) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

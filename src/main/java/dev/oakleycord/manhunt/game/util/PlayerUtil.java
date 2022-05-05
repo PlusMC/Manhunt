@@ -11,12 +11,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.plusmc.pluslib.mongo.User;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 public class PlayerUtil {
-    private static List<UUID> wasRunner;
+    private static final List<UUID> wasRunner = new ArrayList<>();
+
+    private PlayerUtil() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static void resetAdvancements(Player player) {
         Iterator<Advancement> iterator = Bukkit.advancementIterator();
@@ -34,7 +39,8 @@ public class PlayerUtil {
         WorldBorder border = p.getWorld().getWorldBorder();
         double size = border.getSize() / 2;
         Location center = border.getCenter();
-        double x = loc.getX() - center.getX(), z = loc.getZ() - center.getZ();
+        double x = loc.getX() - center.getX();
+        double z = loc.getZ() - center.getZ();
         return ((x > size || (-x) > size) || (z > size || (-z) > size));
     }
 

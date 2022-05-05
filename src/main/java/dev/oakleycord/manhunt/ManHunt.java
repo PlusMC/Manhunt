@@ -39,22 +39,21 @@ public final class ManHunt extends JavaPlugin {
             new PortalEvents()
     );
 
-    private static MHGame GAME;
+    private static MHGame game;
     private static DatabaseHandler db;
 
     public static MHGame getGame() {
-        return GAME;
+        return game;
     }
 
     public static void createGame() {
         if (!hasGame())
-            GAME = new MHGame();
+            game = new MHGame();
     }
 
     public static void removeGame() {
         if (!hasGame()) return;
-        GAME = null;
-        System.gc();
+        game = null;
     }
 
     public static DatabaseHandler getDatabase() {
@@ -77,14 +76,22 @@ public final class ManHunt extends JavaPlugin {
         return JavaPlugin.getPlugin(ManHunt.class);
     }
 
-    private static void registerEnchant(Enchantment enchant) {
+    private static void registerEnchant() {
         try {
             Field f = Enchantment.class.getDeclaredField("acceptingNew");
-            f.setAccessible(true);
             f.set(null, true);
-            Enchantment.registerEnchantment(enchant);
+            Enchantment.registerEnchantment(OtherUtil.EMPTY_ENCHANT);
         } catch (Exception e) {
-            e.printStackTrace();
+            //ignore
+        }
+    }
+
+    private static void startDatabase() {
+        try {
+            db = new DatabaseHandler();
+            getInstance().getLogger().info("Database Loaded!");
+        } catch (Exception ex) {
+            db = null;
         }
     }
 
@@ -100,14 +107,9 @@ public final class ManHunt extends JavaPlugin {
         for (PlusCommand cmd : COMMANDS)
             BaseManager.registerAny(cmd, this);
 
-        try {
-            db = new DatabaseHandler();
-            getLogger().info("Database Loaded!");
-        } catch (Exception ex) {
-            db = null;
-        }
+        startDatabase();
 
-        registerEnchant(OtherUtil.EMPTY_ENCHANT);
+        registerEnchant();
     }
 
     @Override
