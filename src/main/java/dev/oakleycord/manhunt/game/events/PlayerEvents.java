@@ -45,7 +45,7 @@ public class PlayerEvents implements Listener {
         Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + event.getDamager().getName() + "!");
 
         if (!(event.getDamager() instanceof Player damager)) return;
-        PlayerUtil.incrementKills(damager);
+        PlayerUtil.incrementKills(damager, ManHunt.getGame().getGameTeam(player));
         PlayerUtil.rewardPoints(damager, 25, "§aKill");
     }
 
@@ -84,7 +84,7 @@ public class PlayerEvents implements Listener {
         Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + lastDamager.getName() + "!");
 
         if (!(lastDamager instanceof Player playerKiller)) return;
-        PlayerUtil.incrementKills(playerKiller);
+        PlayerUtil.incrementKills(playerKiller, ManHunt.getGame().getGameTeam(playerKiller));
         PlayerUtil.rewardPoints(playerKiller, 25, "§aKill");
     }
 

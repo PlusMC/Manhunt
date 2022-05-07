@@ -54,7 +54,7 @@ public class GUIUtil {
     public static GUIElement getNextPageElement(PaginatedGUI gui) {
         ItemStack next = new ItemBuilder(Material.ARROW).setName("§cNext").build();
         return new GUIElement(next, event -> {
-            if (gui.getPage() + 1 > gui.getPageAmount()) return;
+            if (gui.getPage() + 1 >= gui.getPageAmount()) return;
             gui.setPage(gui.getPage() + 1, true);
             if (event.getWhoClicked() instanceof Player p)
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1.25f);

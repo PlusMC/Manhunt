@@ -18,7 +18,6 @@ import org.plusmc.pluslib.bukkit.managing.GUIManager;
 import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
 import org.plusmc.pluslib.mongo.DatabaseHandler;
-import org.plusmc.pluslib.mongo.User;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -64,18 +63,13 @@ public final class ManHunt extends JavaPlugin {
         return db;
     }
 
-    public static User getUser(String uuid) {
-        return db.getUser(uuid);
-    }
 
     public static boolean hasDB() {
-        return db != null;
+        return db != null && db.isLoaded();
     }
 
-    @Override
-    public void onDisable() {
-        if (db != null)
-            db.shutdown();
+    public static ManHunt getInstance() {
+        return JavaPlugin.getPlugin(ManHunt.class);
     }
 
     @Override
@@ -96,12 +90,8 @@ public final class ManHunt extends JavaPlugin {
     }
 
     private static void startDatabase() {
-        try {
-            db = new DatabaseHandler();
-            getInstance().getLogger().info("Database Loaded!");
-        } catch (Exception ex) {
-            db = null;
-        }
+        DatabaseHandler.createInstance();
+        db = DatabaseHandler.getInstance();
     }
 
     private static void registerEnchant() {
@@ -112,9 +102,5 @@ public final class ManHunt extends JavaPlugin {
         } catch (Exception e) {
             //ignore
         }
-    }
-
-    public static ManHunt getInstance() {
-        return JavaPlugin.getPlugin(ManHunt.class);
     }
 }
