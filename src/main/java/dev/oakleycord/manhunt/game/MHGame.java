@@ -1,10 +1,10 @@
 package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.game.boards.ManhuntBoard;
 import dev.oakleycord.manhunt.game.logic.GameLoop;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
-import dev.oakleycord.manhunt.game.logic.handlers.ScoreboardHandler;
 import dev.oakleycord.manhunt.game.logic.modes.Mode;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
@@ -25,10 +25,9 @@ public class MHGame {
     private final long seed;
     private final World[] worlds;
 
-    private final ScoreboardHandler scoreboardHandler;
+    private final ManhuntBoard board;
     private final CompassHandler compassHandler;
 
-    private final Scoreboard scoreboard;
     private final Team hunters;
     private final Team runners;
     private final Team spectators;
@@ -71,23 +70,27 @@ public class MHGame {
         }
 
         assert Bukkit.getScoreboardManager() != null;
-        this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.scoreboardHandler = new ScoreboardHandler(this);
+        this.board = new ManhuntBoard(this);
         this.compassHandler = new CompassHandler(this);
 
-        this.hunters = scoreboard.registerNewTeam("Hunters");
+        this.hunters = getScoreboard().registerNewTeam("Hunters");
         hunters.setAllowFriendlyFire(false);
         hunters.setPrefix(ChatColor.RED + "" + ChatColor.BOLD + "[Hunter] ");
 
-        this.runners = scoreboard.registerNewTeam("Runners");
+        this.runners = getScoreboard().registerNewTeam("Runners");
         runners.setAllowFriendlyFire(false);
         runners.setPrefix(ChatColor.GREEN + "" + ChatColor.BOLD + "[Runner] ");
 
-        this.spectators = scoreboard.registerNewTeam("Spectators");
+        this.spectators = getScoreboard().registerNewTeam("Spectators");
         spectators.setPrefix(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[Spectator] ");
         spectators.setColor(ChatColor.DARK_GRAY);
+
+        ManHunt.getBoardHandler().addBoard(board);
     }
 
+    public Scoreboard getScoreboard() {
+        return board.getScoreboard();
+    }
 
     public void pregame() {
         state = GameState.PREGAME;
@@ -97,7 +100,7 @@ public class MHGame {
             world.setDifficulty(Difficulty.PEACEFUL);
         }
         freeze();
-        scoreboardHandler.tick(0);
+        board.tick(0);
     }
 
     private void freeze() {
@@ -177,6 +180,7 @@ public class MHGame {
     }
 
     public void destroy(GameTeam winningTeam) {
+        ManHunt.getBoardHandler().removeBoard(board);
         BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
 
         String time = OtherUtil.formatTime(endTimeStamp - this.timeStamp);
@@ -226,7 +230,7 @@ public class MHGame {
     }
 
     public Team getTeam(Player player) {
-        return scoreboard.getEntryTeam(player.getName());
+        return getScoreboard().getEntryTeam(player.getName());
     }
 
     public long getTimeStamp() {
@@ -257,12 +261,8 @@ public class MHGame {
         return spectators;
     }
 
-    public Scoreboard getScoreboard() {
-        return scoreboard;
-    }
-
     public void setTeam(Player player, GameTeam team) {
-        Team t = scoreboard.getEntryTeam(player.getName());
+        Team t = getScoreboard().getEntryTeam(player.getName());
         if (t != null) t.removeEntry(player.getName());
 
         switch (team) {
@@ -282,11 +282,11 @@ public class MHGame {
     }
 
     public boolean hasTeam(Player player) {
-        return scoreboard.getEntryTeam(player.getName()) != null;
+        return getScoreboard().getEntryTeam(player.getName()) != null;
     }
 
-    public ScoreboardHandler getScoreboardHandler() {
-        return scoreboardHandler;
+    public ManhuntBoard getScoreboardHandler() {
+        return board;
     }
 
     public CompassHandler getCompassHandler() {

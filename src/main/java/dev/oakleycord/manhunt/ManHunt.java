@@ -12,6 +12,7 @@ import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.plusmc.pluslib.bukkit.handlers.BoardHandler;
 import org.plusmc.pluslib.bukkit.managed.PlusCommand;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
 import org.plusmc.pluslib.bukkit.managing.GUIManager;
@@ -40,6 +41,7 @@ public final class ManHunt extends JavaPlugin {
 
     private static MHGame game;
     private static DatabaseHandler db;
+    private static BoardHandler boardHandler;
 
     public static void createGame() {
         if (!hasGame())
@@ -54,6 +56,16 @@ public final class ManHunt extends JavaPlugin {
         return game;
     }
 
+    public static BoardHandler getBoardHandler() {
+        if (boardHandler == null)
+            boardHandler = new BoardHandler(getInstance());
+        return boardHandler;
+    }
+
+    public static ManHunt getInstance() {
+        return JavaPlugin.getPlugin(ManHunt.class);
+    }
+
     public static void removeGame() {
         if (!hasGame()) return;
         game = null;
@@ -63,13 +75,8 @@ public final class ManHunt extends JavaPlugin {
         return db;
     }
 
-
     public static boolean hasDB() {
         return db != null && db.isLoaded();
-    }
-
-    public static ManHunt getInstance() {
-        return JavaPlugin.getPlugin(ManHunt.class);
     }
 
     @Override

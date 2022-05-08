@@ -94,7 +94,7 @@ public class PlayerUtil {
                 user.getUserMH().addDeathRunner();
         });
     }
-
+    
     public static void incrementLoses(Player player, GameTeam team) {
         if (!ManHunt.hasDB()) return;
         ManHunt.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
