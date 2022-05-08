@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 public class Classic extends Logic {
@@ -37,7 +38,7 @@ public class Classic extends Logic {
         HandlerList.unregisterAll(killListener);
     }
 
-    private class KillListener implements org.bukkit.event.Listener {
+    private class KillListener implements Listener {
 
         @EventHandler
         public void onEntityDeath(EntityDeathEvent event) {

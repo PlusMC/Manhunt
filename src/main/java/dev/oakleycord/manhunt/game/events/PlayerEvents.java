@@ -71,14 +71,14 @@ public class PlayerEvents implements Listener {
         player.getWorld().strikeLightningEffect(player.getLocation());
         PlayerUtil.resetPlayer(player, true, true);
 
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)
+                || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
+                || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) return;
+        
         if (!lastDamaged.containsKey(player)) {
             Bukkit.broadcastMessage("§c" + player.getDisplayName() + " has died!");
             return;
         }
-
-        if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)
-                || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
-                || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) return;
 
         Entity lastDamager = lastDamaged.get(player);
         Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + lastDamager.getName() + "!");

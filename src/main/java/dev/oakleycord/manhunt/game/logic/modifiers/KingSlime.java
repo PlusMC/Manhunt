@@ -11,6 +11,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -272,7 +273,7 @@ public class KingSlime extends Logic {
         HandlerList.unregisterAll(blockListener);
     }
 
-    private class BlockListener implements org.bukkit.event.Listener {
+    private class BlockListener implements Listener {
         @EventHandler
         public void onBlockLand(EntityChangeBlockEvent event) {
             if (!(event.getEntity() instanceof FallingBlock blockEntity))

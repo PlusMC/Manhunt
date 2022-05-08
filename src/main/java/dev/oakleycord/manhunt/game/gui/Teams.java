@@ -35,7 +35,6 @@ public class Teams extends PaginatedGUI {
             Map<Integer, GUIElement> page = new HashMap<>();
             int index = 0;
             for (int j = 0; j < 27 && index < game.getPlayers().size(); j++, index = i * 27 + j) {
-                System.out.println(index);
                 Player player = game.getPlayers().get(index);
                 if (!game.hasTeam(player)) continue;
 

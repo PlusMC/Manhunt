@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -75,7 +76,7 @@ public class QuickGame extends Logic {
             getGame().getPlayers().stream().map(Player::getInventory).forEach(Inventory::clear);
     }
 
-    private class DeathListener implements org.bukkit.event.Listener {
+    private class DeathListener implements Listener {
 
         //low priority so we can give the player the items after resetting their inventory
         @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
