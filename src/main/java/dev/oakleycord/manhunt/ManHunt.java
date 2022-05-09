@@ -8,16 +8,16 @@ import dev.oakleycord.manhunt.game.commands.StartGame;
 import dev.oakleycord.manhunt.game.events.PlayerEvents;
 import dev.oakleycord.manhunt.game.events.PortalEvents;
 import dev.oakleycord.manhunt.game.events.WorldEvents;
+import dev.oakleycord.manhunt.game.items.GameSettingsItem;
+import dev.oakleycord.manhunt.game.items.StartGameItem;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.plusmc.pluslib.bukkit.handlers.BoardHandler;
 import org.plusmc.pluslib.bukkit.managed.PlusCommand;
-import org.plusmc.pluslib.bukkit.managing.BaseManager;
-import org.plusmc.pluslib.bukkit.managing.GUIManager;
-import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
-import org.plusmc.pluslib.bukkit.managing.TickingManager;
+import org.plusmc.pluslib.bukkit.managed.PlusItem;
+import org.plusmc.pluslib.bukkit.managing.*;
 import org.plusmc.pluslib.mongo.DatabaseHandler;
 
 import java.lang.reflect.Field;
@@ -37,6 +37,11 @@ public final class ManHunt extends JavaPlugin {
             new PlayerEvents(),
             new WorldEvents(),
             new PortalEvents()
+    );
+
+    private static final List<PlusItem> ITEMS = List.of(
+            new GameSettingsItem(),
+            new StartGameItem()
     );
 
     private static MHGame game;
@@ -85,11 +90,16 @@ public final class ManHunt extends JavaPlugin {
             getServer().getPluginManager().registerEvents(listener, this);
 
         BaseManager.createManager(PlusCommandManager.class, this);
+        BaseManager.createManager(PlusItemManager.class, this);
         BaseManager.createManager(TickingManager.class, this);
         BaseManager.createManager(GUIManager.class, this);
 
+
         for (PlusCommand cmd : COMMANDS)
             BaseManager.registerAny(cmd, this);
+
+        for (PlusItem item : ITEMS)
+            BaseManager.registerAny(item, this);
 
         startDatabase();
 

@@ -38,6 +38,8 @@ public class MHGame {
     private Mode mode;
     private Logic gameModeLogic;
 
+    private boolean flipThroughPlayers;
+
     private GameState state;
     private GameLoop gameLoop;
 
@@ -113,7 +115,6 @@ public class MHGame {
     }
 
     public void startGame() {
-
         state = GameState.INGAME;
         this.timeStamp = System.currentTimeMillis();
 
@@ -134,6 +135,7 @@ public class MHGame {
 
         getPlayers().forEach(player -> {
             player.sendTitle(ChatColor.GOLD + "" + ChatColor.BOLD + "Game Started!", "", 10, 20, 10);
+            PlayerUtil.resetPlayer(player);
             player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
         });
     }
