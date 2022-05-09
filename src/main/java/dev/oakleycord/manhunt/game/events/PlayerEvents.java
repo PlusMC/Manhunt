@@ -171,24 +171,23 @@ public class PlayerEvents implements Listener {
         Player player = event.getPlayer();
 
 
-        if (!OtherUtil.isManHunt(event.getPlayer().getWorld())) {
+        if (!OtherUtil.isManHunt(event.getPlayer().getWorld()) && !ManHunt.hasGame()) {
             assert Bukkit.getScoreboardManager() != null;
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0.5, 1, 0.5));
             PlayerUtil.resetPlayer(player);
             player.setGameMode(GameMode.SURVIVAL);
-            if (!ManHunt.hasGame()) {
-                Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> {
-                    ManHunt.createGame();
-                    MHGame game = ManHunt.getGame();
-                    game.pregame();
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        World world = game.getOverworld();
-                        world.getSpawnLocation().getChunk().load();
-                        p.teleport(world.getSpawnLocation().add(0, 1, 0));
-                    }
-                }, 20);
-            }
+            Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> {
+                if (!ManHunt.hasGame()) return;
+                ManHunt.createGame();
+                MHGame game = ManHunt.getGame();
+                game.pregame();
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    World world = game.getWorldHandler().getWorld();
+                    world.getSpawnLocation().getChunk().load();
+                    p.teleport(world.getSpawnLocation().add(0, 1, 0));
+                }
+            }, 20);
             return;
         }
 

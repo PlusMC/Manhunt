@@ -67,7 +67,7 @@ public class PlayerUtil {
         if (respawn) {
             if (player.getBedSpawnLocation() != null)
                 player.teleport(player.getBedSpawnLocation());
-            else player.teleport(game.getOverworld().getSpawnLocation().add(0, 1, 0));
+            else player.teleport(game.getWorldHandler().getWorld().getSpawnLocation().add(0, 1, 0));
         }
 
         if (ManHunt.hasGame() && wasDeath) {
@@ -94,7 +94,7 @@ public class PlayerUtil {
                 user.getUserMH().addDeathRunner();
         });
     }
-    
+
     public static void incrementLoses(Player player, GameTeam team) {
         if (!ManHunt.hasDB()) return;
         ManHunt.getDatabase().asyncUserAction(player.getUniqueId(), user -> {

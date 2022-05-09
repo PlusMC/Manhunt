@@ -15,6 +15,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
 
 import java.io.File;
@@ -23,7 +24,6 @@ import java.util.*;
 public class MHGame {
 
     private final long seed;
-    private final World[] worlds;
 
     private final ManhuntBoard board;
     private final CompassHandler compassHandler;
@@ -33,13 +33,11 @@ public class MHGame {
     private final Team spectators;
     private final List<Modifier> modifiers;
     private final List<Logic> modifierLogic;
+    private final MultiWorldHandler worldHandler;
     private long timeStamp;
     private long endTimeStamp;
     private Mode mode;
     private Logic gameModeLogic;
-
-    private boolean flipThroughPlayers;
-
     private GameState state;
     private GameLoop gameLoop;
 
@@ -54,17 +52,17 @@ public class MHGame {
 
         this.timeStamp = System.currentTimeMillis();
 
-        this.worlds = new World[3];
         this.seed = new Random().nextLong();
 
         Bukkit.broadcastMessage("§6Loading worlds (§e1§6/§e3§6)...");
-        worlds[0] = new WorldCreator("mh_world_1").seed(seed).createWorld();
+        World overworld = new WorldCreator("mh_world_1").seed(seed).createWorld();
         Bukkit.broadcastMessage("§6Loading worlds (§e2§6/§e3§6)...");
-        worlds[1] = new WorldCreator("mh_world_2").seed(seed).environment(World.Environment.NETHER).createWorld();
+        World nether = new WorldCreator("mh_world_2").seed(seed).environment(World.Environment.NETHER).createWorld();
         Bukkit.broadcastMessage("§6Loading worlds (§e3§6/§e3§6)...");
-        worlds[2] = new WorldCreator("mh_world_3").seed(seed).environment(World.Environment.THE_END).createWorld();
+        World end = new WorldCreator("mh_world_3").seed(seed).environment(World.Environment.THE_END).createWorld();
+        worldHandler = new MultiWorldHandler(ManHunt.getInstance(), overworld, nether, end);
 
-        for (World world : worlds) {
+        for (World world : worldHandler.getWorlds()) {
             world.setAutoSave(false);
             world.getSpawnLocation().getChunk().load();
             world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
@@ -96,7 +94,7 @@ public class MHGame {
 
     public void pregame() {
         state = GameState.PREGAME;
-        for (World world : worlds) {
+        for (World world : worldHandler.getWorlds()) {
             world.getWorldBorder().setCenter(world.getSpawnLocation());
             world.getWorldBorder().setSize(30);
             world.setDifficulty(Difficulty.PEACEFUL);
@@ -106,7 +104,7 @@ public class MHGame {
     }
 
     private void freeze() {
-        for (World world : worlds) {
+        for (World world : worldHandler.getWorlds()) {
             world.setSpawnFlags(false, false);
             world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
             world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
@@ -118,7 +116,7 @@ public class MHGame {
         state = GameState.INGAME;
         this.timeStamp = System.currentTimeMillis();
 
-        for (World world : worlds) {
+        for (World world : worldHandler.getWorlds()) {
             world.getWorldBorder().setSize(300000000);
             world.setDifficulty(Difficulty.HARD);
         }
@@ -141,7 +139,7 @@ public class MHGame {
     }
 
     private void unfreeze() {
-        for (World world : worlds) {
+        for (World world : worldHandler.getWorlds()) {
             world.setSpawnFlags(true, true);
             world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
             world.setGameRule(GameRule.DO_WEATHER_CYCLE, true);
@@ -151,7 +149,7 @@ public class MHGame {
 
     public List<Player> getPlayers() {
         List<Player> players = new ArrayList<>();
-        for (World world : worlds)
+        for (World world : worldHandler.getWorlds())
             players.addAll(world.getPlayers());
         return players;
     }
@@ -214,7 +212,7 @@ public class MHGame {
             PlayerUtil.resetPlayer(player);
         });
 
-        for (World world : worlds) {
+        for (World world : worldHandler.getWorlds()) {
             String name = world.getName();
             Bukkit.unloadWorld(world, false);
             OtherUtil.deleteDir(new File(Bukkit.getWorldContainer(), name));
@@ -239,16 +237,8 @@ public class MHGame {
         return timeStamp;
     }
 
-    public World getOverworld() {
-        return worlds[0];
-    }
-
-    public World getNether() {
-        return worlds[1];
-    }
-
-    public World getEnd() {
-        return worlds[2];
+    public MultiWorldHandler getWorldHandler() {
+        return worldHandler;
     }
 
     public Team getHunters() {

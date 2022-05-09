@@ -29,7 +29,7 @@ public class GameSettingsItem implements PlusItem {
     }
 
     @Override
-    public void onInteractBlock(PlayerInteractEvent event) {
+    public void onInteract(PlayerInteractEvent event) {
         event.getPlayer().openInventory(new MHSettings().getInventory());
     }
 }

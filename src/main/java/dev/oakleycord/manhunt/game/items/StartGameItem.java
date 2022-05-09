@@ -30,7 +30,7 @@ public class StartGameItem implements PlusItem {
     }
 
     @Override
-    public void onInteractBlock(PlayerInteractEvent event) {
+    public void onInteract(PlayerInteractEvent event) {
         if (!OtherUtil.isManHunt(event.getPlayer().getWorld())) return;
         MHGame game = ManHunt.getGame();
         if (game.getRunners().getSize() == 0) {

@@ -6,7 +6,6 @@ import dev.oakleycord.manhunt.game.commands.InitGame;
 import dev.oakleycord.manhunt.game.commands.MHDebug;
 import dev.oakleycord.manhunt.game.commands.StartGame;
 import dev.oakleycord.manhunt.game.events.PlayerEvents;
-import dev.oakleycord.manhunt.game.events.PortalEvents;
 import dev.oakleycord.manhunt.game.events.WorldEvents;
 import dev.oakleycord.manhunt.game.items.GameSettingsItem;
 import dev.oakleycord.manhunt.game.items.StartGameItem;
@@ -15,9 +14,13 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.plusmc.pluslib.bukkit.handlers.BoardHandler;
+import org.plusmc.pluslib.bukkit.handlers.GUIHandler;
 import org.plusmc.pluslib.bukkit.managed.PlusCommand;
 import org.plusmc.pluslib.bukkit.managed.PlusItem;
-import org.plusmc.pluslib.bukkit.managing.*;
+import org.plusmc.pluslib.bukkit.managing.BaseManager;
+import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
+import org.plusmc.pluslib.bukkit.managing.PlusItemManager;
+import org.plusmc.pluslib.bukkit.managing.TickingManager;
 import org.plusmc.pluslib.mongo.DatabaseHandler;
 
 import java.lang.reflect.Field;
@@ -35,8 +38,7 @@ public final class ManHunt extends JavaPlugin {
 
     private static final List<Listener> LISTENERS = List.of(
             new PlayerEvents(),
-            new WorldEvents(),
-            new PortalEvents()
+            new WorldEvents()
     );
 
     private static final List<PlusItem> ITEMS = List.of(
@@ -92,7 +94,7 @@ public final class ManHunt extends JavaPlugin {
         BaseManager.createManager(PlusCommandManager.class, this);
         BaseManager.createManager(PlusItemManager.class, this);
         BaseManager.createManager(TickingManager.class, this);
-        BaseManager.createManager(GUIManager.class, this);
+        new GUIHandler(this);
 
 
         for (PlusCommand cmd : COMMANDS)
