@@ -183,7 +183,7 @@ public class PlayerEvents implements Listener {
                 MHGame game = ManHunt.getGame();
                 game.pregame();
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    World world = game.getWorldHandler().getWorld();
+                    World world = game.getWorldHandler().getWorldOverworld();
                     world.getSpawnLocation().getChunk().load();
                     p.teleport(world.getSpawnLocation().add(0, 1, 0));
                 }

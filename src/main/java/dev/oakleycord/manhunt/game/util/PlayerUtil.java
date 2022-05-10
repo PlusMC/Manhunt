@@ -67,7 +67,7 @@ public class PlayerUtil {
         if (respawn) {
             if (player.getBedSpawnLocation() != null)
                 player.teleport(player.getBedSpawnLocation());
-            else player.teleport(game.getWorldHandler().getWorld().getSpawnLocation().add(0, 1, 0));
+            else player.teleport(game.getWorldHandler().getWorldOverworld().getSpawnLocation().add(0, 1, 0));
         }
 
         if (ManHunt.hasGame() && wasDeath) {

@@ -46,7 +46,7 @@ public class KingSlime extends Logic {
         team.setColor(ChatColor.GREEN);
 
 
-        slime = game.getWorldHandler().getWorld().spawn(game.getWorldHandler().getWorld().getSpawnLocation().add(0, 1, 0), Slime.class);
+        slime = game.getWorldHandler().getWorldOverworld().spawn(game.getWorldHandler().getWorldOverworld().getSpawnLocation().add(0, 1, 0), Slime.class);
         team.addEntry(slime.getUniqueId().toString());
         slime.setAI(false);
         slime.setGravity(false);

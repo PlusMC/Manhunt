@@ -50,7 +50,7 @@ public class InitGame implements PlusCommand {
         MHGame game = ManHunt.getGame();
         game.pregame();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            World world = game.getWorldHandler().getWorld();
+            World world = game.getWorldHandler().getWorldOverworld();
             world.getSpawnLocation().getChunk().load();
             player.teleport(world.getSpawnLocation().add(0, 1, 0));
         }

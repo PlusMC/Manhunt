@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
 
-import java.io.File;
 import java.util.*;
 
 public class MHGame {
@@ -27,13 +26,13 @@ public class MHGame {
 
     private final ManhuntBoard board;
     private final CompassHandler compassHandler;
+    private final MultiWorldHandler worldHandler;
 
     private final Team hunters;
     private final Team runners;
     private final Team spectators;
     private final List<Modifier> modifiers;
     private final List<Logic> modifierLogic;
-    private final MultiWorldHandler worldHandler;
     private long timeStamp;
     private long endTimeStamp;
     private Mode mode;
@@ -212,12 +211,7 @@ public class MHGame {
             PlayerUtil.resetPlayer(player);
         });
 
-        for (World world : worldHandler.getWorlds()) {
-            String name = world.getName();
-            Bukkit.unloadWorld(world, false);
-            OtherUtil.deleteDir(new File(Bukkit.getWorldContainer(), name));
-        }
-
+        worldHandler.delete();
         ManHunt.removeGame();
     }
 
