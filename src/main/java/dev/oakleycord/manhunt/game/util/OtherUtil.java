@@ -8,9 +8,6 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.nio.file.Files;
-
 public class OtherUtil {
     public static final Enchantment EMPTY_ENCHANT = new EmptyEnchant(new NamespacedKey(ManHunt.getInstance(), "empty"));
 
@@ -29,19 +26,6 @@ public class OtherUtil {
 
     public static boolean isManHunt(World world) {
         return world.getName().startsWith("mh_world_");
-    }
-
-    public static void deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            for (File file : dir.listFiles()) {
-                deleteDir(file);
-            }
-        }
-        try {
-            Files.delete(dir.toPath());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
 

@@ -22,7 +22,7 @@ import java.util.*;
 public class KingSlime extends Logic {
     private static final int MAX_SIZE = 14;
     private static final long DELAY = 200;
-    private final List<FallingBlock> fallingBlocks = new ArrayList<>();
+    private final List<FallingBlock> fallingBlocks;
     private final Map<Entity, Long> lastDamage;
     private final BlockListener blockListener;
     private Slime slime;
@@ -32,28 +32,8 @@ public class KingSlime extends Logic {
     public KingSlime(MHGame game) {
         super(game);
         lastDamage = new HashMap<>();
-
-        spawnSlime();
         blockListener = new BlockListener();
-    }
-
-    public void spawnSlime() {
-        MHGame game = getGame();
-        Scoreboard board = game.getScoreboard();
-        Team team = board.getTeam("blueTeam");
-        if (team == null)
-            team = board.registerNewTeam("blueTeam");
-        team.setColor(ChatColor.GREEN);
-
-
-        slime = game.getWorldHandler().getWorldOverworld().spawn(game.getWorldHandler().getWorldOverworld().getSpawnLocation().add(0, 1, 0), Slime.class);
-        team.addEntry(slime.getUniqueId().toString());
-        slime.setAI(false);
-        slime.setGravity(false);
-        slime.setInvulnerable(true);
-        slime.setSize(2);
-        slime.setGlowing(true);
-        slime.setRemoveWhenFarAway(false);
+        fallingBlocks = new ArrayList<>();
     }
 
     @Override
@@ -68,7 +48,7 @@ public class KingSlime extends Logic {
             }
         }
 
-        if (!slime.isValid()) {
+        if (slime.isDead()) {
             spawnSlime();
         }
 
@@ -85,7 +65,7 @@ public class KingSlime extends Logic {
 
         if (timeLeft == 0) {
             game.getPlayers().forEach(player -> {
-                player.sendMessage("§4The Godly Slime has been released!");
+                player.sendMessage("§4King Slime has been released!");
                 player.playSound(player.getLocation(), Sound.ENTITY_SLIME_SQUISH, 1, 0.25f);
             });
         }
@@ -98,6 +78,33 @@ public class KingSlime extends Logic {
             suck(tick);
             moveTowards();
         }
+    }
+
+    public void spawnSlime() {
+        MHGame game = getGame();
+        Scoreboard board = game.getScoreboard();
+        Team team = board.getTeam("blueTeam");
+        if (team == null)
+            team = board.registerNewTeam("blueTeam");
+        team.setColor(ChatColor.GREEN);
+
+        int size = 3;
+        Location spawn = game.getWorldHandler().getWorldOverworld().getSpawnLocation().add(0, 1, 0);
+        if (slime != null) {
+            size = slime.getSize();
+            spawn = slime.getLocation();
+            slime.remove();
+        }
+
+
+        slime = game.getWorldHandler().getWorldOverworld().spawn(spawn, Slime.class);
+        team.addEntry(slime.getUniqueId().toString());
+        slime.setAI(false);
+        slime.setGravity(false);
+        slime.setInvulnerable(true);
+        slime.setSize(size);
+        slime.setGlowing(true);
+        slime.setRemoveWhenFarAway(false);
     }
 
     private void suck(long tick) {
@@ -117,14 +124,13 @@ public class KingSlime extends Logic {
             Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
             vector.normalize();
             vector.multiply(0.0035 * nearest.getLocation().distance(slime.getLocation()));
-            slime.teleport(slime.getLocation().setDirection(vector).add(vector));
-        } else if (false) {
-            nearest = getNearestLiving(slime, slime.getSize() * 2D);
-            if (nearest == slime) return;
-            Vector vector = nearest.getLocation().toVector().subtract(slime.getLocation().toVector());
-            vector.normalize();
-            vector.multiply(0.0025 * nearest.getLocation().distance(slime.getLocation()));
-            slime.teleport(slime.getLocation().setDirection(vector).add(vector));
+            Location loc = slime.getLocation().setDirection(vector).add(vector);
+            loc.getChunk().load(true);
+            slime.teleport(loc);
+            Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> {
+                if (!slime.getLocation().getChunk().equals(loc.getChunk()))
+                    System.out.println(loc.getChunk().isLoaded());
+            }, 10);
         }
     }
 
@@ -155,9 +161,9 @@ public class KingSlime extends Logic {
             if (slime.getBoundingBox().overlaps(entity.getBoundingBox()))
                 damageEntity(entity, tick);
 
-            if (entity instanceof LivingEntity living) {
+            if (entity instanceof LivingEntity living)
                 playGrabEffect(living, tick);
-            }
+
 
             //use last damage as a pull cooldown
             if (tick - lastDamage.getOrDefault(entity, 0L) > 100)
@@ -176,22 +182,6 @@ public class KingSlime extends Logic {
             if (d < distance) {
                 distance = d;
                 nearest = player;
-            }
-        }
-        return nearest;
-    }
-
-    private LivingEntity getNearestLiving(Entity entity, double searchRadius) {
-        LivingEntity nearest = null;
-        double distance = Double.MAX_VALUE;
-        for (Entity e : entity.getNearbyEntities(searchRadius, searchRadius, searchRadius)) {
-            if (!(e instanceof LivingEntity))
-                continue;
-
-            double d = entity.getLocation().distance(e.getLocation());
-            if (d < distance) {
-                distance = d;
-                nearest = (LivingEntity) e;
             }
         }
         return nearest;
@@ -261,9 +251,26 @@ public class KingSlime extends Logic {
         entity.setVelocity(velocity.add(vector.normalize().multiply(1 / multiplier)));
     }
 
+    private LivingEntity getNearestLiving(Entity entity, double searchRadius) {
+        LivingEntity nearest = null;
+        double distance = Double.MAX_VALUE;
+        for (Entity e : entity.getNearbyEntities(searchRadius, searchRadius, searchRadius)) {
+            if (!(e instanceof LivingEntity))
+                continue;
+
+            double d = entity.getLocation().distance(e.getLocation());
+            if (d < distance) {
+                distance = d;
+                nearest = (LivingEntity) e;
+            }
+        }
+        return nearest;
+    }
+
     @Override
     public void load() {
         Bukkit.getPluginManager().registerEvents(blockListener, ManHunt.getInstance());
+        spawnSlime();
     }
 
     @Override

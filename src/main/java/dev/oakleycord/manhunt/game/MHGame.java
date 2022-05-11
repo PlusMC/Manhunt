@@ -21,7 +21,6 @@ import org.plusmc.pluslib.bukkit.managing.BaseManager;
 import java.util.*;
 
 public class MHGame {
-
     private final long seed;
 
     private final ManhuntBoard board;
@@ -168,8 +167,9 @@ public class MHGame {
             );
         }
 
-        modifierLogic.forEach(Logic::unload);
         gameModeLogic.unload();
+        modifierLogic.forEach(Logic::unload);
+        BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
 
         getPlayers().forEach(player -> {
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
@@ -180,7 +180,6 @@ public class MHGame {
 
     public void destroy(GameTeam winningTeam) {
         ManHunt.getBoardHandler().removeBoard(board);
-        BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
 
         String time = OtherUtil.formatTime(endTimeStamp - this.timeStamp);
         String[] summary = new String[5];
@@ -198,7 +197,7 @@ public class MHGame {
 
         this.getPlayers().forEach(player -> {
             player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
-            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 1, 0));
+            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0.5, 1, 0.5));
 
             if (getGameTeam(player) == winningTeam) {
                 PlayerUtil.incrementWins(player, winningTeam);
