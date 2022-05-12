@@ -1,12 +1,12 @@
 package dev.oakleycord.manhunt;
 
+import dev.oakleycord.manhunt.events.VoidWorldEvents;
+import dev.oakleycord.manhunt.events.WorldEvents;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.commands.GameSettings;
 import dev.oakleycord.manhunt.game.commands.InitGame;
 import dev.oakleycord.manhunt.game.commands.MHDebug;
 import dev.oakleycord.manhunt.game.commands.StartGame;
-import dev.oakleycord.manhunt.game.events.PlayerEvents;
-import dev.oakleycord.manhunt.game.events.WorldEvents;
 import dev.oakleycord.manhunt.game.items.GameSettingsItem;
 import dev.oakleycord.manhunt.game.items.StartGameItem;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.plusmc.pluslib.bukkit.handlers.BoardHandler;
 import org.plusmc.pluslib.bukkit.handlers.GUIHandler;
+import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
 import org.plusmc.pluslib.bukkit.managed.PlusCommand;
 import org.plusmc.pluslib.bukkit.managed.PlusItem;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
@@ -37,7 +38,6 @@ public final class ManHunt extends JavaPlugin {
     );
 
     private static final List<Listener> LISTENERS = List.of(
-            new PlayerEvents(),
             new WorldEvents()
     );
 
@@ -49,6 +49,7 @@ public final class ManHunt extends JavaPlugin {
     private static MHGame game;
     private static DatabaseHandler db;
     private static BoardHandler boardHandler;
+    private static MultiWorldHandler worldHandler;
 
     public static void createGame() {
         if (!hasGame())
@@ -87,6 +88,11 @@ public final class ManHunt extends JavaPlugin {
     }
 
     @Override
+    public void onDisable() {
+        worldHandler.unregisterAllEvents();
+    }
+
+    @Override
     public void onEnable() {
         for (Listener listener : LISTENERS)
             getServer().getPluginManager().registerEvents(listener, this);
@@ -95,6 +101,9 @@ public final class ManHunt extends JavaPlugin {
         BaseManager.createManager(PlusItemManager.class, this);
         BaseManager.createManager(TickingManager.class, this);
         new GUIHandler(this);
+
+        worldHandler = new MultiWorldHandler(this);
+        worldHandler.registerEvents(new VoidWorldEvents());
 
 
         for (PlusCommand cmd : COMMANDS)

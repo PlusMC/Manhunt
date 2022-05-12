@@ -6,7 +6,7 @@
 
     <groupId>dev.oakleycord</groupId>
     <artifactId>ManHunt</artifactId>
-    <version>0.5.2-INDEV</version>
+    <version>0.5.3-INDEV</version>
     <packaging>jar</packaging>
 
     <name>ManHunt</name>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.plusmc</groupId>
             <artifactId>PlusLib</artifactId>
-            <version>0.7-INDEV</version>
+            <version>0.8-INDEV</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

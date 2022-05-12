@@ -1,4 +1,4 @@
-package dev.oakleycord.manhunt.game.events;
+package dev.oakleycord.manhunt.events;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

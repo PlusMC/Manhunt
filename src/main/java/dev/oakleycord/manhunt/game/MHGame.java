@@ -2,6 +2,7 @@ package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.boards.ManhuntBoard;
+import dev.oakleycord.manhunt.game.events.MHEvents;
 import dev.oakleycord.manhunt.game.logic.GameLoop;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
@@ -59,6 +60,8 @@ public class MHGame {
         Bukkit.broadcastMessage("§6Loading worlds (§e3§6/§e3§6)...");
         World end = new WorldCreator("mh_world_3").seed(seed).environment(World.Environment.THE_END).createWorld();
         worldHandler = new MultiWorldHandler(ManHunt.getInstance(), overworld, nether, end);
+        worldHandler.registerEvents(new MHEvents(this));
+        worldHandler.listenForPortal(true);
 
         for (World world : worldHandler.getWorlds()) {
             world.setAutoSave(false);
