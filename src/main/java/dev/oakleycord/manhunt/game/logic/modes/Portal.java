@@ -1,12 +1,9 @@
 package dev.oakleycord.manhunt.game.logic.modes;
 
-import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class Portal extends Logic {
@@ -28,12 +25,12 @@ public class Portal extends Logic {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(portalListener, ManHunt.getInstance());
+        getGame().getWorldHandler().registerEvents(portalListener);
     }
 
     @Override
     public void unload() {
-        HandlerList.unregisterAll(portalListener);
+        getGame().getWorldHandler().unregisterEvents(portalListener);
     }
 
     private class PortalListener implements org.bukkit.event.Listener {

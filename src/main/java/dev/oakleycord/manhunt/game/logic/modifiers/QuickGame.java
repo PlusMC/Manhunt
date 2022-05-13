@@ -1,15 +1,12 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
-import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.Inventory;
@@ -32,7 +29,7 @@ public class QuickGame extends Logic {
     @Override
     public void load() {
         getGame().getPlayers().forEach(this::giveItems);
-        Bukkit.getPluginManager().registerEvents(deathListener, ManHunt.getInstance());
+        getGame().getWorldHandler().registerEvents(deathListener);
     }
 
     private void giveItems(Player player) {
@@ -71,7 +68,7 @@ public class QuickGame extends Logic {
 
     @Override
     public void unload() {
-        HandlerList.unregisterAll(deathListener);
+        getGame().getWorldHandler().unregisterEvents(deathListener);
         if (getGame().getState().equals(GameState.PREGAME))
             getGame().getPlayers().stream().map(Player::getInventory).forEach(Inventory::clear);
     }

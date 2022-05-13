@@ -11,6 +11,6 @@ public abstract class Logic implements Tickable {
     }
 
     public MHGame getGame() {
-        return game;
+        return game; //hi there :)
     }
 }

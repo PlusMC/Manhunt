@@ -1,9 +1,7 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
-import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,7 +17,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
@@ -100,12 +97,12 @@ public class BlockRain extends Logic {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(blockListener, ManHunt.getInstance());
+        getGame().getWorldHandler().registerEvents(blockListener);
     }
 
     @Override
     public void unload() {
-        HandlerList.unregisterAll(blockListener);
+        getGame().getWorldHandler().unregisterEvents(blockListener);
     }
 
     private class BlockListener implements Listener {

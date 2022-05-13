@@ -1,15 +1,12 @@
 package dev.oakleycord.manhunt.game.logic.modes;
 
-import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.GameTeam;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
@@ -30,12 +27,12 @@ public class Classic extends Logic {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(killListener, ManHunt.getInstance());
+        getGame().getWorldHandler().registerEvents(killListener);
     }
 
     @Override
     public void unload() {
-        HandlerList.unregisterAll(killListener);
+        getGame().getWorldHandler().unregisterEvents(killListener);
     }
 
     private class KillListener implements Listener {

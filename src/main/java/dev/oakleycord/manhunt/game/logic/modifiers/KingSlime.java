@@ -10,7 +10,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.scoreboard.Scoreboard;
@@ -269,7 +268,7 @@ public class KingSlime extends Logic {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(blockListener, ManHunt.getInstance());
+        getGame().getWorldHandler().registerEvents(blockListener);
         spawnSlime();
     }
 
@@ -277,7 +276,7 @@ public class KingSlime extends Logic {
     public void unload() {
         slime.remove();
         fallingBlocks.forEach(FallingBlock::remove);
-        HandlerList.unregisterAll(blockListener);
+        getGame().getWorldHandler().unregisterEvents(blockListener);
     }
 
     private class BlockListener implements Listener {
