@@ -10,6 +10,7 @@ import dev.oakleycord.manhunt.game.commands.StartGame;
 import dev.oakleycord.manhunt.game.items.GameSettingsItem;
 import dev.oakleycord.manhunt.game.items.StartGameItem;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -102,7 +103,7 @@ public final class ManHunt extends JavaPlugin {
         BaseManager.createManager(TickingManager.class, this);
         new GUIHandler(this);
 
-        worldHandler = new MultiWorldHandler(this);
+        worldHandler = new MultiWorldHandler(this, Bukkit.getWorlds().get(0));
         worldHandler.registerEvents(new VoidWorldEvents());
 
 

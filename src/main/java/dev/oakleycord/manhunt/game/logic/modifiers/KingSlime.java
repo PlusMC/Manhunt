@@ -1,6 +1,5 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
-import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.util.ParticleUtil;
@@ -126,10 +125,6 @@ public class KingSlime extends Logic {
             Location loc = slime.getLocation().setDirection(vector).add(vector);
             loc.getChunk().load(true);
             slime.teleport(loc);
-            Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> {
-                if (!slime.getLocation().getChunk().equals(loc.getChunk()))
-                    System.out.println(loc.getChunk().isLoaded());
-            }, 10);
         }
     }
 
