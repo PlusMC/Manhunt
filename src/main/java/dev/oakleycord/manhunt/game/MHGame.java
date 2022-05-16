@@ -17,6 +17,7 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
+import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
 
 import java.util.*;
@@ -101,6 +102,10 @@ public class MHGame {
             world.setDifficulty(Difficulty.PEACEFUL);
         }
         freeze();
+        if (gameLoop == null) {
+            gameLoop = new GameLoop(this);
+            BaseManager.registerAny(gameLoop, ManHunt.getInstance());
+        }
         board.tick(0);
     }
 
@@ -124,10 +129,6 @@ public class MHGame {
 
         unfreeze();
 
-        if (gameLoop == null) {
-            gameLoop = new GameLoop(this);
-            BaseManager.registerAny(gameLoop, ManHunt.getInstance());
-        }
 
         modifierLogic.forEach(Logic::load);
         gameModeLogic.load();
@@ -169,7 +170,7 @@ public class MHGame {
                     player.sendTitle(ChatColor.GREEN + "Runners Win!", "", 10, 20, 10)
             );
         }
-
+        
         gameModeLogic.unload();
         modifierLogic.forEach(Logic::unload);
         BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
@@ -178,6 +179,7 @@ public class MHGame {
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
             player.sendMessage("§8§lReturning to lobby in 10 seconds...");
         });
+        updateVariables();
         Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> this.destroy(winningTeam), 200);
     }
 
@@ -229,24 +231,8 @@ public class MHGame {
         return getScoreboard().getEntryTeam(player.getName());
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
-    }
-
     public MultiWorldHandler getWorldHandler() {
         return worldHandler;
-    }
-
-    public Team getHunters() {
-        return hunters;
-    }
-
-    public Team getRunners() {
-        return runners;
-    }
-
-    public Team getSpectators() {
-        return spectators;
     }
 
     public void setTeam(Player player, GameTeam team) {
@@ -281,33 +267,9 @@ public class MHGame {
         return compassHandler;
     }
 
-    public GameState getState() {
-        return state;
-    }
-
-
-    @NotNull
-    public Mode getGameMode() {
-        return mode;
-    }
-
-    public void setGameMode(Mode mode) {
-        if (this.gameModeLogic != null)
-            this.gameModeLogic.unload(); // unload old logic
-        this.mode = mode;
-        this.gameModeLogic = mode.getLogic(this);
-        if (state == GameState.INGAME)
-            this.gameModeLogic.load();
-    }
-
     @Nullable
     public Logic getGameModeLogic() {
         return gameModeLogic;
-    }
-
-
-    public List<Modifier> getModifiers() {
-        return modifiers;
     }
 
     public void addModifier(Modifier modifier) {
@@ -329,6 +291,61 @@ public class MHGame {
             }
             return false;
         });
+    }
+
+    public void updateVariables() {
+        VariableHandler.setVariable("mode", getGameMode().name() + "%");
+        VariableHandler.setVariable("playerAmount", String.valueOf(getPlayers().size()));
+        VariableHandler.setVariable("hunterAmount", String.valueOf(getHunters().getEntries().size()));
+        VariableHandler.setVariable("runnerAmount", String.valueOf(getRunners().getEntries().size()));
+        VariableHandler.setVariable("spectatorAmount", String.valueOf(getSpectators().getEntries().size()));
+        VariableHandler.setVariable("time", OtherUtil.formatTime(System.currentTimeMillis() - getTimeStamp()));
+        if (!getModifiers().isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            getModifiers().forEach(modifier -> sb.append(modifier.sortName).append(", "));
+            sb.delete(sb.length() - 2, sb.length());
+            VariableHandler.setVariable("modifiers", sb.toString());
+        }
+        VariableHandler.setVariable("gameState", getState().name());
+
+    }
+
+    @NotNull
+    public Mode getGameMode() {
+        return mode;
+    }
+
+    public void setGameMode(Mode mode) {
+        if (this.gameModeLogic != null)
+            this.gameModeLogic.unload(); // unload old logic
+        this.mode = mode;
+        this.gameModeLogic = mode.getLogic(this);
+        if (state == GameState.INGAME)
+            this.gameModeLogic.load();
+    }
+
+    public Team getHunters() {
+        return hunters;
+    }
+
+    public Team getRunners() {
+        return runners;
+    }
+
+    public Team getSpectators() {
+        return spectators;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public List<Modifier> getModifiers() {
+        return modifiers;
+    }
+
+    public GameState getState() {
+        return state;
     }
 
     public List<Logic> getModifierLogic() {

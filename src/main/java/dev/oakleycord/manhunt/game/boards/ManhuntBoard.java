@@ -3,7 +3,6 @@ package dev.oakleycord.manhunt.game.boards;
 import dev.oakleycord.manhunt.ManHunt;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.MHGame;
-import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Sound;
@@ -34,30 +33,32 @@ public class ManhuntBoard extends PlusBoard {
     public List<String> getEntries(long tick) {
         List<String> entries = new ArrayList<>();
         entries.add("");
-        entries.add("Players: §b" + game.getPlayers().size());
-        entries.add("Hunters: §b" + game.getHunters().getSize());
-        entries.add("Runners Alive: §b" + game.getRunners().getSize());
+        entries.add("Players: §b%playerAmount%");
+        entries.add("Hunters: §b%hunterAmount%");
+        entries.add("Runners Alive: §b%runnerAmount%");
 
         if (game.getState() == GameState.INGAME) {
-            entries.add("Time: §b" + OtherUtil.formatTime(System.currentTimeMillis() - game.getTimeStamp()));
+            entries.add("Time: §b%time%");
         }
 
-        entries.add("Mode: §b" + game.getGameMode().name() + "%");
+        entries.add("Mode: §b%mode%");
 
-        if (!game.getModifiers().isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            game.getModifiers().forEach(modifier -> sb.append(modifier.sortName).append(", "));
-            sb.delete(sb.length() - 2, sb.length());
-            entries.add("Modifiers: §b" + sb);
-        }
+        if (!game.getModifiers().isEmpty())
+            entries.add("Modifiers: §b%modifiers%");
+
 
         entries.add("");
         flipThroughRandomPlayers(tick);
         if (currentPlayer != null)
             entries.add("Host: " + (flipSpeed == -1 ? "§a" : "§c") + currentPlayer.getName());
 
-        entries.add("§8§lGameState: " + game.getState());
+        entries.add("§8§lGameState: %gameState%");
         return entries;
+    }
+
+    @Override
+    public boolean useVariables() {
+        return true;
     }
 
     private void flipThroughRandomPlayers(long tick) {
