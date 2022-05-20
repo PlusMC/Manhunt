@@ -86,7 +86,7 @@ public class PlayerUtil {
     }
 
     public static void incrementDeaths(Player player, ManHunt.MHTeam team) {
-        if (!SpeedRuns.hasDB()) return;
+        if (SpeedRuns.dbNotFound()) return;
         SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
             if (team == ManHunt.MHTeam.HUNTERS)
                 user.getUserMH().addDeathHunter();
@@ -96,7 +96,7 @@ public class PlayerUtil {
     }
 
     public static void incrementLoses(Player player, ManHunt.MHTeam team) {
-        if (!SpeedRuns.hasDB()) return;
+        if (SpeedRuns.dbNotFound()) return;
         SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
             if (team == ManHunt.MHTeam.HUNTERS)
                 user.getUserMH().addLossHunter();
@@ -115,7 +115,7 @@ public class PlayerUtil {
     }
 
     public static void incrementKills(Player player, ManHunt.MHTeam team) {
-        if (!SpeedRuns.hasDB()) return;
+        if (SpeedRuns.dbNotFound()) return;
         SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
             if (team == ManHunt.MHTeam.HUNTERS)
                 user.getUserMH().addKillHunter();
@@ -125,7 +125,7 @@ public class PlayerUtil {
     }
 
     public static void incrementWins(Player player, ManHunt.MHTeam team) {
-        if (!SpeedRuns.hasDB()) return;
+        if (SpeedRuns.dbNotFound()) return;
         SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
             if (team == ManHunt.MHTeam.HUNTERS)
                 user.getUserMH().addWinHunter();
@@ -135,7 +135,7 @@ public class PlayerUtil {
     }
 
     public static void rewardPoints(Player player, long points, String reason) {
-        if (!SpeedRuns.hasDB()) return;
+        if (SpeedRuns.dbNotFound()) return;
         SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> user.addPoints(points, reason));
     }
 }

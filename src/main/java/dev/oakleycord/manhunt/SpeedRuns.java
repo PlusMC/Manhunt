@@ -4,6 +4,7 @@ import dev.oakleycord.manhunt.events.VoidWorldEvents;
 import dev.oakleycord.manhunt.events.WorldEvents;
 import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.ManHunt;
+import dev.oakleycord.manhunt.game.SoloRun;
 import dev.oakleycord.manhunt.game.commands.GameSettings;
 import dev.oakleycord.manhunt.game.commands.InitGame;
 import dev.oakleycord.manhunt.game.commands.StartGame;
@@ -24,7 +25,9 @@ import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.PlusItemManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
 import org.plusmc.pluslib.mongo.DatabaseHandler;
+import org.plusmc.pluslib.reflection.config.ConfigSpigot;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -50,10 +53,14 @@ public final class SpeedRuns extends JavaPlugin {
     private static DatabaseHandler db;
     private static BoardHandler boardHandler;
     private static MultiWorldHandler worldHandler;
+    private static SpeedRunConfig config;
 
     public static void createGame() {
-        if (!hasGame())
-            game = new ManHunt();
+        game = switch (config.gameType().toLowerCase()) {
+            case "solo" -> new SoloRun();
+            case "manhunt" -> new ManHunt();
+            default -> throw new IllegalArgumentException("Invalid game type");
+        };
     }
 
     public static boolean hasGame() {
@@ -83,8 +90,8 @@ public final class SpeedRuns extends JavaPlugin {
         return db;
     }
 
-    public static boolean hasDB() {
-        return db != null && db.isLoaded();
+    public static boolean dbNotFound() {
+        return db == null || !db.isLoaded();
     }
 
     @Override
@@ -105,6 +112,11 @@ public final class SpeedRuns extends JavaPlugin {
         worldHandler = new MultiWorldHandler(this, Bukkit.getWorlds().get(0));
         worldHandler.registerEvents(new VoidWorldEvents());
 
+        saveDefaultConfig();
+        db = DatabaseHandler.getInstance();
+        ConfigSpigot configYaml = new ConfigSpigot(new File(getDataFolder(), "config.yml"));
+        config = configYaml.read(SpeedRunConfig.class);
+
 
         for (PlusCommand cmd : COMMANDS)
             BaseManager.registerAny(cmd, this);
@@ -112,14 +124,8 @@ public final class SpeedRuns extends JavaPlugin {
         for (PlusItem item : ITEMS)
             BaseManager.registerAny(item, this);
 
-        startDatabase();
 
         registerEnchant();
-    }
-
-    private static void startDatabase() {
-        DatabaseHandler.createInstance();
-        db = DatabaseHandler.getInstance();
     }
 
     private static void registerEnchant() {
@@ -130,5 +136,11 @@ public final class SpeedRuns extends JavaPlugin {
         } catch (Exception e) {
             //ignore
         }
+    }
+
+    private record SpeedRunConfig(
+            String gameType
+    ) {
+
     }
 }

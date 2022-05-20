@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.plusmc</groupId>
             <artifactId>PlusLib</artifactId>
-            <version>0.8.1-INDEV</version>
+            <version>0.9-INDEV</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
