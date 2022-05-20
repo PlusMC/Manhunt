@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.events;
 
-import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.SpeedRuns;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -66,11 +66,11 @@ public class VoidWorldEvents implements Listener {
         PlayerUtil.resetPlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
 
-        if (ManHunt.hasGame()) return;
-        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> {
-            if (ManHunt.hasGame()) return;
-            ManHunt.createGame();
-            MHGame game = ManHunt.getGame();
+        if (SpeedRuns.hasGame()) return;
+        Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), () -> {
+            if (SpeedRuns.hasGame()) return;
+            SpeedRuns.createGame();
+            AbstractRun game = SpeedRuns.getGame();
             game.pregame();
             for (Player p : Bukkit.getOnlinePlayers()) {
                 World world = game.getWorldHandler().getWorldOverworld();

@@ -1,8 +1,8 @@
 package dev.oakleycord.manhunt.game.boards;
 
-import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.GameState;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.ManHunt;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Sound;
@@ -19,12 +19,12 @@ import java.util.Random;
 
 public class ManhuntBoard extends PlusBoard {
     private static final Random RANDOM = new Random();
-    private final MHGame game;
+    private final ManHunt game;
     private double flipSpeed = 0;
     private double prevFlipSpeed = 1;
     private Player currentPlayer;
 
-    public ManhuntBoard(MHGame game) {
+    public ManhuntBoard(ManHunt game) {
         super("§6§l§n§oManHunt");
         this.game = game;
     }
@@ -76,7 +76,7 @@ public class ManhuntBoard extends PlusBoard {
             if (flipSpeed > 7.5) {
                 flipSpeed = -1;
                 currentPlayer.getWorld().playSound(currentPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-                PlusItemManager manager = BaseManager.getManager(ManHunt.getInstance(), PlusItemManager.class);
+                PlusItemManager manager = BaseManager.getManager(SpeedRuns.getInstance(), PlusItemManager.class);
                 currentPlayer.getInventory().setItem(3, manager.getPlusItem("start_game").getItem());
                 currentPlayer.getInventory().setItem(5, manager.getPlusItem("game_settings").getItem());
                 currentPlayer.sendMessage("§aYou are the host!");

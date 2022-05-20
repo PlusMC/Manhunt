@@ -1,5 +1,7 @@
 package dev.oakleycord.manhunt.game.commands;
 
+import dev.oakleycord.manhunt.SpeedRuns;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.gui.MHSettings;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -39,7 +41,12 @@ public class GameSettings implements PlusCommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender instanceof HumanEntity he) he.openInventory(new MHSettings().getInventory());
+        AbstractRun game = SpeedRuns.getGame();
+        if (game == null) {
+            sender.sendMessage("Game not initialized");
+            return false;
+        }
+        if (sender instanceof HumanEntity he) he.openInventory(new MHSettings(game).getInventory());
         else sender.sendMessage("You must be a player to use this command!");
         return true;
     }

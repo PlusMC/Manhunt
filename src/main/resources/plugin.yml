@@ -1,5 +1,5 @@
-name: ManHunt
+name: SpeedRuns
 version: '${project.version}'
-main: dev.oakleycord.manhunt.ManHunt
+main: dev.oakleycord.manhunt.SpeedRuns
 api-version: 1.18
 depend: [ PlusLib ]

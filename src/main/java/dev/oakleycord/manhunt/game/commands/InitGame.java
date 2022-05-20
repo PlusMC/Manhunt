@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.commands;
 
-import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.SpeedRuns;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -41,13 +41,13 @@ public class InitGame implements PlusCommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (ManHunt.hasGame()) {
+        if (SpeedRuns.hasGame()) {
             sender.sendMessage("Game already initialized");
             return false;
         }
 
-        ManHunt.createGame();
-        MHGame game = ManHunt.getGame();
+        SpeedRuns.createGame();
+        AbstractRun game = SpeedRuns.getGame();
         game.pregame();
         for (Player player : Bukkit.getOnlinePlayers()) {
             World world = game.getWorldHandler().getWorldOverworld();

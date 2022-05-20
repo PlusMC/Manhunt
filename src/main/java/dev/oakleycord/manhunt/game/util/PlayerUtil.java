@@ -1,8 +1,8 @@
 package dev.oakleycord.manhunt.game.util;
 
-import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.GameTeam;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.SpeedRuns;
+import dev.oakleycord.manhunt.game.AbstractRun;
+import dev.oakleycord.manhunt.game.ManHunt;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -63,44 +63,44 @@ public class PlayerUtil {
         player.getActivePotionEffects().forEach(potion -> player.removePotionEffect(potion.getType()));
         Bukkit.getBossBars().forEachRemaining(bossBar -> bossBar.removePlayer(player));
 
-        MHGame game = ManHunt.getGame();
+        AbstractRun game = SpeedRuns.getGame();
         if (respawn) {
             if (player.getBedSpawnLocation() != null)
                 player.teleport(player.getBedSpawnLocation());
             else player.teleport(game.getWorldHandler().getWorldOverworld().getSpawnLocation().add(0, 1, 0));
         }
 
-        if (ManHunt.hasGame() && wasDeath) {
-            if (game.getRunners().hasEntry(player.getName())) {
-                incrementDeaths(player, GameTeam.RUNNERS);
-                game.setTeam(player, GameTeam.SPECTATORS);
+        if (wasDeath && game instanceof ManHunt manHunt) {
+            if (manHunt.getRunners().hasEntry(player.getName())) {
+                incrementDeaths(player, ManHunt.MHTeam.RUNNERS);
+                manHunt.setTeam(player, ManHunt.MHTeam.SPECTATORS);
                 player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1, 0.5f);
                 wasRunner.add(player.getUniqueId());
             }
 
-            if (game.getHunters().hasEntry(player.getName())) {
-                incrementDeaths(player, GameTeam.HUNTERS);
+            if (manHunt.getHunters().hasEntry(player.getName())) {
+                incrementDeaths(player, ManHunt.MHTeam.HUNTERS);
                 player.getInventory().addItem(new ItemStack(Material.COMPASS));
             }
         }
     }
 
-    public static void incrementDeaths(Player player, GameTeam team) {
-        if (!ManHunt.hasDB()) return;
-        ManHunt.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
-            if (team == GameTeam.HUNTERS)
+    public static void incrementDeaths(Player player, ManHunt.MHTeam team) {
+        if (!SpeedRuns.hasDB()) return;
+        SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
+            if (team == ManHunt.MHTeam.HUNTERS)
                 user.getUserMH().addDeathHunter();
-            else if (team == GameTeam.RUNNERS)
+            else if (team == ManHunt.MHTeam.RUNNERS)
                 user.getUserMH().addDeathRunner();
         });
     }
 
-    public static void incrementLoses(Player player, GameTeam team) {
-        if (!ManHunt.hasDB()) return;
-        ManHunt.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
-            if (team == GameTeam.HUNTERS)
+    public static void incrementLoses(Player player, ManHunt.MHTeam team) {
+        if (!SpeedRuns.hasDB()) return;
+        SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
+            if (team == ManHunt.MHTeam.HUNTERS)
                 user.getUserMH().addLossHunter();
-            else if (team == GameTeam.RUNNERS)
+            else if (team == ManHunt.MHTeam.RUNNERS)
                 user.getUserMH().addLossRunner();
         });
 
@@ -114,28 +114,28 @@ public class PlayerUtil {
         return wasRunner.contains(player.getUniqueId());
     }
 
-    public static void incrementKills(Player player, GameTeam team) {
-        if (!ManHunt.hasDB()) return;
-        ManHunt.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
-            if (team == GameTeam.HUNTERS)
+    public static void incrementKills(Player player, ManHunt.MHTeam team) {
+        if (!SpeedRuns.hasDB()) return;
+        SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
+            if (team == ManHunt.MHTeam.HUNTERS)
                 user.getUserMH().addKillHunter();
-            else if (team == GameTeam.RUNNERS)
+            else if (team == ManHunt.MHTeam.RUNNERS)
                 user.getUserMH().addKillRunner();
         });
     }
 
-    public static void incrementWins(Player player, GameTeam team) {
-        if (!ManHunt.hasDB()) return;
-        ManHunt.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
-            if (team == GameTeam.HUNTERS)
+    public static void incrementWins(Player player, ManHunt.MHTeam team) {
+        if (!SpeedRuns.hasDB()) return;
+        SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
+            if (team == ManHunt.MHTeam.HUNTERS)
                 user.getUserMH().addWinHunter();
-            else if (team == GameTeam.RUNNERS)
+            else if (team == ManHunt.MHTeam.RUNNERS)
                 user.getUserMH().addWinRunner();
         });
     }
 
     public static void rewardPoints(Player player, long points, String reason) {
-        if (!ManHunt.hasDB()) return;
-        ManHunt.getDatabase().asyncUserAction(player.getUniqueId(), user -> user.addPoints(points, reason));
+        if (!SpeedRuns.hasDB()) return;
+        SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> user.addPoints(points, reason));
     }
 }

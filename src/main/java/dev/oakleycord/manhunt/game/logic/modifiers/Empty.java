@@ -1,11 +1,11 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.logic.Logic;
 
 public class Empty extends Logic {
 
-    public Empty(MHGame game) {
+    public Empty(AbstractRun game) {
         super(game);
     }
 

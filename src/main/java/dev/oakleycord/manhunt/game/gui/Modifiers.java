@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.gui;
 
-import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.SpeedRuns;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.GUIUtil;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
@@ -18,6 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Modifiers extends PlusGUI {
+    private final AbstractRun game;
+
+    public Modifiers(AbstractRun game) {
+        super();
+        this.game = game;
+    }
+
+
     @Override
     protected Inventory createInventory() {
         return Bukkit.createInventory(this, 27, "Modifiers");
@@ -27,20 +35,16 @@ public class Modifiers extends PlusGUI {
     public void draw() {
         int i = 1;
         for (Modifier modifier : Modifier.values()) {
-            if (!ManHunt.hasGame())
-                continue;
-
-            MHGame game = ManHunt.getGame();
 
             setElement(getModifierElement(modifier, game), i);
             i += 3;
         }
 
-        GUIUtil.addCloseElement(this);
+        GUIUtil.addCloseElement(this, game);
         super.draw();
     }
 
-    private GUIElement getModifierElement(Modifier modifier, MHGame game) {
+    private GUIElement getModifierElement(Modifier modifier, AbstractRun game) {
         boolean hasModifier = game.getModifiers().contains(modifier);
 
         List<String> lore = new ArrayList<>(List.of(
@@ -53,7 +57,7 @@ public class Modifiers extends PlusGUI {
         ItemStack item = new ItemBuilder(modifier.icon).setName(modifier.itemName).addEnchant(OtherUtil.EMPTY_ENCHANT, 0).setLore(lore).build();
 
         return new GUIElement(item, event -> {
-            if (!ManHunt.hasGame())
+            if (!SpeedRuns.hasGame())
                 return;
 
             boolean hasMod = game.getModifiers().contains(modifier);
@@ -65,7 +69,7 @@ public class Modifiers extends PlusGUI {
             if (event.getWhoClicked() instanceof Player p)
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_GUITAR, 1, hasMod ? 0.75f : 1.25f);
 
-            game.getScoreboardHandler().tick(0);
+            game.getPlusBoard().tick(0);
             draw();
         });
     }

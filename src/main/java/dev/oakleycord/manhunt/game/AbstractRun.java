@@ -1,11 +1,9 @@
 package dev.oakleycord.manhunt.game;
 
-import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.boards.ManhuntBoard;
+import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.events.MHEvents;
 import dev.oakleycord.manhunt.game.logic.GameLoop;
 import dev.oakleycord.manhunt.game.logic.Logic;
-import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
 import dev.oakleycord.manhunt.game.logic.modes.Mode;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
@@ -17,21 +15,18 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
-import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
+import org.plusmc.pluslib.bukkit.managed.PlusBoard;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
 
 import java.util.*;
 
-public class MHGame {
+import static dev.oakleycord.manhunt.game.util.PlayerUtil.resetAdvancements;
+
+public abstract class AbstractRun {
     private final long seed;
 
-    private final ManhuntBoard board;
-    private final CompassHandler compassHandler;
     private final MultiWorldHandler worldHandler;
 
-    private final Team hunters;
-    private final Team runners;
-    private final Team spectators;
     private final List<Modifier> modifiers;
     private final List<Logic> modifierLogic;
     private long timeStamp;
@@ -40,11 +35,14 @@ public class MHGame {
     private Logic gameModeLogic;
     private GameState state;
     private GameLoop gameLoop;
+    private final List<UUID> joinedPlayers;
 
-    public MHGame() {
+    protected AbstractRun() {
         this.state = GameState.LOADING;
         this.mode = Mode.CLASSIC;
         this.gameModeLogic = mode.getLogic(this);
+
+        this.joinedPlayers = new ArrayList<>();
 
         this.modifierLogic = new ArrayList<>();
 
@@ -55,12 +53,12 @@ public class MHGame {
         this.seed = new Random().nextLong();
 
         Bukkit.broadcastMessage("§6Loading worlds (§e1§6/§e3§6)...");
-        World overworld = new WorldCreator("mh_world_1").seed(seed).createWorld();
+        World overworld = new WorldCreator("sr_world_1").seed(seed).createWorld();
         Bukkit.broadcastMessage("§6Loading worlds (§e2§6/§e3§6)...");
-        World nether = new WorldCreator("mh_world_2").seed(seed).environment(World.Environment.NETHER).createWorld();
+        World nether = new WorldCreator("sr_world_2").seed(seed).environment(World.Environment.NETHER).createWorld();
         Bukkit.broadcastMessage("§6Loading worlds (§e3§6/§e3§6)...");
-        World end = new WorldCreator("mh_world_3").seed(seed).environment(World.Environment.THE_END).createWorld();
-        worldHandler = new MultiWorldHandler(ManHunt.getInstance(), overworld, nether, end);
+        World end = new WorldCreator("sr_world_3").seed(seed).environment(World.Environment.THE_END).createWorld();
+        worldHandler = new MultiWorldHandler(SpeedRuns.getInstance(), overworld, nether, end);
         worldHandler.registerEvents(new MHEvents(this));
         worldHandler.listenForPortal(true);
 
@@ -70,28 +68,6 @@ public class MHGame {
             world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
             world.setGameRule(GameRule.DO_INSOMNIA, false);
         }
-
-        assert Bukkit.getScoreboardManager() != null;
-        this.board = new ManhuntBoard(this);
-        this.compassHandler = new CompassHandler(this);
-
-        this.hunters = getScoreboard().registerNewTeam("Hunters");
-        hunters.setAllowFriendlyFire(false);
-        hunters.setPrefix(ChatColor.RED + "" + ChatColor.BOLD + "[Hunter] ");
-
-        this.runners = getScoreboard().registerNewTeam("Runners");
-        runners.setAllowFriendlyFire(false);
-        runners.setPrefix(ChatColor.GREEN + "" + ChatColor.BOLD + "[Runner] ");
-
-        this.spectators = getScoreboard().registerNewTeam("Spectators");
-        spectators.setPrefix(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[Spectator] ");
-        spectators.setColor(ChatColor.DARK_GRAY);
-
-        ManHunt.getBoardHandler().addBoard(board);
-    }
-
-    public Scoreboard getScoreboard() {
-        return board.getScoreboard();
     }
 
     public void pregame() {
@@ -104,9 +80,9 @@ public class MHGame {
         freeze();
         if (gameLoop == null) {
             gameLoop = new GameLoop(this);
-            BaseManager.registerAny(gameLoop, ManHunt.getInstance());
+            BaseManager.registerAny(gameLoop, SpeedRuns.getInstance());
         }
-        board.tick(0);
+        getPlusBoard().tick(0);
     }
 
     private void freeze() {
@@ -156,35 +132,31 @@ public class MHGame {
         return players;
     }
 
-    public void postGame(GameTeam winningTeam) {
+    public abstract void tick(long tick);
+
+    public void postGame() {
         state = GameState.POSTGAME;
         endTimeStamp = System.currentTimeMillis();
         freeze();
 
-        if (winningTeam == GameTeam.HUNTERS) {
-            getPlayers().forEach(player ->
-                    player.sendTitle(ChatColor.RED + "Hunters Win!", "", 10, 20, 10)
-            );
-        } else if (winningTeam == GameTeam.RUNNERS) {
-            getPlayers().forEach(player ->
-                    player.sendTitle(ChatColor.GREEN + "Runners Win!", "", 10, 20, 10)
-            );
-        }
-        
         gameModeLogic.unload();
         modifierLogic.forEach(Logic::unload);
-        BaseManager.unregisterAny(gameLoop, ManHunt.getInstance());
+        BaseManager.unregisterAny(gameLoop, SpeedRuns.getInstance());
 
         getPlayers().forEach(player -> {
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
             player.sendMessage("§8§lReturning to lobby in 10 seconds...");
         });
         updateVariables();
-        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> this.destroy(winningTeam), 200);
+        Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), this::destroy, 200);
     }
 
-    public void destroy(GameTeam winningTeam) {
-        ManHunt.getBoardHandler().removeBoard(board);
+    public Scoreboard getScoreboard() {
+        return getPlusBoard().getScoreboard();
+    }
+
+    public void destroy() {
+        SpeedRuns.getBoardHandler().removeBoard(getPlusBoard());
 
         String time = OtherUtil.formatTime(endTimeStamp - this.timeStamp);
         String[] summary = new String[5];
@@ -204,27 +176,11 @@ public class MHGame {
             player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0.5, 1, 0.5));
 
-            if (getGameTeam(player) == winningTeam) {
-                PlayerUtil.incrementWins(player, winningTeam);
-                PlayerUtil.rewardPoints(player, getTeam(player).equals(hunters) ? 75 : 200, "§aGame Won");
-            } else if (getGameTeam(player) == winningTeam.getOpponent() || PlayerUtil.wasRunner(player)) {
-                PlayerUtil.incrementLoses(player, winningTeam.getOpponent());
-                PlayerUtil.rewardPoints(player, 25, "§aParticipation");
-            }
-
             PlayerUtil.resetPlayer(player);
         });
 
         worldHandler.delete();
-        ManHunt.removeGame();
-    }
-
-    public GameTeam getGameTeam(Player player) {
-        if (getTeam(player).equals(hunters))
-            return GameTeam.HUNTERS;
-        else if (getTeam(player).equals(runners))
-            return GameTeam.RUNNERS;
-        else return GameTeam.SPECTATORS;
+        SpeedRuns.removeGame();
     }
 
     public Team getTeam(Player player) {
@@ -235,37 +191,8 @@ public class MHGame {
         return worldHandler;
     }
 
-    public void setTeam(Player player, GameTeam team) {
-        Team t = getScoreboard().getEntryTeam(player.getName());
-        if (t != null) t.removeEntry(player.getName());
-
-        switch (team) {
-            case HUNTERS -> {
-                hunters.addEntry(player.getName());
-                player.setGameMode(org.bukkit.GameMode.SURVIVAL);
-            }
-            case RUNNERS -> {
-                runners.addEntry(player.getName());
-                player.setGameMode(org.bukkit.GameMode.SURVIVAL);
-            }
-            case SPECTATORS -> {
-                spectators.addEntry(player.getName());
-                player.setGameMode(org.bukkit.GameMode.SPECTATOR);
-            }
-        }
-    }
-
-    public boolean hasTeam(Player player) {
-        return getScoreboard().getEntryTeam(player.getName()) != null;
-    }
-
-    public ManhuntBoard getScoreboardHandler() {
-        return board;
-    }
-
-    public CompassHandler getCompassHandler() {
-        return compassHandler;
-    }
+    @NotNull
+    public abstract PlusBoard getPlusBoard();
 
     @Nullable
     public Logic getGameModeLogic() {
@@ -293,22 +220,7 @@ public class MHGame {
         });
     }
 
-    public void updateVariables() {
-        VariableHandler.setVariable("mode", getGameMode().name() + "%");
-        VariableHandler.setVariable("playerAmount", String.valueOf(getPlayers().size()));
-        VariableHandler.setVariable("hunterAmount", String.valueOf(getHunters().getEntries().size()));
-        VariableHandler.setVariable("runnerAmount", String.valueOf(getRunners().getEntries().size()));
-        VariableHandler.setVariable("spectatorAmount", String.valueOf(getSpectators().getEntries().size()));
-        VariableHandler.setVariable("time", OtherUtil.formatTime(System.currentTimeMillis() - getTimeStamp()));
-        if (!getModifiers().isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            getModifiers().forEach(modifier -> sb.append(modifier.sortName).append(", "));
-            sb.delete(sb.length() - 2, sb.length());
-            VariableHandler.setVariable("modifiers", sb.toString());
-        }
-        VariableHandler.setVariable("gameState", getState().name());
-
-    }
+    public abstract void updateVariables();
 
     @NotNull
     public Mode getGameMode() {
@@ -324,16 +236,18 @@ public class MHGame {
             this.gameModeLogic.load();
     }
 
-    public Team getHunters() {
-        return hunters;
+    public void onPlayerJoin(Player player) {
+        player.setScoreboard(this.getScoreboard());
+        if (!this.hasPlayerJoined(player)) {
+            resetAdvancements(player);
+            PlayerUtil.resetPlayer(player);
+            joinedPlayers.add(player.getUniqueId());
+        }
+        this.getPlusBoard().tick(0);
     }
 
-    public Team getRunners() {
-        return runners;
-    }
-
-    public Team getSpectators() {
-        return spectators;
+    public boolean hasPlayerJoined(Player player) {
+        return joinedPlayers.contains(player.getUniqueId());
     }
 
     public long getTimeStamp() {

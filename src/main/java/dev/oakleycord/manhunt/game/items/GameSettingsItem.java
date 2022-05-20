@@ -1,5 +1,6 @@
 package dev.oakleycord.manhunt.game.items;
 
+import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.gui.MHSettings;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -30,6 +31,7 @@ public class GameSettingsItem implements PlusItem {
 
     @Override
     public void onInteract(PlayerInteractEvent event) {
-        event.getPlayer().openInventory(new MHSettings().getInventory());
+        if (!SpeedRuns.hasGame()) return;
+        event.getPlayer().openInventory(new MHSettings(SpeedRuns.getGame()).getInventory());
     }
 }

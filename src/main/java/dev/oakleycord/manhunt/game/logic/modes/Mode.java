@@ -1,6 +1,6 @@
 package dev.oakleycord.manhunt.game.logic.modes;
 
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -23,9 +23,9 @@ public enum Mode {
         this.logic = logic;
     }
 
-    public Logic getLogic(MHGame game) {
+    public Logic getLogic(AbstractRun game) {
         try {
-            Constructor<? extends Logic> constructor = this.logic.getDeclaredConstructor(MHGame.class);
+            Constructor<? extends Logic> constructor = this.logic.getDeclaredConstructor(AbstractRun.class);
             constructor.setAccessible(true);
             return constructor.newInstance(game);
         } catch (Exception e) {

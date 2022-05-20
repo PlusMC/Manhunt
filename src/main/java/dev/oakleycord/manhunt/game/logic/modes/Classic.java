@@ -1,8 +1,8 @@
 package dev.oakleycord.manhunt.game.logic.modes;
 
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.GameState;
-import dev.oakleycord.manhunt.game.GameTeam;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.entity.EntityType;
@@ -14,15 +14,12 @@ public class Classic extends Logic {
 
     private final KillListener killListener;
 
-    public Classic(MHGame game) {
+    public Classic(AbstractRun game) {
         super(game);
         killListener = new KillListener();
     }
 
     public void tick(long tick) {
-        MHGame game = getGame();
-        if (game.getRunners().getSize() == 0)
-            game.postGame(GameTeam.HUNTERS);
     }
 
     @Override
@@ -39,12 +36,16 @@ public class Classic extends Logic {
 
         @EventHandler
         public void onEntityDeath(EntityDeathEvent event) {
-            if (!OtherUtil.isManHunt(event.getEntity().getWorld())) return;
-            MHGame game = getGame();
+            if (!OtherUtil.isWorldSR(event.getEntity().getWorld())) return;
+            AbstractRun game = getGame();
             if (game.getState() != GameState.INGAME) return;
             if (event.getEntityType() != EntityType.ENDER_DRAGON) return;
 
-            game.postGame(GameTeam.RUNNERS);
+            if (game instanceof ManHunt manHunt) {
+                manHunt.win(ManHunt.MHTeam.RUNNERS);
+            } else {
+                game.postGame();
+            }
         }
     }
 }

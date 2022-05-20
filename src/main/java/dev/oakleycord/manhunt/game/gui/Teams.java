@@ -1,8 +1,6 @@
 package dev.oakleycord.manhunt.game.gui;
 
-import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.GameTeam;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.util.GUIUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,6 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Teams extends PaginatedGUI {
+    private final ManHunt game;
+
+    public Teams(ManHunt game) {
+        super();
+        this.game = game;
+    }
 
     @Override
     protected Inventory createInventory() {
@@ -28,8 +32,6 @@ public class Teams extends PaginatedGUI {
 
     @Override
     protected void createPages() {
-        if (!ManHunt.hasGame()) return;
-        MHGame game = ManHunt.getGame();
 
         for (int i = 0; i < (game.getPlayers().size() / 27) + 1; i++) {
             Map<Integer, GUIElement> page = new HashMap<>();
@@ -45,14 +47,14 @@ public class Teams extends PaginatedGUI {
 
 
             page.put(30, GUIUtil.getBackPageElement(this));
-            GUIUtil.addCloseElement(page, this.getInventory().getSize());
+            GUIUtil.addCloseElement(page, this.getInventory().getSize(), game);
             page.put(32, GUIUtil.getNextPageElement(this));
 
             addPage(i, page);
         }
     }
 
-    private GUIElement getHeadElement(Player player, MHGame game) {
+    private GUIElement getHeadElement(Player player, ManHunt game) {
         String team = game.getTeam(player).getPrefix();
         ItemStack head = new ItemBuilder(Material.PLAYER_HEAD).setSkullOwner(player).setLore(
                 "§fTeam: " + team,
@@ -64,17 +66,17 @@ public class Teams extends PaginatedGUI {
         return new GUIElement(head, event -> {
             switch (event.getClick()) {
                 case LEFT -> {
-                    game.setTeam(player, GameTeam.RUNNERS);
+                    game.setTeam(player, ManHunt.MHTeam.RUNNERS);
                     player.getWorld().playSound(player.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 1, 2);
                     player.sendMessage("§aYou are now a Runner!");
                 }
                 case RIGHT -> {
-                    game.setTeam(player, GameTeam.HUNTERS);
+                    game.setTeam(player, ManHunt.MHTeam.HUNTERS);
                     player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PILLAGER_AMBIENT, 1, 1);
                     player.sendMessage("§aYou are now a Hunter!");
                 }
                 case DROP -> {
-                    game.setTeam(player, GameTeam.SPECTATORS);
+                    game.setTeam(player, ManHunt.MHTeam.SPECTATORS);
                     player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_AMBIENT, 1, 1);
                     player.sendMessage("§aYou are now a Spectator!");
                 }
@@ -84,7 +86,7 @@ public class Teams extends PaginatedGUI {
                 }
             }
 
-            game.getScoreboardHandler().tick(0);
+            game.getPlusBoard().tick(0);
 
             ItemMeta meta = head.getItemMeta();
             assert meta != null;

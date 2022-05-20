@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.AbstractRun;
+import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.util.ParticleUtil;
 import org.bukkit.*;
@@ -27,7 +28,7 @@ public class KingSlime extends Logic {
     private long startTime = -1;
     private int suckedUp = 0;
 
-    public KingSlime(MHGame game) {
+    public KingSlime(AbstractRun game) {
         super(game);
         lastDamage = new HashMap<>();
         blockListener = new BlockListener();
@@ -36,7 +37,7 @@ public class KingSlime extends Logic {
 
     @Override
     public void tick(long tick) {
-        MHGame game = getGame();
+        AbstractRun game = getGame();
         for (Iterator<FallingBlock> iterator = fallingBlocks.iterator(); iterator.hasNext(); ) {
             FallingBlock fallingBlock = iterator.next();
             if (!fallingBlock.isValid() || fallingBlock.getTicksLived() > 200) {
@@ -79,7 +80,7 @@ public class KingSlime extends Logic {
     }
 
     public void spawnSlime() {
-        MHGame game = getGame();
+        AbstractRun game = getGame();
         Scoreboard board = game.getScoreboard();
         Team team = board.getTeam("blueTeam");
         if (team == null)
@@ -168,10 +169,10 @@ public class KingSlime extends Logic {
     private Player getNearestPlayer(Location location) {
         Player nearest = null;
         double distance = Double.MAX_VALUE;
-        MHGame game = getGame();
+        AbstractRun game = getGame();
         for (Player player : game.getPlayers()) {
             double d = location.distance(player.getLocation());
-            if (!game.getRunners().hasEntry(player.getName()) && !game.getHunters().hasEntry(player.getName()))
+            if (game instanceof ManHunt manHunt && !manHunt.getRunners().hasEntry(player.getName()) && !manHunt.getHunters().hasEntry(player.getName()))
                 continue;
             if (d < distance) {
                 distance = d;

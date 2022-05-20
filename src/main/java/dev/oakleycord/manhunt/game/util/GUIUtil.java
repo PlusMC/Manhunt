@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.util;
 
-import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.SpeedRuns;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.gui.MHSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,22 +21,23 @@ public class GUIUtil {
         throw new IllegalStateException("Utility class");
     }
 
-    public static void addCloseElement(PlusGUI gui) {
+    public static void addCloseElement(PlusGUI gui, AbstractRun game) {
         ItemStack close = new ItemBuilder(Material.BARRIER).setName("§cClose").build();
 
         gui.setElement(new GUIElement(close, event -> {
             HumanEntity human = event.getWhoClicked();
-            Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> human.openInventory(new MHSettings().getInventory()));
+
+            Bukkit.getScheduler().runTask(SpeedRuns.getInstance(), () -> human.openInventory(new MHSettings(game).getInventory()));
             if (human instanceof Player p) p.playSound(p.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1, 1.25f);
         }), gui.getInventory().getSize() - 5);
     }
 
-    public static void addCloseElement(Map<Integer, GUIElement> gui, int size) {
+    public static void addCloseElement(Map<Integer, GUIElement> gui, int size, AbstractRun game) {
         ItemStack close = new ItemBuilder(Material.BARRIER).setName("§cClose").build();
 
         gui.put(size - 5, new GUIElement(close, event -> {
             HumanEntity human = event.getWhoClicked();
-            Bukkit.getScheduler().runTask(ManHunt.getInstance(), () -> human.openInventory(new MHSettings().getInventory()));
+            Bukkit.getScheduler().runTask(SpeedRuns.getInstance(), () -> human.openInventory(new MHSettings(game).getInventory()));
             if (human instanceof Player p) p.playSound(p.getLocation(), Sound.BLOCK_CHEST_CLOSE, 1, 1.25f);
         }));
     }

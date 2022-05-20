@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.AbstractRun;
+import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +45,7 @@ public class BlockRain extends Logic {
 
     private final BlockListener blockListener;
 
-    public BlockRain(MHGame game) {
+    public BlockRain(AbstractRun game) {
         super(game);
         this.random = new Random();
         this.blocks = new ArrayList<>();
@@ -54,7 +55,7 @@ public class BlockRain extends Logic {
 
     @Override
     public void tick(long tick) {
-        MHGame game = getGame();
+        AbstractRun game = getGame();
 
         blocks.removeIf(block -> {
             if (block.getTicksLived() > 250) {
@@ -65,7 +66,7 @@ public class BlockRain extends Logic {
 
         if (blocks.size() >= 100) return;
         for (Player player : game.getPlayers()) {
-            if (game.getSpectators().hasEntry(player.getName())) continue;
+            if (game instanceof ManHunt manHunt && manHunt.getSpectators().hasEntry(player.getName())) continue;
 
             double max = 20;
             double min = -20;

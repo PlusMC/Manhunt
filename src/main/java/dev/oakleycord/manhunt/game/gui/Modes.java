@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.gui;
 
-import dev.oakleycord.manhunt.ManHunt;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.SpeedRuns;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.logic.modes.Mode;
 import dev.oakleycord.manhunt.game.util.GUIUtil;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
@@ -20,6 +20,13 @@ import java.util.List;
 
 public class Modes extends PlusGUI {
 
+    private final AbstractRun game;
+
+    public Modes(AbstractRun game) {
+        super();
+        this.game = game;
+    }
+
     @Override
     protected Inventory createInventory() {
         return Bukkit.createInventory(this, 18, "Modes");
@@ -29,18 +36,16 @@ public class Modes extends PlusGUI {
     public void draw() {
         int i = 1;
         for (Mode mode : Mode.values()) {
-            if (!ManHunt.hasGame())
-                continue;
-            setElement(getModeElement(mode, ManHunt.getGame()), i);
+            setElement(getModeElement(mode, game), i);
             i += 3;
         }
 
-        GUIUtil.addCloseElement(this);
+        GUIUtil.addCloseElement(this, game);
         super.draw();
     }
 
 
-    private GUIElement getModeElement(Mode mode, MHGame game) {
+    private GUIElement getModeElement(Mode mode, AbstractRun game) {
         boolean isGameMode = game.getGameMode() == mode;
 
         List<String> lore = new ArrayList<>(List.of("", "§7Click to select this mode."));
@@ -52,7 +57,7 @@ public class Modes extends PlusGUI {
         ItemStack item = new ItemBuilder(mode.icon).setName(mode.name() + "%").addEnchant(OtherUtil.EMPTY_ENCHANT, 0).setLore(lore).build();
 
         return new GUIElement(item, event -> {
-            if (!ManHunt.hasGame())
+            if (!SpeedRuns.hasGame())
                 return;
 
             boolean isGameMode2 = game.getGameMode() == mode;
@@ -63,7 +68,7 @@ public class Modes extends PlusGUI {
             if (event.getWhoClicked() instanceof Player p)
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_GUITAR, 1, isGameMode2 ? 0.75f : 1.25f);
 
-            game.getScoreboardHandler().tick(0);
+            game.getPlusBoard().tick(0);
 
             draw();
         });

@@ -1,16 +1,15 @@
 package dev.oakleycord.manhunt.game.logic;
 
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.GameState;
-import dev.oakleycord.manhunt.game.GameTeam;
-import dev.oakleycord.manhunt.game.MHGame;
 import org.bukkit.Bukkit;
 import org.plusmc.pluslib.bukkit.managed.Tickable;
 
 public class GameLoop implements Tickable {
 
-    private final MHGame game;
+    private final AbstractRun game;
 
-    public GameLoop(MHGame game) {
+    public GameLoop(AbstractRun game) {
         this.game = game;
     }
 
@@ -18,9 +17,7 @@ public class GameLoop implements Tickable {
     public void tick(long tick) {
         game.updateVariables();
         if (game.getState() != GameState.INGAME) return;
-        game.getCompassHandler().getTimings().startTiming();
-        game.getCompassHandler().tick(tick);
-        game.getCompassHandler().getTimings().stopTiming();
+        game.tick(tick);
 
         if (game.getGameModeLogic() != null) {
             game.getGameModeLogic().getTimings().startTiming();
@@ -33,7 +30,7 @@ public class GameLoop implements Tickable {
             });
         } else {
             Bukkit.broadcastMessage("ERROR RUNNING GAMEMODE ENDING GAME...");
-            game.postGame(GameTeam.SPECTATORS);
+            game.postGame();
         }
     }
 }

@@ -1,10 +1,10 @@
 package dev.oakleycord.manhunt.game.events;
 
 
-import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.SpeedRuns;
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.GameState;
-import dev.oakleycord.manhunt.game.GameTeam;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -24,13 +24,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import static dev.oakleycord.manhunt.game.util.PlayerUtil.isOutsideOfBorder;
-import static dev.oakleycord.manhunt.game.util.PlayerUtil.resetAdvancements;
 
 public class MHEvents implements Listener {
     private final HashMap<Player, Entity> lastDamaged = new HashMap<>();
-    private final MHGame game;
+    private final AbstractRun game;
 
-    public MHEvents(MHGame game) {
+    public MHEvents(AbstractRun game) {
         this.game = game;
     }
 
@@ -39,12 +38,14 @@ public class MHEvents implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
 
         lastDamaged.put(player, event.getDamager());
-        Bukkit.getScheduler().runTaskLater(ManHunt.getInstance(), () -> lastDamaged.remove(player), 50);
+        Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), () -> lastDamaged.remove(player), 50);
         if (player.getHealth() - event.getFinalDamage() > 0) return;
         Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + event.getDamager().getName() + "!");
 
         if (!(event.getDamager() instanceof Player damager)) return;
-        PlayerUtil.incrementKills(damager, game.getGameTeam(player));
+        if (game instanceof ManHunt manHunt)
+            PlayerUtil.incrementKills(damager, manHunt.getGameTeam(player));
+
         PlayerUtil.rewardPoints(damager, 25, "§aKill");
     }
 
@@ -80,7 +81,9 @@ public class MHEvents implements Listener {
         Bukkit.broadcastMessage("§c" + player.getName() + " was killed by " + lastDamager.getName() + "!");
 
         if (!(lastDamager instanceof Player playerKiller)) return;
-        PlayerUtil.incrementKills(playerKiller, game.getGameTeam(playerKiller));
+        if (game instanceof ManHunt manHunt)
+            PlayerUtil.incrementKills(playerKiller, manHunt.getGameTeam(playerKiller));
+
         PlayerUtil.rewardPoints(playerKiller, 25, "§aKill");
     }
 
@@ -112,32 +115,12 @@ public class MHEvents implements Listener {
 
     @EventHandler
     public void onWorldChange(PlayerChangedWorldEvent event) {
-        Player player = event.getPlayer();
-
-        player.setScoreboard(game.getScoreboard());
-        if (!game.hasTeam(player)) {
-            resetAdvancements(player);
-            PlayerUtil.resetPlayer(player);
-            if (game.getState() == GameState.PREGAME)
-                game.setTeam(player, GameTeam.HUNTERS);
-            else game.setTeam(player, GameTeam.SPECTATORS);
-        }
-        game.getScoreboardHandler().tick(0);
+        game.onPlayerJoin(event.getPlayer());
     }
 
     //fix this to make it so that it teleports the player to the mh world
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-
-        player.setScoreboard(game.getScoreboard());
-        if (!game.hasTeam(player)) {
-            resetAdvancements(player);
-            PlayerUtil.resetPlayer(player);
-            if (game.getState() == GameState.PREGAME)
-                game.setTeam(player, GameTeam.HUNTERS);
-            else game.setTeam(player, GameTeam.SPECTATORS);
-        }
-        game.getScoreboardHandler().tick(0);
+        game.onPlayerJoin(event.getPlayer());
     }
 }

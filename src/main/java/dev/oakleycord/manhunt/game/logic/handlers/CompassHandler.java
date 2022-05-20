@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.logic.handlers;
 
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.AbstractRun;
+import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -14,7 +15,7 @@ import javax.annotation.Nullable;
 
 public class CompassHandler extends Logic {
 
-    public CompassHandler(MHGame game) {
+    public CompassHandler(AbstractRun game) {
         super(game);
     }
 
@@ -40,7 +41,8 @@ public class CompassHandler extends Logic {
         Player nearestPlayer = null;
 
         for (Player otherPlayer : player.getWorld().getPlayers()) {
-            if (!getGame().getRunners().hasEntry(otherPlayer.getName()) || otherPlayer.equals(player)) continue;
+            if (getGame() instanceof ManHunt manHunt && !manHunt.getRunners().hasEntry(otherPlayer.getName()) || otherPlayer.equals(player))
+                continue;
 
             double otherPlayerDistance = playerLocation.distance(otherPlayer.getLocation());
 

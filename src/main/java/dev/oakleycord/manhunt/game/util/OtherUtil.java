@@ -1,6 +1,6 @@
 package dev.oakleycord.manhunt.game.util;
 
-import dev.oakleycord.manhunt.ManHunt;
+import dev.oakleycord.manhunt.SpeedRuns;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class OtherUtil {
-    public static final Enchantment EMPTY_ENCHANT = new EmptyEnchant(new NamespacedKey(ManHunt.getInstance(), "empty"));
+    public static final Enchantment EMPTY_ENCHANT = new EmptyEnchant(new NamespacedKey(SpeedRuns.getInstance(), "empty"));
 
     private OtherUtil() {
         throw new IllegalStateException("Utility class");
@@ -24,8 +24,8 @@ public class OtherUtil {
         return String.format("%02d:%02d:%02d", hours, minutes % 60, seconds % 60);
     }
 
-    public static boolean isManHunt(World world) {
-        return world.getName().startsWith("mh_world_");
+    public static boolean isWorldSR(World world) {
+        return world.getName().startsWith("sr_world_");
     }
 
 

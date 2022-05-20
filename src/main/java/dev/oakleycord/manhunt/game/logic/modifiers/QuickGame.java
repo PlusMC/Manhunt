@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game.logic.modifiers;
 
+import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.GameState;
-import dev.oakleycord.manhunt.game.MHGame;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ public class QuickGame extends Logic {
 
     private final DeathListener deathListener;
 
-    protected QuickGame(MHGame game) {
+    protected QuickGame(AbstractRun game) {
         super(game);
         deathListener = new DeathListener();
     }

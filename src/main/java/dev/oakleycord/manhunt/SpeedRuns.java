@@ -2,10 +2,10 @@ package dev.oakleycord.manhunt;
 
 import dev.oakleycord.manhunt.events.VoidWorldEvents;
 import dev.oakleycord.manhunt.events.WorldEvents;
-import dev.oakleycord.manhunt.game.MHGame;
+import dev.oakleycord.manhunt.game.AbstractRun;
+import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.commands.GameSettings;
 import dev.oakleycord.manhunt.game.commands.InitGame;
-import dev.oakleycord.manhunt.game.commands.MHDebug;
 import dev.oakleycord.manhunt.game.commands.StartGame;
 import dev.oakleycord.manhunt.game.items.GameSettingsItem;
 import dev.oakleycord.manhunt.game.items.StartGameItem;
@@ -29,13 +29,12 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 //I FUCKING HATE DREAM
-public final class ManHunt extends JavaPlugin {
+public final class SpeedRuns extends JavaPlugin {
 
     private static final List<PlusCommand> COMMANDS = List.of(
             new InitGame(),
             new StartGame(),
-            new GameSettings(),
-            new MHDebug()
+            new GameSettings()
     );
 
     private static final List<Listener> LISTENERS = List.of(
@@ -47,21 +46,21 @@ public final class ManHunt extends JavaPlugin {
             new StartGameItem()
     );
 
-    private static MHGame game;
+    private static AbstractRun game;
     private static DatabaseHandler db;
     private static BoardHandler boardHandler;
     private static MultiWorldHandler worldHandler;
 
     public static void createGame() {
         if (!hasGame())
-            game = new MHGame();
+            game = new ManHunt();
     }
 
     public static boolean hasGame() {
         return getGame() != null;
     }
 
-    public static MHGame getGame() {
+    public static AbstractRun getGame() {
         return game;
     }
 
@@ -71,8 +70,8 @@ public final class ManHunt extends JavaPlugin {
         return boardHandler;
     }
 
-    public static ManHunt getInstance() {
-        return JavaPlugin.getPlugin(ManHunt.class);
+    public static SpeedRuns getInstance() {
+        return JavaPlugin.getPlugin(SpeedRuns.class);
     }
 
     public static void removeGame() {
