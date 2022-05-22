@@ -8,10 +8,10 @@ import org.bukkit.Material;
 import java.lang.reflect.Constructor;
 
 public enum Modifier {
-    TEAM_SWAP(TeamSwap.class, Material.HEART_OF_THE_SEA, true, "Team Swap", "§fEvery 1 to 3 minutes, everyone will swap teams!"),
+    TEAM_SWAP(TeamSwap.class, Material.HEART_OF_THE_SEA, true, "TS", "Team Swap", "§fEvery 1 to 3 minutes, everyone will swap teams!"),
     BLOCK_RAIN(BlockRain.class, Material.ANVIL, "BR", "Block Rain", "§fIt's raining blocks! How fun!", "§fContainers will have random loot, keep a look out!"),
     KING_SLIME(KingSlime.class, Material.SLIME_BLOCK, "KS", "King Slime", "§fKing Slime appears!", "§fYou better watch out! It'll destroy everything in its path!"),
-    QUICK_GAME(QuickGame.class, Material.SUGAR, true, "Quick Game", "§fEveryone will get tools and armor!");
+    QUICK_GAME(QuickGame.class, Material.SUGAR, true, "QG", "Quick Game", "§fEveryone will get tools and armor!");
 
     public final String sortName;
     public final String itemName;

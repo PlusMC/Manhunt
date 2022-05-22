@@ -23,8 +23,9 @@ public class Modes extends PlusGUI {
     private final AbstractRun game;
 
     public Modes(AbstractRun game) {
-        super();
+        super(false);
         this.game = game;
+        regenerateInventory();
     }
 
     @Override

@@ -21,8 +21,9 @@ public class Teams extends PaginatedGUI {
     private final ManHunt game;
 
     public Teams(ManHunt game) {
-        super();
+        super(false);
         this.game = game;
+        regenerateInventory();
     }
 
     @Override

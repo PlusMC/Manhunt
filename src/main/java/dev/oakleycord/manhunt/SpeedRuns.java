@@ -25,6 +25,7 @@ import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.PlusItemManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
 import org.plusmc.pluslib.mongo.DatabaseHandler;
+import org.plusmc.pluslib.reflection.config.ConfigEntry;
 import org.plusmc.pluslib.reflection.config.ConfigSpigot;
 
 import java.io.File;
@@ -49,14 +50,14 @@ public final class SpeedRuns extends JavaPlugin {
             new StartGameItem()
     );
 
-    private static AbstractRun game;
-    private static DatabaseHandler db;
-    private static BoardHandler boardHandler;
-    private static MultiWorldHandler worldHandler;
-    private static SpeedRunConfig config;
+    private AbstractRun game;
+    private DatabaseHandler db;
+    private BoardHandler boardHandler;
+    private MultiWorldHandler worldHandler;
+    private @ConfigEntry String gameType;
 
     public static void createGame() {
-        game = switch (config.gameType().toLowerCase()) {
+        getInstance().game = switch (getInstance().gameType.toLowerCase()) {
             case "solo" -> new SoloRun();
             case "manhunt" -> new ManHunt();
             default -> throw new IllegalArgumentException("Invalid game type");
@@ -68,13 +69,13 @@ public final class SpeedRuns extends JavaPlugin {
     }
 
     public static AbstractRun getGame() {
-        return game;
+        return getInstance().game;
     }
 
     public static BoardHandler getBoardHandler() {
-        if (boardHandler == null)
-            boardHandler = new BoardHandler(getInstance());
-        return boardHandler;
+        if (getInstance().boardHandler == null)
+            getInstance().boardHandler = new BoardHandler(getInstance());
+        return getInstance().boardHandler;
     }
 
     public static SpeedRuns getInstance() {
@@ -83,15 +84,15 @@ public final class SpeedRuns extends JavaPlugin {
 
     public static void removeGame() {
         if (!hasGame()) return;
-        game = null;
+        getInstance().game = null;
     }
 
     public static DatabaseHandler getDatabase() {
-        return db;
+        return getInstance().db;
     }
 
     public static boolean dbNotFound() {
-        return db == null || !db.isLoaded();
+        return getDatabase() == null || !getDatabase().isLoaded();
     }
 
     @Override
@@ -113,10 +114,11 @@ public final class SpeedRuns extends JavaPlugin {
         worldHandler.registerEvents(new VoidWorldEvents());
 
         saveDefaultConfig();
-        db = DatabaseHandler.getInstance();
-        ConfigSpigot configYaml = new ConfigSpigot(new File(getDataFolder(), "config.yml"));
-        config = configYaml.read(SpeedRunConfig.class);
 
+        ConfigSpigot configYaml = new ConfigSpigot(new File(getDataFolder(), "config.yml"));
+        configYaml.writeIntoObject(this);
+
+        db = DatabaseHandler.getInstance();
 
         for (PlusCommand cmd : COMMANDS)
             BaseManager.registerAny(cmd, this);
@@ -138,9 +140,4 @@ public final class SpeedRuns extends JavaPlugin {
         }
     }
 
-    private record SpeedRunConfig(
-            String gameType
-    ) {
-
-    }
 }

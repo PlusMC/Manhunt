@@ -21,9 +21,11 @@ public class MHSettings extends PlusGUI {
     private final AbstractRun game;
 
     public MHSettings(AbstractRun game) {
-        super();
+        super(false);
         this.game = game;
+        regenerateInventory();
     }
+
 
     @Override
     protected Inventory createInventory() {
