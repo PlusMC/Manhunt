@@ -265,12 +265,14 @@ public class KingSlime extends Logic {
     @Override
     public void load() {
         getGame().getWorldHandler().registerEvents(blockListener);
-        spawnSlime();
+        if (slime == null)
+            spawnSlime();
     }
 
     @Override
     public void unload() {
-        slime.remove();
+        if (slime != null)
+            slime.remove();
         fallingBlocks.forEach(FallingBlock::remove);
         getGame().getWorldHandler().unregisterEvents(blockListener);
     }

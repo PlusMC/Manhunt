@@ -3,7 +3,7 @@ package dev.oakleycord.manhunt.game.logic;
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
 import org.plusmc.pluslib.bukkit.managed.Tickable;
-import org.plusmc.pluslib.reflection.timings.ITimings;
+import org.plusmc.pluslib.reflect.spigot.timings.ITimings;
 
 public abstract class Logic implements Tickable {
     private final AbstractRun game;

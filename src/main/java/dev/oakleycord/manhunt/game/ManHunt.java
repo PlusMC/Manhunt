@@ -113,12 +113,12 @@ public class ManHunt extends AbstractRun {
 
     @Override
     public void onPlayerJoin(Player player) {
+        super.onPlayerJoin(player);
         if (this.hasPlayerJoined(player)) {
             if (getState() == GameState.PREGAME) {
                 setTeam(player, MHTeam.HUNTERS);
             } else setTeam(player, ManHunt.MHTeam.SPECTATORS);
         }
-        super.onPlayerJoin(player);
     }
 
     @Override

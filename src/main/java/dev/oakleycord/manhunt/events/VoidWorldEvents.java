@@ -74,7 +74,6 @@ public class VoidWorldEvents implements Listener {
             game.pregame();
             for (Player p : Bukkit.getOnlinePlayers()) {
                 World world = game.getWorldHandler().getWorldOverworld();
-                world.getSpawnLocation().getChunk().load();
                 p.teleport(world.getSpawnLocation().add(0, 1, 0));
             }
         }, 20);

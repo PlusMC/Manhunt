@@ -25,8 +25,8 @@ import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.PlusItemManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
 import org.plusmc.pluslib.mongo.DatabaseHandler;
-import org.plusmc.pluslib.reflection.config.ConfigEntry;
-import org.plusmc.pluslib.reflection.config.ConfigSpigot;
+import org.plusmc.pluslib.reflect.bungeespigot.config.ConfigEntry;
+import org.plusmc.pluslib.reflect.bungeespigot.config.ConfigSpigot;
 
 import java.io.File;
 import java.lang.reflect.Field;
