@@ -8,8 +8,6 @@ import dev.oakleycord.manhunt.game.SoloRun;
 import dev.oakleycord.manhunt.game.commands.GameSettings;
 import dev.oakleycord.manhunt.game.commands.InitGame;
 import dev.oakleycord.manhunt.game.commands.StartGame;
-import dev.oakleycord.manhunt.game.items.GameSettingsItem;
-import dev.oakleycord.manhunt.game.items.StartGameItem;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
@@ -19,7 +17,6 @@ import org.plusmc.pluslib.bukkit.handlers.BoardHandler;
 import org.plusmc.pluslib.bukkit.handlers.GUIHandler;
 import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
 import org.plusmc.pluslib.bukkit.managed.PlusCommand;
-import org.plusmc.pluslib.bukkit.managed.PlusItem;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
 import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.PlusItemManager;
@@ -45,16 +42,12 @@ public final class SpeedRuns extends JavaPlugin {
             new WorldEvents()
     );
 
-    private static final List<PlusItem> ITEMS = List.of(
-            new GameSettingsItem(),
-            new StartGameItem()
-    );
-
     private AbstractRun game;
     private DatabaseHandler db;
     private BoardHandler boardHandler;
     private MultiWorldHandler worldHandler;
     private @ConfigEntry String gameType;
+    public @ConfigEntry String lobbyServer;
 
     public static void createGame() {
         getInstance().game = switch (getInstance().gameType.toLowerCase()) {
@@ -122,9 +115,6 @@ public final class SpeedRuns extends JavaPlugin {
 
         for (PlusCommand cmd : COMMANDS)
             BaseManager.registerAny(cmd, this);
-
-        for (PlusItem item : ITEMS)
-            BaseManager.registerAny(item, this);
 
 
         registerEnchant();

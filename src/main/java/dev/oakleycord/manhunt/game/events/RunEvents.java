@@ -25,11 +25,11 @@ import java.util.HashMap;
 
 import static dev.oakleycord.manhunt.game.util.PlayerUtil.isOutsideOfBorder;
 
-public class MHEvents implements Listener {
+public class RunEvents implements Listener {
     private final HashMap<Player, Entity> lastDamaged = new HashMap<>();
     private final AbstractRun game;
 
-    public MHEvents(AbstractRun game) {
+    public RunEvents(AbstractRun game) {
         this.game = game;
     }
 

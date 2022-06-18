@@ -66,7 +66,12 @@ public class VoidWorldEvents implements Listener {
         PlayerUtil.resetPlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
 
-        if (SpeedRuns.hasGame()) return;
+        if (SpeedRuns.hasGame()) {
+            World world = SpeedRuns.getGame().getWorldHandler().getWorldOverworld();
+            player.teleport(world.getSpawnLocation().add(0, 1, 0));
+            return;
+        }
+        
         Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), () -> {
             if (SpeedRuns.hasGame()) return;
             SpeedRuns.createGame();

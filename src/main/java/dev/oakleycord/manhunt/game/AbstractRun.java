@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.SpeedRuns;
-import dev.oakleycord.manhunt.game.events.MHEvents;
+import dev.oakleycord.manhunt.game.events.RunEvents;
 import dev.oakleycord.manhunt.game.logic.GameLoop;
 import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.logic.modes.Mode;
@@ -15,6 +15,7 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
+import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
 import org.plusmc.pluslib.bukkit.managed.PlusBoard;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
 
@@ -29,6 +30,7 @@ public abstract class AbstractRun {
 
     private final List<Modifier> modifiers;
     private final List<Logic> modifierLogic;
+    private boolean hadModifiers;
     private long timeStamp;
     private long endTimeStamp;
     private Mode mode;
@@ -45,8 +47,8 @@ public abstract class AbstractRun {
         this.joinedPlayers = new ArrayList<>();
 
         this.modifierLogic = new ArrayList<>();
-
         this.modifiers = new ArrayList<>();
+        this.hadModifiers = false;
 
         this.timeStamp = System.currentTimeMillis();
 
@@ -59,7 +61,7 @@ public abstract class AbstractRun {
         Bukkit.broadcastMessage("§6Loading worlds (§e3§6/§e3§6)...");
         World end = new WorldCreator("sr_world_3").seed(seed).environment(World.Environment.THE_END).createWorld();
         worldHandler = new MultiWorldHandler(SpeedRuns.getInstance(), overworld, nether, end);
-        worldHandler.registerEvents(new MHEvents(this));
+        worldHandler.registerEvents(new RunEvents(this));
         worldHandler.listenForPortal(true);
 
         for (World world : worldHandler.getWorlds()) {
@@ -83,6 +85,10 @@ public abstract class AbstractRun {
             BaseManager.registerAny(gameLoop, SpeedRuns.getInstance());
         }
         getPlusBoard().tick(0);
+    }
+
+    public boolean hadModifiers() {
+        return hadModifiers;
     }
 
     private void freeze() {
@@ -200,6 +206,7 @@ public abstract class AbstractRun {
     }
 
     public void addModifier(Modifier modifier) {
+        hadModifiers = true;
         if (modifiers.contains(modifier)) return;
         modifiers.add(modifier);
         Logic logic = modifier.getLogic(this);
@@ -220,7 +227,18 @@ public abstract class AbstractRun {
         });
     }
 
-    public abstract void updateVariables();
+    public void updateVariables() {
+        VariableHandler.setVariable("mode", getGameMode().name() + "%");
+        VariableHandler.setVariable("playerAmount", String.valueOf(getPlayers().size()));
+        VariableHandler.setVariable("time", OtherUtil.formatTime(System.currentTimeMillis() - getTimeStamp()));
+        if (!getModifiers().isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            getModifiers().forEach(modifier -> sb.append(modifier.sortName).append(", "));
+            sb.delete(sb.length() - 2, sb.length());
+            VariableHandler.setVariable("modifiers", sb.toString());
+        }
+        VariableHandler.setVariable("gameState", getState().name());
+    }
 
     @NotNull
     public Mode getGameMode() {
@@ -260,6 +278,10 @@ public abstract class AbstractRun {
 
     public GameState getState() {
         return state;
+    }
+
+    public long getTime() {
+        return endTimeStamp != 0 ? endTimeStamp - timeStamp : System.currentTimeMillis() - timeStamp;
     }
 
     public List<Logic> getModifierLogic() {

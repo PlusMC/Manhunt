@@ -3,12 +3,14 @@ package dev.oakleycord.manhunt.game.util;
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.ManHunt;
+import dev.oakleycord.manhunt.game.logic.modes.Mode;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.plusmc.pluslib.mongo.UserMH;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -131,6 +133,21 @@ public class PlayerUtil {
                 user.getUserMH().addWinHunter();
             else if (team == ManHunt.MHTeam.RUNNERS)
                 user.getUserMH().addWinRunner();
+        });
+    }
+
+    public static void finishedRun(Player player, Mode mode, long time) {
+        if (SpeedRuns.dbNotFound()) return;
+        SpeedRuns.getDatabase().asyncUserAction(player.getUniqueId(), user -> {
+            UserMH userMH = user.getUserMH();
+            float timeSeconds = time / 1000f;
+            timeSeconds = Math.round(timeSeconds * 100f) / 100f;
+            user.getPlayer().sendMessage("§aYou finished " + mode.name() + "% in " + timeSeconds + "s!");
+            if (time < userMH.getPersonalBests().getOrDefault(mode.name(), Long.MAX_VALUE)) {
+                user.getPlayer().sendMessage("§aNew personal best!");
+                user.getPlayer().playSound("entity.player.levelup", 1, 2f);
+            }
+            userMH.addPersonalBest(mode.name(), time);
         });
     }
 

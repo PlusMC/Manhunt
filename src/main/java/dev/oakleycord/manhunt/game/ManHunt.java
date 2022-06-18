@@ -3,7 +3,6 @@ package dev.oakleycord.manhunt.game;
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.boards.ManhuntBoard;
 import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
-import dev.oakleycord.manhunt.game.util.OtherUtil;
 import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -133,23 +132,10 @@ public class ManHunt extends AbstractRun {
 
     @Override
     public void updateVariables() {
-        VariableHandler.setVariable("mode", getGameMode().name() + "%");
-        VariableHandler.setVariable("playerAmount", String.valueOf(getPlayers().size()));
+        super.updateVariables();
         VariableHandler.setVariable("hunterAmount", String.valueOf(getHunters().getEntries().size()));
         VariableHandler.setVariable("runnerAmount", String.valueOf(getRunners().getEntries().size()));
         VariableHandler.setVariable("spectatorAmount", String.valueOf(getSpectators().getEntries().size()));
-        VariableHandler.setVariable("time", OtherUtil.formatTime(System.currentTimeMillis() - getTimeStamp()));
-        if (!getModifiers().isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            getModifiers().forEach(modifier -> sb.append(modifier.sortName).append(", "));
-            sb.delete(sb.length() - 2, sb.length());
-            VariableHandler.setVariable("modifiers", sb.toString());
-        }
-        VariableHandler.setVariable("gameState", getState().name());
-    }
-
-    public CompassHandler getCompassHandler() {
-        return compassHandler;
     }
 
     public enum MHTeam {
