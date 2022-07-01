@@ -2,7 +2,6 @@ package dev.oakleycord.manhunt.events;
 
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
-import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -16,7 +15,6 @@ import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import static dev.oakleycord.manhunt.game.util.PlayerUtil.resetPlayer;
 
 public class VoidWorldEvents implements Listener {
     @EventHandler
@@ -51,7 +49,7 @@ public class VoidWorldEvents implements Listener {
 
         assert Bukkit.getScoreboardManager() != null;
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-        resetPlayer(player);
+        player.reset();
         player.setGameMode(GameMode.SURVIVAL);
     }
 
@@ -63,7 +61,7 @@ public class VoidWorldEvents implements Listener {
         assert Bukkit.getScoreboardManager() != null;
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0.5, 1, 0.5));
-        PlayerUtil.resetPlayer(player);
+        player.reset();
         player.setGameMode(GameMode.SURVIVAL);
 
         if (SpeedRuns.hasGame()) {
@@ -71,7 +69,7 @@ public class VoidWorldEvents implements Listener {
             player.teleport(world.getSpawnLocation().add(0, 1, 0));
             return;
         }
-        
+
         Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), () -> {
             if (SpeedRuns.hasGame()) return;
             SpeedRuns.createGame();

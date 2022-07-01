@@ -5,7 +5,6 @@ import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.ManHunt;
-import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
@@ -23,7 +22,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static dev.oakleycord.manhunt.game.util.PlayerUtil.isOutsideOfBorder;
 
 public class RunEvents implements Listener {
     private final HashMap<Player, Entity> lastDamaged = new HashMap<>();
@@ -44,9 +42,9 @@ public class RunEvents implements Listener {
 
         if (!(event.getDamager() instanceof Player damager)) return;
         if (game instanceof ManHunt manHunt)
-            PlayerUtil.incrementKills(damager, manHunt.getGameTeam(player));
+            damager.incrementKills(manHunt.getGameTeam(player));
 
-        PlayerUtil.rewardPoints(damager, 25, "§aKill");
+        damager.rewardPoints(25, "§aKill");
     }
 
     @EventHandler
@@ -66,7 +64,7 @@ public class RunEvents implements Listener {
         player.getWorld().spawn(player.getLocation(), ExperienceOrb.class).setExperience(player.getLevel());
 
         player.getWorld().strikeLightningEffect(player.getLocation());
-        PlayerUtil.resetPlayer(player, true, true);
+        player.reset(true, true);
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)
                 || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
@@ -82,9 +80,9 @@ public class RunEvents implements Listener {
 
         if (!(lastDamager instanceof Player playerKiller)) return;
         if (game instanceof ManHunt manHunt)
-            PlayerUtil.incrementKills(playerKiller, manHunt.getGameTeam(playerKiller));
+            playerKiller.incrementKills(manHunt.getGameTeam(playerKiller));
 
-        PlayerUtil.rewardPoints(playerKiller, 25, "§aKill");
+        playerKiller.rewardPoints(25, "§aKill");
     }
 
 
@@ -107,7 +105,7 @@ public class RunEvents implements Listener {
 
         if (game.getState() != GameState.PREGAME) return;
 
-        if (!isOutsideOfBorder(event.getPlayer()))
+        if (!event.getPlayer().isOutsideOfBorder())
             return;
 
         event.getPlayer().teleport(event.getTo().getWorld().getSpawnLocation().add(0, 1, 0));
