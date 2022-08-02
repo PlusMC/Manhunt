@@ -16,13 +16,12 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 
-public class VoidWorldEvents implements Listener {
+public class LobbyWorldEvents implements Listener {
     @EventHandler
     public void onEntityInteract(EntityInteractEvent event) {
         event.setCancelled(true);
         if (event.getEntity() instanceof Player player && player.isOp())
             event.setCancelled(false);
-
     }
 
     @EventHandler
@@ -51,6 +50,14 @@ public class VoidWorldEvents implements Listener {
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         player.reset();
         player.setGameMode(GameMode.SURVIVAL);
+
+        if (SpeedRuns.hasGame()) { //prevent players joining void world during game
+            World world = SpeedRuns.getGame().getWorldHandler().getWorldOverworld();
+            player.teleport(world.getSpawnLocation().add(0, 1, 0));
+            return;
+        }
+
+        initGame();
     }
 
     //fix this to make it so that it teleports the player to the mh world
@@ -70,15 +77,23 @@ public class VoidWorldEvents implements Listener {
             return;
         }
 
-        Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), () -> {
+        initGame();
+    }
+
+
+    public void initGame() {
+        Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), () -> { //timeout game creation so player can join before game initializes
             if (SpeedRuns.hasGame()) return;
             SpeedRuns.createGame();
             AbstractRun game = SpeedRuns.getGame();
             game.pregame();
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                World world = game.getWorldHandler().getWorldOverworld();
-                p.teleport(world.getSpawnLocation().add(0, 1, 0));
-            }
+
+            Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), () -> { //timeout teleport to avoid errors
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    World world = game.getWorldHandler().getWorldOverworld();
+                    p.teleport(world.getSpawnLocation().add(0, 1, 0));
+                }
+            }, 20);
         }, 20);
     }
 }
