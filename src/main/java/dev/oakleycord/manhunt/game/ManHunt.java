@@ -3,7 +3,6 @@ package dev.oakleycord.manhunt.game;
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.boards.ManhuntBoard;
 import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
-import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
@@ -35,7 +34,6 @@ public class ManHunt extends AbstractRun {
         this.spectators = getScoreboard().registerNewTeam("Spectators");
         spectators.setPrefix(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[Spectator] ");
         spectators.setColor(ChatColor.DARK_GRAY);
-
         SpeedRuns.getBoardHandler().addBoard(board);
     }
 
@@ -98,11 +96,11 @@ public class ManHunt extends AbstractRun {
             }
 
             if (getGameTeam(player) == winningTeam) {
-                PlayerUtil.incrementWins(player, winningTeam);
-                PlayerUtil.rewardPoints(player, getTeam(player).equals(hunters) ? 75 : 200, "§aGame Won");
-            } else if (getGameTeam(player) == winningTeam.getOpponent() || PlayerUtil.wasRunner(player)) {
-                PlayerUtil.incrementLoses(player, winningTeam.getOpponent());
-                PlayerUtil.rewardPoints(player, 25, "§aParticipation");
+                player.incrementWins(winningTeam);
+                player.rewardPoints(getTeam(player).equals(hunters) ? 75 : 200, "§aGame Won");
+            } else if (getGameTeam(player) == winningTeam.getOpponent() || player.wasRunner()) {
+                player.incrementLoses(winningTeam.getOpponent());
+                player.rewardPoints(25, "§aParticipation");
             }
         });
 
@@ -112,12 +110,12 @@ public class ManHunt extends AbstractRun {
 
     @Override
     public void onPlayerJoin(Player player) {
-        super.onPlayerJoin(player);
-        if (this.hasPlayerJoined(player)) {
+        if (!this.hasPlayerJoined(player)) {
             if (getState() == GameState.PREGAME) {
                 setTeam(player, MHTeam.HUNTERS);
             } else setTeam(player, ManHunt.MHTeam.SPECTATORS);
         }
+        super.onPlayerJoin(player);
     }
 
     @Override

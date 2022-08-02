@@ -2,7 +2,6 @@ package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.boards.SoloBoard;
-import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -56,7 +55,7 @@ public class SoloRun extends AbstractRun {
 
     @Override
     public void postGame() {
-        PlayerUtil.finishedRun(getPlayer(), getGameMode(), getTime());
+        getPlayer().finishedRun(getGameMode(), getTime());
         super.postGame();
     }
 

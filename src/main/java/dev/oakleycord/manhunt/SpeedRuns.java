@@ -1,6 +1,6 @@
 package dev.oakleycord.manhunt;
 
-import dev.oakleycord.manhunt.events.VoidWorldEvents;
+import dev.oakleycord.manhunt.events.LobbyWorldEvents;
 import dev.oakleycord.manhunt.events.WorldEvents;
 import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.ManHunt;
@@ -29,7 +29,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
 
-//I FUCKING HATE DREAM
 public final class SpeedRuns extends JavaPlugin {
 
     private static final List<PlusCommand> COMMANDS = List.of(
@@ -104,7 +103,7 @@ public final class SpeedRuns extends JavaPlugin {
         new GUIHandler(this);
 
         worldHandler = new MultiWorldHandler(this, Bukkit.getWorlds().get(0));
-        worldHandler.registerEvents(new VoidWorldEvents());
+        worldHandler.registerEvents(new LobbyWorldEvents());
 
         saveDefaultConfig();
 

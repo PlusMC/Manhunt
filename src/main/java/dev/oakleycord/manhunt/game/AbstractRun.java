@@ -7,7 +7,6 @@ import dev.oakleycord.manhunt.game.logic.Logic;
 import dev.oakleycord.manhunt.game.logic.modes.Mode;
 import dev.oakleycord.manhunt.game.logic.modifiers.Modifier;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
-import dev.oakleycord.manhunt.game.util.PlayerUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -21,7 +20,6 @@ import org.plusmc.pluslib.bukkit.managing.BaseManager;
 
 import java.util.*;
 
-import static dev.oakleycord.manhunt.game.util.PlayerUtil.resetAdvancements;
 
 public abstract class AbstractRun {
     private final long seed;
@@ -117,7 +115,7 @@ public abstract class AbstractRun {
 
         getPlayers().forEach(player -> {
             player.sendTitle(ChatColor.GOLD + "" + ChatColor.BOLD + "Game Started!", "", 10, 20, 10);
-            PlayerUtil.resetPlayer(player);
+            player.reset();
             player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
         });
     }
@@ -182,7 +180,7 @@ public abstract class AbstractRun {
             player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0.5, 1, 0.5));
 
-            PlayerUtil.resetPlayer(player);
+            player.reset();
         });
 
         worldHandler.delete();
@@ -257,8 +255,8 @@ public abstract class AbstractRun {
     public void onPlayerJoin(Player player) {
         player.setScoreboard(this.getScoreboard());
         if (!this.hasPlayerJoined(player)) {
-            resetAdvancements(player);
-            PlayerUtil.resetPlayer(player);
+            player.resetAdvancements();
+            player.reset();
             joinedPlayers.add(player.getUniqueId());
         }
         this.getPlusBoard().tick(0);
