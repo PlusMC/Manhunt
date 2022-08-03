@@ -22,8 +22,8 @@ import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.PlusItemManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
 import org.plusmc.pluslibcore.mongo.DatabaseHandler;
-import org.plusmc.pluslibcore.reflect.bungeespigot.config.ConfigEntry;
-import org.plusmc.pluslibcore.reflect.bungeespigot.config.ConfigSpigot;
+import org.plusmc.pluslibcore.reflection.bungeebukkit.config.ConfigEntry;
+import org.plusmc.pluslibcore.reflection.bungeebukkit.config.InjectConfigBukkit;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -107,8 +107,8 @@ public final class SpeedRuns extends JavaPlugin {
 
         saveDefaultConfig();
 
-        ConfigSpigot configYaml = new ConfigSpigot(new File(getDataFolder(), "config.yml"));
-        configYaml.writeIntoObject(this);
+        InjectConfigBukkit configYaml = new InjectConfigBukkit(new File(getDataFolder(), "config.yml"));
+        configYaml.inject(this);
 
         db = DatabaseHandler.getInstance();
 

@@ -3,18 +3,18 @@ package dev.oakleycord.manhunt.game.logic;
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
 import org.plusmc.pluslib.bukkit.managed.Tickable;
-import org.plusmc.pluslibcore.reflect.spigotpaper.timings.ITimings;
+import org.plusmc.pluslibcore.reflection.bukkitpaper.timings.WrappedTimings;
 
 public abstract class Logic implements Tickable {
     private final AbstractRun game;
-    private final ITimings timings;
+    private final WrappedTimings timings;
 
     protected Logic(AbstractRun game) {
         this.game = game;
-        this.timings = ITimings.create(SpeedRuns.getInstance(), this.getClass().getSimpleName());
+        this.timings = WrappedTimings.create(SpeedRuns.getInstance(), this.getClass().getSimpleName());
     }
 
-    public ITimings getTimings() {
+    public WrappedTimings getTimings() {
         return this.timings;
     }
 

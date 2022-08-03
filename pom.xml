@@ -84,7 +84,7 @@
         <dependency>
             <groupId>org.plusmc</groupId>
             <artifactId>PlusLib</artifactId>
-            <version>0.12.2-INDEV</version>
+            <version>0.13-INDEV</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

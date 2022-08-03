@@ -138,9 +138,8 @@ public class ManHunt extends AbstractRun {
     @Override
     public void startGame() {
         super.startGame();
-        getPlayers().forEach(player -> {
-            player.sendTitle(GOLD + "" + BOLD + "Game Started!", GOLD + "You're a " + getTeam(player).getPrefix().trim() + GOLD + "!", 10, 20, 10);
-        });
+        getPlayers().forEach(player ->
+                player.sendTitle(GOLD + "" + BOLD + "Game Started!", GOLD + "You're a " + getTeam(player).getPrefix().trim() + GOLD + "!", 10, 20, 10));
         setBoard(new ManhuntBoard(this, getScoreboard()));
     }
 

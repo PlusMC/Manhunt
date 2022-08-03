@@ -51,6 +51,13 @@ public class PlayerExt {
     }
 
     public static void reset(@This Player thiz, boolean respawn, boolean wasDeath) {
+        AbstractRun game = SpeedRuns.getGame();
+        if (respawn) {
+            if (thiz.getBedSpawnLocation() != null) {
+                thiz.teleport(thiz.getBedSpawnLocation());
+            } else thiz.teleport(game.getWorldHandler().getWorldOverworld().getSpawnLocation().add(0, 1, 0));
+        }
+
         thiz.setHealth(20);
         thiz.setFoodLevel(20);
         thiz.setFireTicks(0);
@@ -66,12 +73,6 @@ public class PlayerExt {
         thiz.getActivePotionEffects().forEach(potion -> thiz.removePotionEffect(potion.getType()));
         Bukkit.getBossBars().forEachRemaining(bossBar -> bossBar.removePlayer(thiz));
 
-        AbstractRun game = SpeedRuns.getGame();
-        if (respawn) {
-            if (thiz.getBedSpawnLocation() != null)
-                thiz.teleport(thiz.getBedSpawnLocation());
-            else thiz.teleport(game.getWorldHandler().getWorldOverworld().getSpawnLocation().add(0, 1, 0));
-        }
 
         if (wasDeath && game instanceof ManHunt manHunt) {
             if (manHunt.getRunners().hasEntry(thiz.getName())) {

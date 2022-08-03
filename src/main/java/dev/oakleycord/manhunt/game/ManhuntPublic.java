@@ -63,12 +63,18 @@ public class ManhuntPublic extends ManHunt {
     @Override
     public void onPlayerQuit(Player player) {
         super.onPlayerQuit(player);
-        updateStartTicks();
+        updateStartTicks(true);
     }
 
     public void updateStartTicks() {
+        updateStartTicks(false);
+    }
+
+    public void updateStartTicks(boolean leave) {
         if (getState() != GameState.PREGAME) return;
         int amountOfPlayers = getPlayers().size();
+        if (leave)
+            amountOfPlayers--;
 
         if (amountOfPlayers >= 2 && !starting) {
             starting = true;
