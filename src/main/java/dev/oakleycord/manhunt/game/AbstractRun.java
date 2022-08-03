@@ -162,6 +162,7 @@ public abstract class AbstractRun {
 
     public void destroy() {
         SpeedRuns.getBoardHandler().removeBoard(getPlusBoard());
+        SpeedRuns.removeGame();
 
         String time = OtherUtil.formatTime(endTimeStamp - this.timeStamp);
         String[] summary = new String[5];
@@ -185,7 +186,6 @@ public abstract class AbstractRun {
         });
 
         worldHandler.delete();
-        SpeedRuns.removeGame();
     }
 
     public Team getTeam(Player player) {

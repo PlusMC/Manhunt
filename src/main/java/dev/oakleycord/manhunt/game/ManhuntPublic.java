@@ -1,12 +1,18 @@
 package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.game.boards.ManHuntPublicBoard;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static net.md_5.bungee.api.ChatColor.AQUA;
+import static net.md_5.bungee.api.ChatColor.GOLD;
 
 public class ManhuntPublic extends ManHunt {
     private boolean starting = false;
@@ -24,31 +30,27 @@ public class ManhuntPublic extends ManHunt {
 
     @Override
     public void startGame() {
-        super.startGame();
         float percentRunners = 0.5f;
         List<Player> players = new ArrayList<>(getPlayers());
         Collections.shuffle(players);
         for (int i = 0; i < players.size(); i++) {
             if (i < players.size() * percentRunners) {
-                players.get(i).sendTitle("", "You are a runner", 10, 20, 10);
                 setTeam(players.get(i), MHTeam.RUNNERS);
-            } else {
-                players.get(i).sendTitle("", "You are a hunter", 10, 20, 10);
-                setTeam(players.get(i), MHTeam.HUNTERS);
-            }
-
+            } else setTeam(players.get(i), MHTeam.HUNTERS);
         }
+        super.startGame();
     }
 
     @Override
     public void tick(long tick) {
         super.tick(tick);
-        if (getState() == GameState.INGAME) return;
+        if (getState() != GameState.PREGAME) return;
         if (!starting) return;
         if (startTicks > 0) {
             startTicks--;
         } else {
             this.startGame();
+            starting = false;
         }
     }
 
@@ -65,16 +67,34 @@ public class ManhuntPublic extends ManHunt {
     }
 
     public void updateStartTicks() {
-        if (getState() == GameState.INGAME) return;
+        if (getState() != GameState.PREGAME) return;
         int amountOfPlayers = getPlayers().size();
-        if (amountOfPlayers < 2 && !starting) {
+
+        if (amountOfPlayers >= 2 && !starting) {
             starting = true;
             startTicks = 30 * 20;
+            playHotBar();
 
-        } else starting = false;
+        } else if (amountOfPlayers < 2) starting = false;
 
-        if (amountOfPlayers < maxPlayers * 0.5f && startTicks > 10 * 20) //TODO: add hotbar message once triggered with a click sound
+        if (amountOfPlayers > maxPlayers * 0.5f && startTicks > 10 * 20) {
             startTicks = 10 * 20;
+            playHotBar();
+        }
+    }
+
+    public void playHotBar() {
+        TextComponent message = new TextComponent("Starting in ");
+        TextComponent seconds = new TextComponent(startTicks / 20 + "s");
+        message.setColor(GOLD);
+        seconds.setColor(AQUA);
+        message.addExtra(seconds);
+        getPlayers().forEach(player -> {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+            player.spigot().sendMessage(ChatMessageType.SYSTEM, message);
+
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
+        });
     }
 
     @Override

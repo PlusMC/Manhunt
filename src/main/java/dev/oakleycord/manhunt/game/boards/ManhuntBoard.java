@@ -4,9 +4,12 @@ import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.ManHunt;
 import org.bukkit.scoreboard.Scoreboard;
 import org.plusmc.pluslib.bukkit.managed.PlusBoard;
+import org.plusmc.pluslibcore.util.MessageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.bukkit.ChatColor.GOLD;
 
 public class ManhuntBoard extends PlusBoard {
     private final ManHunt game;
@@ -40,7 +43,11 @@ public class ManhuntBoard extends PlusBoard {
 
         entries.add("");
 
-        entries.add("§8§lGameState: %gameState%");
+        //entries.add("§8§lGameState: %gameState%");
+
+        String border = GOLD + MessageUtil.border(entries);
+        entries.set(0, border);
+        entries.set(entries.size() - 1, border);
         return entries;
     }
 

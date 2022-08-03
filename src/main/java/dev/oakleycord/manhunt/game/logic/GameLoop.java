@@ -16,8 +16,8 @@ public class GameLoop implements Tickable {
     @Override
     public void tick(long tick) {
         game.updateVariables();
-        if (game.getState() != GameState.INGAME) return;
         game.tick(tick);
+        if (game.getState() != GameState.INGAME) return;
 
         if (game.getGameModeLogic() != null) {
             game.getGameModeLogic().getTimings().startTiming();

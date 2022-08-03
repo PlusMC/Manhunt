@@ -8,6 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
 
+import static net.md_5.bungee.api.ChatColor.BOLD;
+import static net.md_5.bungee.api.ChatColor.GOLD;
+
 public class ManHunt extends AbstractRun {
     private final Team hunters;
     private final Team runners;
@@ -18,6 +21,7 @@ public class ManHunt extends AbstractRun {
     public ManHunt() {
         super();
         this.compassHandler = new CompassHandler(this);
+        this.setBoard(new ManhuntBoard(this));
 
         this.hunters = getScoreboard().registerNewTeam("Hunters");
         hunters.setAllowFriendlyFire(false);
@@ -111,6 +115,9 @@ public class ManHunt extends AbstractRun {
 
     @Override
     public void tick(long tick) {
+        if (getState() == GameState.PREGAME)
+            return;
+
         compassHandler.getTimings().startTiming();
         compassHandler.tick(tick);
         compassHandler.getTimings().stopTiming();
@@ -131,13 +138,26 @@ public class ManHunt extends AbstractRun {
     @Override
     public void startGame() {
         super.startGame();
+        getPlayers().forEach(player -> {
+            player.sendTitle(GOLD + "" + BOLD + "Game Started!", GOLD + "You're a " + getTeam(player).getPrefix().trim() + GOLD + "!", 10, 20, 10);
+        });
         setBoard(new ManhuntBoard(this, getScoreboard()));
     }
 
     public enum MHTeam {
-        HUNTERS,
-        RUNNERS,
-        SPECTATORS;
+        HUNTERS("Hunter"),
+        RUNNERS("Runner"),
+        SPECTATORS("Spectator");
+
+        private final String name;
+
+        public String getName() {
+            return name;
+        }
+
+        MHTeam(String name) {
+            this.name = name;
+        }
 
         public MHTeam getOpponent() {
             return switch (this) {

@@ -94,6 +94,6 @@ public class LobbyWorldEvents implements Listener {
                     p.teleport(world.getSpawnLocation().add(0, 1, 0));
                 }
             }, 20);
-        }, 20);
+        }, 60);
     }
 }
