@@ -6,6 +6,7 @@ import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.ManHunt;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class RunEvents implements Listener {
@@ -57,8 +59,8 @@ public class RunEvents implements Listener {
 
         event.setCancelled(true);
 
-        Arrays.stream(player.getInventory().getContents()).forEach(item -> {
-            if (item != null)
+        Arrays.stream(player.getInventory().getContents()).filter(Objects::nonNull).forEach(item -> {
+            if (item.getType() != Material.COMPASS)
                 player.getWorld().dropItem(player.getLocation(), item);
         });
 
