@@ -5,31 +5,22 @@ import dev.oakleycord.manhunt.game.boards.SoloBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.plusmc.pluslib.bukkit.managed.PlusBoard;
 import org.plusmc.pluslib.bukkit.util.BungeeUtil;
 
 import java.util.UUID;
 
 public class SoloRun extends AbstractRun {
-    private final PlusBoard board;
     private UUID playerUUID;
 
 
     public SoloRun() {
         super();
-        this.board = new SoloBoard(this);
+        setBoard(new SoloBoard(this));
         playerUUID = null;
-        SpeedRuns.getBoardHandler().addBoard(board);
     }
 
     @Override
     public void tick(long tick) {
-    }
-
-    @Override
-    public @NotNull PlusBoard getPlusBoard() {
-        return board;
     }
 
 

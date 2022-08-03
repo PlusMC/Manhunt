@@ -12,7 +12,7 @@ import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.plusmc.pluslib.mongo.UserMH;
+import org.plusmc.pluslibcore.mongo.UserSR;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -136,7 +136,7 @@ public class PlayerExt {
     public static void finishedRun(@This Player thiz, Mode mode, long time) {
         if (SpeedRuns.dbNotFound()) return;
         SpeedRuns.getDatabase().asyncUserAction(thiz.getUniqueId(), user -> {
-            UserMH userMH = user.getUserMH();
+            UserSR userMH = user.getUserMH();
             float timeSeconds = time / 1000f;
             timeSeconds = Math.round(timeSeconds * 100f) / 100f;
             user.getPlayer().sendMessage("§aYou finished " + mode.name() + "% in " + timeSeconds + "s!");

@@ -34,6 +34,7 @@ public abstract class AbstractRun {
     private Mode mode;
     private Logic gameModeLogic;
     private GameState state;
+    private PlusBoard board;
     private GameLoop gameLoop;
     private final List<UUID> joinedPlayers;
 
@@ -196,7 +197,9 @@ public abstract class AbstractRun {
     }
 
     @NotNull
-    public abstract PlusBoard getPlusBoard();
+    public PlusBoard getPlusBoard() {
+        return board;
+    }
 
     @Nullable
     public Logic getGameModeLogic() {
@@ -262,6 +265,10 @@ public abstract class AbstractRun {
         this.getPlusBoard().tick(0);
     }
 
+    public void onPlayerQuit(Player player) {
+        this.getPlusBoard().tick(0);
+    }
+
     public boolean hasPlayerJoined(Player player) {
         return joinedPlayers.contains(player.getUniqueId());
     }
@@ -273,6 +280,15 @@ public abstract class AbstractRun {
     public List<Modifier> getModifiers() {
         return modifiers;
     }
+
+    protected void setBoard(PlusBoard board) {
+        if (this.board != null)
+            SpeedRuns.getBoardHandler().removeBoard(board);
+        this.board = board;
+        SpeedRuns.getBoardHandler().addBoard(board);
+        this.getPlayers().forEach(player -> player.setScoreboard(board.getScoreboard()));
+    }
+
 
     public GameState getState() {
         return state;

@@ -3,7 +3,7 @@ package dev.oakleycord.manhunt;
 import dev.oakleycord.manhunt.events.LobbyWorldEvents;
 import dev.oakleycord.manhunt.events.WorldEvents;
 import dev.oakleycord.manhunt.game.AbstractRun;
-import dev.oakleycord.manhunt.game.ManHunt;
+import dev.oakleycord.manhunt.game.ManhuntPublic;
 import dev.oakleycord.manhunt.game.SoloRun;
 import dev.oakleycord.manhunt.game.commands.GameSettings;
 import dev.oakleycord.manhunt.game.commands.InitGame;
@@ -21,9 +21,9 @@ import org.plusmc.pluslib.bukkit.managing.BaseManager;
 import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.PlusItemManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
-import org.plusmc.pluslib.mongo.DatabaseHandler;
-import org.plusmc.pluslib.reflect.bungeespigot.config.ConfigEntry;
-import org.plusmc.pluslib.reflect.bungeespigot.config.ConfigSpigot;
+import org.plusmc.pluslibcore.mongo.DatabaseHandler;
+import org.plusmc.pluslibcore.reflect.bungeespigot.config.ConfigEntry;
+import org.plusmc.pluslibcore.reflect.bungeespigot.config.ConfigSpigot;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -51,7 +51,7 @@ public final class SpeedRuns extends JavaPlugin {
     public static void createGame() {
         getInstance().game = switch (getInstance().gameType.toLowerCase()) {
             case "solo" -> new SoloRun();
-            case "manhunt" -> new ManHunt();
+            case "manhunt-public" -> new ManhuntPublic();
             default -> throw new IllegalArgumentException("Invalid game type");
         };
     }

@@ -1,3 +1,3 @@
-#Game Types: (Solo, Team, Manhunt)
+#Game Types: (Solo, Team, Manhunt-Public, Manhunt-Private)
 gameType: "Solo"
 lobbyServer: "SR-Lobby"

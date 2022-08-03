@@ -1,26 +1,22 @@
 package dev.oakleycord.manhunt.game;
 
-import dev.oakleycord.manhunt.SpeedRuns;
+
 import dev.oakleycord.manhunt.game.boards.ManhuntBoard;
 import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
-import org.jetbrains.annotations.NotNull;
 import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
-import org.plusmc.pluslib.bukkit.managed.PlusBoard;
 
 public class ManHunt extends AbstractRun {
     private final Team hunters;
     private final Team runners;
     private final Team spectators;
 
-    private final ManhuntBoard board;
     private final CompassHandler compassHandler;
 
     public ManHunt() {
         super();
-        this.board = new ManhuntBoard(this);
         this.compassHandler = new CompassHandler(this);
 
         this.hunters = getScoreboard().registerNewTeam("Hunters");
@@ -34,7 +30,6 @@ public class ManHunt extends AbstractRun {
         this.spectators = getScoreboard().registerNewTeam("Spectators");
         spectators.setPrefix(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "[Spectator] ");
         spectators.setColor(ChatColor.DARK_GRAY);
-        SpeedRuns.getBoardHandler().addBoard(board);
     }
 
     public void setTeam(Player player, MHTeam team) {
@@ -65,10 +60,6 @@ public class ManHunt extends AbstractRun {
         else return MHTeam.SPECTATORS;
     }
 
-    @Override
-    public @NotNull PlusBoard getPlusBoard() {
-        return board;
-    }
 
     public Team getHunters() {
         return hunters;
@@ -134,6 +125,13 @@ public class ManHunt extends AbstractRun {
         VariableHandler.setVariable("hunterAmount", String.valueOf(getHunters().getEntries().size()));
         VariableHandler.setVariable("runnerAmount", String.valueOf(getRunners().getEntries().size()));
         VariableHandler.setVariable("spectatorAmount", String.valueOf(getSpectators().getEntries().size()));
+    }
+
+
+    @Override
+    public void startGame() {
+        super.startGame();
+        setBoard(new ManhuntBoard(this, getScoreboard()));
     }
 
     public enum MHTeam {

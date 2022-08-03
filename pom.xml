@@ -78,13 +78,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.plusmc</groupId>
             <artifactId>PlusLib</artifactId>
-            <version>0.10.1-INDEV</version>
+            <version>0.12.1-INDEV</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -97,6 +97,7 @@
             <groupId>systems.manifold</groupId>
             <artifactId>manifold-ext-rt</artifactId>
             <version>${manifold.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

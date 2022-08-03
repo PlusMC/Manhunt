@@ -1,6 +1,7 @@
 package dev.oakleycord.manhunt.game.util;
 
-import org.apache.commons.lang.Validate;
+
+import com.google.common.base.Preconditions;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -38,10 +39,10 @@ public class ParticleUtil {
 
     //random guy from spigot
     public static void drawLine(Location point1, Location point2, double space, Color color) {
-        Validate.notNull(point1, "Point1 cannot be null");
-        Validate.notNull(point1.getWorld(), "World cannot be null");
+        Preconditions.checkNotNull(point1, "Point1 cannot be null");
+        Preconditions.checkNotNull(point1.getWorld(), "World cannot be null");
         World world = point1.getWorld();
-        Validate.isTrue(point2.getWorld().equals(world), "Lines cannot be in different worlds!");
+        Preconditions.checkArgument(point2.getWorld().equals(world), "Lines cannot be in different worlds!");
         double distance = point1.distance(point2);
         Vector p1 = point1.toVector();
         Vector p2 = point2.toVector();

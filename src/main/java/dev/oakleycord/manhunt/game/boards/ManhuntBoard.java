@@ -2,6 +2,7 @@ package dev.oakleycord.manhunt.game.boards;
 
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.ManHunt;
+import org.bukkit.scoreboard.Scoreboard;
 import org.plusmc.pluslib.bukkit.managed.PlusBoard;
 
 import java.util.ArrayList;
@@ -12,6 +13,11 @@ public class ManhuntBoard extends PlusBoard {
 
     public ManhuntBoard(ManHunt game) {
         super("§6§l§n§oManHunt");
+        this.game = game;
+    }
+
+    public ManhuntBoard(ManHunt game, Scoreboard scoreboard) {
+        super("§6§l§n§oManHunt", scoreboard);
         this.game = game;
     }
 
