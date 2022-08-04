@@ -29,7 +29,7 @@ public class SoloRun extends AbstractRun {
         super.onPlayerJoin(player);
         if (getPlayers().size() > 1) {
             player.sendMessage("Only 1 player is allowed in this game.");
-            BungeeUtil.connectServer(player, SpeedRuns.getInstance().lobbyServer);
+            BungeeUtil.connectServer(player, SpeedRuns.getLobbyServer());
         } else if (playerUUID == null) {
             this.playerUUID = player.getUniqueId();
         }

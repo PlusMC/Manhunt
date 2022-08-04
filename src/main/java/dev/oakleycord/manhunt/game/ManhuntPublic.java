@@ -6,6 +6,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
+import org.plusmc.pluslibcore.reflection.bungeebukkit.config.ConfigEntry;
+import org.plusmc.pluslibcore.reflection.bungeebukkit.config.InjectableConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,11 +18,14 @@ import static net.md_5.bungee.api.ChatColor.GOLD;
 
 public class ManhuntPublic extends ManHunt {
     private boolean starting = false;
-    private final int maxPlayers = 6;
+
+    private @ConfigEntry int maxPlayers = 6;
+    private @ConfigEntry double percentRunners = 0.5;
     private int startTicks = 30 * 20; //30 seconds
 
-    public ManhuntPublic() {
+    public ManhuntPublic(InjectableConfig config) {
         super();
+        config.inject(this);
         setBoard(new ManHuntPublicBoard(this, getScoreboard()));
     }
 
@@ -30,7 +35,6 @@ public class ManhuntPublic extends ManHunt {
 
     @Override
     public void startGame() {
-        float percentRunners = 0.5f;
         List<Player> players = new ArrayList<>(getPlayers());
         Collections.shuffle(players);
         for (int i = 0; i < players.size(); i++) {
@@ -48,6 +52,16 @@ public class ManhuntPublic extends ManHunt {
         if (!starting) return;
         if (startTicks > 0) {
             startTicks--;
+
+            if (startTicks % 20 != 0)
+                return;
+
+
+            int seconds = (int) ((startTicks - 100) / 20.0);
+
+            if (seconds == 10 || seconds <= 5)
+                playHotBar();
+
         } else {
             this.startGame();
             starting = false;
@@ -90,7 +104,7 @@ public class ManhuntPublic extends ManHunt {
     }
 
     public void playHotBar() {
-        TextComponent message = new TextComponent("Starting in ");
+        TextComponent message = new TextComponent("Starting in: ");
         TextComponent seconds = new TextComponent(startTicks / 20 + "s");
         message.setColor(GOLD);
         seconds.setColor(AQUA);

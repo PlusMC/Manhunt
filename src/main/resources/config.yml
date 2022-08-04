@@ -1,3 +1,10 @@
 #Game Types: (Solo, Team, Manhunt-Public, Manhunt-Private)
 gameType: "Manhunt-Public"
 lobbyServer: "SR-Lobby"
+# (restart, lobby)
+# restart starts the game again, lobby sends player goes to the lobbyserver
+endGameAction: "restart"
+
+Manhunt-Public:
+  maxPlayers: 10
+  percentRunners: 0.5

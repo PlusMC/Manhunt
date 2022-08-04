@@ -3,6 +3,7 @@ package dev.oakleycord.manhunt;
 import dev.oakleycord.manhunt.events.LobbyWorldEvents;
 import dev.oakleycord.manhunt.events.WorldEvents;
 import dev.oakleycord.manhunt.game.AbstractRun;
+import dev.oakleycord.manhunt.game.ManhuntPrivate;
 import dev.oakleycord.manhunt.game.ManhuntPublic;
 import dev.oakleycord.manhunt.game.SoloRun;
 import dev.oakleycord.manhunt.game.commands.GameSettings;
@@ -30,6 +31,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public final class SpeedRuns extends JavaPlugin {
+    private static InjectConfigBukkit config;
 
     private static final List<PlusCommand> COMMANDS = List.of(
             new InitGame(),
@@ -46,14 +48,24 @@ public final class SpeedRuns extends JavaPlugin {
     private BoardHandler boardHandler;
     private MultiWorldHandler worldHandler;
     private @ConfigEntry String gameType;
+    private @ConfigEntry String endGameAction;
     public @ConfigEntry String lobbyServer;
 
     public static void createGame() {
         getInstance().game = switch (getInstance().gameType.toLowerCase()) {
             case "solo" -> new SoloRun();
-            case "manhunt-public" -> new ManhuntPublic();
+            case "manhunt-public" -> new ManhuntPublic(config.section("Manhunt-Public"));
+            case "manhunt-private" -> new ManhuntPrivate(null, config.section("Manhunt-Private"));
             default -> throw new IllegalArgumentException("Invalid game type");
         };
+    }
+
+    public static String getEndGameAction() {
+        return getInstance().endGameAction;
+    }
+
+    public static String getLobbyServer() {
+        return getInstance().lobbyServer;
     }
 
     public static boolean hasGame() {
@@ -107,8 +119,8 @@ public final class SpeedRuns extends JavaPlugin {
 
         saveDefaultConfig();
 
-        InjectConfigBukkit configYaml = new InjectConfigBukkit(new File(getDataFolder(), "config.yml"));
-        configYaml.inject(this);
+        config = new InjectConfigBukkit(new File(getDataFolder(), "config.yml"));
+        config.inject(this);
 
         db = DatabaseHandler.getInstance();
 

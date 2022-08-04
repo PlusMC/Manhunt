@@ -17,6 +17,7 @@ import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
 import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
 import org.plusmc.pluslib.bukkit.managed.PlusBoard;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
+import org.plusmc.pluslib.bukkit.util.BungeeUtil;
 
 import java.util.*;
 
@@ -180,9 +181,11 @@ public abstract class AbstractRun {
 
         this.getPlayers().forEach(player -> {
             player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
-            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0.5, 1, 0.5));
-
             player.reset();
+            
+            if (SpeedRuns.getEndGameAction().equalsIgnoreCase("lobby"))
+                BungeeUtil.connectServer(player, SpeedRuns.getLobbyServer());
+            else player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0.5, 1, 0.5));
         });
 
         worldHandler.delete();
