@@ -41,7 +41,7 @@ public abstract class AbstractRun {
 
     protected AbstractRun() {
         this.state = GameState.LOADING;
-        this.mode = Mode.CLASSIC;
+        this.mode = Mode.ENDEREYE;
         this.gameModeLogic = mode.getLogic(this);
 
         this.joinedPlayers = new ArrayList<>();
@@ -182,7 +182,7 @@ public abstract class AbstractRun {
         this.getPlayers().forEach(player -> {
             player.sendMessage(Arrays.stream(summary).filter(Objects::nonNull).toArray(String[]::new));
             player.reset();
-            
+
             if (SpeedRuns.getEndGameAction().equalsIgnoreCase("lobby"))
                 BungeeUtil.connectServer(player, SpeedRuns.getLobbyServer());
             else player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation().add(0.5, 1, 0.5));

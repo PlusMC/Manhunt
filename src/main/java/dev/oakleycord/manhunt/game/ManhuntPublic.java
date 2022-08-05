@@ -92,7 +92,7 @@ public class ManhuntPublic extends ManHunt {
 
         if (amountOfPlayers >= 2 && !starting) {
             starting = true;
-            startTicks = 30 * 20;
+            startTicks = 45 * 20;
             playHotBar();
 
         } else if (amountOfPlayers < 2) starting = false;

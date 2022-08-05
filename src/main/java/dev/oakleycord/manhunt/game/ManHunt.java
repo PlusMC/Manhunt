@@ -3,8 +3,11 @@ package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.game.boards.ManhuntBoard;
 import dev.oakleycord.manhunt.game.logic.handlers.CompassHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Team;
 import org.plusmc.pluslib.bukkit.handlers.VariableHandler;
 
@@ -140,6 +143,10 @@ public class ManHunt extends AbstractRun {
         super.startGame();
         getPlayers().forEach(player ->
                 player.sendTitle(GOLD + "" + BOLD + "Game Started!", GOLD + "You're a " + getTeam(player).getPrefix().trim() + GOLD + "!", 10, 20, 10));
+        getHunters().getEntries().forEach(hunter -> {
+            Player player = Bukkit.getPlayer(hunter);
+            if (player != null) player.getInventory().addItem(new ItemStack(Material.COMPASS));
+        });
         setBoard(new ManhuntBoard(this, getScoreboard()));
     }
 

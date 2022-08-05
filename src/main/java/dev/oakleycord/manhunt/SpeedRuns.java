@@ -3,7 +3,7 @@ package dev.oakleycord.manhunt;
 import dev.oakleycord.manhunt.events.LobbyWorldEvents;
 import dev.oakleycord.manhunt.events.WorldEvents;
 import dev.oakleycord.manhunt.game.AbstractRun;
-import dev.oakleycord.manhunt.game.ManhuntPrivate;
+import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.ManhuntPublic;
 import dev.oakleycord.manhunt.game.SoloRun;
 import dev.oakleycord.manhunt.game.commands.GameSettings;
@@ -55,7 +55,7 @@ public final class SpeedRuns extends JavaPlugin {
         getInstance().game = switch (getInstance().gameType.toLowerCase()) {
             case "solo" -> new SoloRun();
             case "manhunt-public" -> new ManhuntPublic(config.section("Manhunt-Public"));
-            case "manhunt-private" -> new ManhuntPrivate(null, config.section("Manhunt-Private"));
+            case "manhunt-private" -> new ManHunt();
             default -> throw new IllegalArgumentException("Invalid game type");
         };
     }
