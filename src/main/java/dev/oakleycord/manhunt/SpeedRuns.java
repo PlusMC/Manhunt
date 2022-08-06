@@ -1,14 +1,14 @@
 package dev.oakleycord.manhunt;
 
+import dev.oakleycord.manhunt.commands.GameSettings;
+import dev.oakleycord.manhunt.commands.InitGame;
+import dev.oakleycord.manhunt.commands.StartGame;
 import dev.oakleycord.manhunt.events.LobbyWorldEvents;
 import dev.oakleycord.manhunt.events.WorldEvents;
 import dev.oakleycord.manhunt.game.AbstractRun;
-import dev.oakleycord.manhunt.game.ManHunt;
+import dev.oakleycord.manhunt.game.ManhuntPrivate;
 import dev.oakleycord.manhunt.game.ManhuntPublic;
 import dev.oakleycord.manhunt.game.SoloRun;
-import dev.oakleycord.manhunt.game.commands.GameSettings;
-import dev.oakleycord.manhunt.game.commands.InitGame;
-import dev.oakleycord.manhunt.game.commands.StartGame;
 import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
@@ -18,11 +18,13 @@ import org.plusmc.pluslib.bukkit.handlers.BoardHandler;
 import org.plusmc.pluslib.bukkit.handlers.GUIHandler;
 import org.plusmc.pluslib.bukkit.handlers.MultiWorldHandler;
 import org.plusmc.pluslib.bukkit.managed.PlusCommand;
+import org.plusmc.pluslib.bukkit.managed.PlusItem;
 import org.plusmc.pluslib.bukkit.managing.BaseManager;
 import org.plusmc.pluslib.bukkit.managing.PlusCommandManager;
 import org.plusmc.pluslib.bukkit.managing.PlusItemManager;
 import org.plusmc.pluslib.bukkit.managing.TickingManager;
 import org.plusmc.pluslibcore.mongo.DatabaseHandler;
+import org.plusmc.pluslibcore.mongo.User;
 import org.plusmc.pluslibcore.reflection.bungeebukkit.config.ConfigEntry;
 import org.plusmc.pluslibcore.reflection.bungeebukkit.config.InjectConfigBukkit;
 
@@ -39,6 +41,11 @@ public final class SpeedRuns extends JavaPlugin {
             new GameSettings()
     );
 
+    private static final List<PlusItem> ITEMS = List.of(
+            new dev.oakleycord.manhunt.game.assets.items.StartGame(),
+            new dev.oakleycord.manhunt.game.assets.items.GameSettings()
+    );
+
     private static final List<Listener> LISTENERS = List.of(
             new WorldEvents()
     );
@@ -47,17 +54,26 @@ public final class SpeedRuns extends JavaPlugin {
     private DatabaseHandler db;
     private BoardHandler boardHandler;
     private MultiWorldHandler worldHandler;
+    private User host = null;
     private @ConfigEntry String gameType;
     private @ConfigEntry String endGameAction;
     public @ConfigEntry String lobbyServer;
 
     public static void createGame() {
-        getInstance().game = switch (getInstance().gameType.toLowerCase()) {
+        getInstance().game = switch (getGameType().toLowerCase()) {
             case "solo" -> new SoloRun();
             case "manhunt-public" -> new ManhuntPublic(config.section("Manhunt-Public"));
-            case "manhunt-private" -> new ManHunt();
+            case "manhunt-private" -> new ManhuntPrivate(getHost(), config.section("Manhunt-Private"));
             default -> throw new IllegalArgumentException("Invalid game type");
         };
+    }
+
+    public static void setHost(User host) {
+        getInstance().host = host;
+    }
+
+    public static User getHost() {
+        return getInstance().host;
     }
 
     public static String getEndGameAction() {
@@ -66,6 +82,10 @@ public final class SpeedRuns extends JavaPlugin {
 
     public static String getLobbyServer() {
         return getInstance().lobbyServer;
+    }
+
+    public static String getGameType() {
+        return getInstance().gameType;
     }
 
     public static boolean hasGame() {
@@ -126,6 +146,9 @@ public final class SpeedRuns extends JavaPlugin {
 
         for (PlusCommand cmd : COMMANDS)
             BaseManager.registerAny(cmd, this);
+
+        for (PlusItem item : ITEMS)
+            BaseManager.registerAny(item, this);
 
 
         registerEnchant();

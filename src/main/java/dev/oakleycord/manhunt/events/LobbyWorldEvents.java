@@ -77,6 +77,9 @@ public class LobbyWorldEvents implements Listener {
             return;
         }
 
+        if (SpeedRuns.getHost() == null)
+            SpeedRuns.setHost(SpeedRuns.getDatabase().getUserFromCache(player.getUniqueId()));
+
         initGame();
     }
 

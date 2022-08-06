@@ -64,6 +64,7 @@ public class PlayerExt {
         thiz.setFallDistance(0);
         thiz.setSaturation(20);
         thiz.setExhaustion(0);
+        thiz.setRemainingAir(thiz.getMaximumAir());
         thiz.setExp(0);
         thiz.setLevel(0);
         thiz.setTotalExperience(0);

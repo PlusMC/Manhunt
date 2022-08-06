@@ -1,6 +1,6 @@
 package dev.oakleycord.manhunt.game;
 
-import dev.oakleycord.manhunt.game.boards.ManHuntPublicBoard;
+import dev.oakleycord.manhunt.game.assets.boards.ManHuntPublicBoard;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Sound;

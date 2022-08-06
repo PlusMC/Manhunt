@@ -1,7 +1,7 @@
 package dev.oakleycord.manhunt.game;
 
 import dev.oakleycord.manhunt.SpeedRuns;
-import dev.oakleycord.manhunt.game.boards.SoloBoard;
+import dev.oakleycord.manhunt.game.assets.boards.SoloBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

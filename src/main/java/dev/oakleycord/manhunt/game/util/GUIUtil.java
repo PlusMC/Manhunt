@@ -2,7 +2,7 @@ package dev.oakleycord.manhunt.game.util;
 
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
-import dev.oakleycord.manhunt.game.gui.MHSettings;
+import dev.oakleycord.manhunt.game.assets.gui.MHSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;

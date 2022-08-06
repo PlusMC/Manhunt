@@ -1,4 +1,4 @@
-package dev.oakleycord.manhunt.game.boards;
+package dev.oakleycord.manhunt.game.assets.boards;
 
 import dev.oakleycord.manhunt.game.SoloRun;
 import org.plusmc.pluslib.bukkit.managed.PlusBoard;

@@ -1,8 +1,8 @@
-package dev.oakleycord.manhunt.game.commands;
+package dev.oakleycord.manhunt.commands;
 
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
-import dev.oakleycord.manhunt.game.gui.MHSettings;
+import dev.oakleycord.manhunt.game.assets.gui.MHSettings;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;

@@ -1,4 +1,4 @@
-package dev.oakleycord.manhunt.game.gui;
+package dev.oakleycord.manhunt.game.assets.gui;
 
 import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.util.GUIUtil;

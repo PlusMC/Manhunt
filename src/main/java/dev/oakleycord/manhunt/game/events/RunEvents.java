@@ -16,10 +16,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.player.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,7 +51,10 @@ public class RunEvents implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (game.getState() == GameState.PREGAME) event.setCancelled(true);
+        if (game.getState() == GameState.PREGAME) {
+            event.setCancelled(true);
+            return;
+        }
 
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.getHealth() - event.getFinalDamage() > 0) return;
@@ -100,6 +102,25 @@ public class RunEvents implements Listener {
         if (game.getState() != GameState.PREGAME) return;
         event.setCancelled(true);
     }
+
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        if (game.getState() != GameState.PREGAME) return;
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerPickUpItem(EntityPickupItemEvent event) {
+        if (game.getState() != GameState.PREGAME) return;
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerInteractInventory(InventoryInteractEvent event) {
+        if (game.getState() != GameState.PREGAME) return;
+        event.setCancelled(true);
+    }
+
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
