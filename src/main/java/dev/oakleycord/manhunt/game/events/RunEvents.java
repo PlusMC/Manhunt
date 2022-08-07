@@ -5,6 +5,7 @@ import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
 import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.ManHunt;
+import dev.oakleycord.manhunt.game.util.OtherUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -137,6 +138,8 @@ public class RunEvents implements Listener {
 
     @EventHandler
     public void onWorldChange(PlayerChangedWorldEvent event) {
+        if (OtherUtil.isWorldSR(event.getFrom()))
+            return;
         game.onPlayerJoin(event.getPlayer());
     }
 

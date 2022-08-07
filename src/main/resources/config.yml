@@ -4,6 +4,9 @@ lobbyServer: "SR-Lobby"
 # (restart, lobby)
 # restart starts the game again, lobby sends player goes to the lobbyserver
 endGameAction: "restart"
+#keepAlive in ticks (20 ticks = 1 second)
+useKeepAlive: true
+keepAliveTimeout: 600
 
 Manhunt-Public:
   maxPlayers: 10

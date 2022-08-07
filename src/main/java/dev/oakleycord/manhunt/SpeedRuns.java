@@ -55,6 +55,10 @@ public final class SpeedRuns extends JavaPlugin {
     private BoardHandler boardHandler;
     private MultiWorldHandler worldHandler;
     private User host = null;
+
+    //config
+    private @ConfigEntry boolean useKeepAlive;
+    private @ConfigEntry int keepAliveTimeout;
     private @ConfigEntry String gameType;
     private @ConfigEntry String endGameAction;
     public @ConfigEntry String lobbyServer;
@@ -68,24 +72,12 @@ public final class SpeedRuns extends JavaPlugin {
         };
     }
 
-    public static void setHost(User host) {
-        getInstance().host = host;
-    }
-
     public static User getHost() {
         return getInstance().host;
     }
 
-    public static String getEndGameAction() {
-        return getInstance().endGameAction;
-    }
-
-    public static String getLobbyServer() {
-        return getInstance().lobbyServer;
-    }
-
-    public static String getGameType() {
-        return getInstance().gameType;
+    public static void setHost(User host) {
+        getInstance().host = host;
     }
 
     public static boolean hasGame() {
@@ -122,6 +114,8 @@ public final class SpeedRuns extends JavaPlugin {
     @Override
     public void onDisable() {
         worldHandler.unregisterAllEvents();
+        if (game != null)
+            game.destroy();
     }
 
     @Override
@@ -162,6 +156,28 @@ public final class SpeedRuns extends JavaPlugin {
         } catch (Exception e) {
             //ignore
         }
+    }
+
+    //config getters
+
+    public static int getKeepAliveTimeout() {
+        return getInstance().keepAliveTimeout;
+    }
+
+    public static boolean useKeepAlive() {
+        return getInstance().useKeepAlive;
+    }
+
+    public static String getEndGameAction() {
+        return getInstance().endGameAction;
+    }
+
+    public static String getLobbyServer() {
+        return getInstance().lobbyServer;
+    }
+
+    public static String getGameType() {
+        return getInstance().gameType;
     }
 
 }

@@ -138,6 +138,15 @@ public abstract class AbstractRun {
         return players;
     }
 
+    public List<Player> getPlayers(boolean includeSpectators) {
+        List<Player> players = new ArrayList<>();
+        for (World world : worldHandler.getWorlds())
+            players.addAll(world.getPlayers());
+        if (this instanceof ManHunt mh && !includeSpectators)
+            players.removeIf(player -> mh.getSpectators().hasEntry(player.getName()));
+        return players;
+    }
+
     public abstract void tick(long tick);
 
     public void postGame() {
@@ -157,11 +166,13 @@ public abstract class AbstractRun {
         Bukkit.getScheduler().runTaskLater(SpeedRuns.getInstance(), this::destroy, 200);
     }
 
+
     public Scoreboard getScoreboard() {
         return getPlusBoard().getScoreboard();
     }
 
-    public void destroy() {
+    public void destroy() { //TODO: test if unloading in destroy() works
+        BaseManager.unregisterAny(gameLoop, SpeedRuns.getInstance());
         SpeedRuns.getBoardHandler().removeBoard(getPlusBoard());
         SpeedRuns.removeGame();
 

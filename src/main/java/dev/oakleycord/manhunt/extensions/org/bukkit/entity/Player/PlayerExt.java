@@ -75,8 +75,8 @@ public class PlayerExt {
         Bukkit.getBossBars().forEachRemaining(bossBar -> bossBar.removePlayer(thiz));
 
 
-        if (wasDeath && game instanceof ManHunt manHunt) {
-            if (manHunt.getRunners().hasEntry(thiz.getName())) {
+        if (game instanceof ManHunt manHunt) {
+            if (manHunt.getRunners().hasEntry(thiz.getName()) && wasDeath) {
                 incrementDeaths(thiz, ManHunt.MHTeam.RUNNERS);
                 manHunt.setTeam(thiz, ManHunt.MHTeam.SPECTATORS);
                 thiz.getWorld().playSound(thiz.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1, 0.5f);
@@ -84,7 +84,8 @@ public class PlayerExt {
             }
 
             if (manHunt.getHunters().hasEntry(thiz.getName())) {
-                incrementDeaths(thiz, ManHunt.MHTeam.HUNTERS);
+                if (wasDeath)
+                    incrementDeaths(thiz, ManHunt.MHTeam.HUNTERS);
                 thiz.getInventory().addItem(new ItemStack(Material.COMPASS));
             }
         }
