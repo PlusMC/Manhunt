@@ -1,2 +1,2 @@
 # ManHunt
- A minecraft spigot manhunt plugin 
+A configurable manhunt plugin with some twists!
