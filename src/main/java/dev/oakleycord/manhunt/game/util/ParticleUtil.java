@@ -37,7 +37,7 @@ public class ParticleUtil {
     }
 
 
-    //random guy from spigot
+    //random guy from spigot forums
     public static void drawLine(Location point1, Location point2, double space, Color color) {
         Preconditions.checkNotNull(point1, "Point1 cannot be null");
         Preconditions.checkNotNull(point1.getWorld(), "World cannot be null");

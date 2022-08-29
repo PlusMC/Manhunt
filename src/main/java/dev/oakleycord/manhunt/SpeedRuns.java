@@ -35,6 +35,7 @@ import java.util.List;
 public final class SpeedRuns extends JavaPlugin {
     private static InjectConfigBukkit config;
 
+
     private static final List<PlusCommand> COMMANDS = List.of(
             new InitGame(),
             new StartGame(),

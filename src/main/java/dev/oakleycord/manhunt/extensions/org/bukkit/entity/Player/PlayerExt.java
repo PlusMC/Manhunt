@@ -35,7 +35,7 @@ public class PlayerExt {
     }
 
 
-    //thanks some guy on spigot
+    //thanks some guy on spigot forums
     public static boolean isOutsideOfBorder(@This Player thiz) {
         Location loc = thiz.getLocation();
         WorldBorder border = thiz.getWorld().getWorldBorder();
