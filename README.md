@@ -9,7 +9,7 @@ A configurable manhunt plugin with some twists!
 
 ### Compile
 1. Clone this repository (`git clone https://github.com/PlusMC/Manhunt.git`)
-2. Confirm if the PlusLib dependency is resolved, if not check [Other Notes](Other-Notes)
+2. Confirm if the PlusLib dependency is resolved, if not check [Other Notes](#other-notes)
 3. Run `maven package` and the jars should be at `target/`
 
 
