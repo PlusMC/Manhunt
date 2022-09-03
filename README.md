@@ -21,3 +21,6 @@ A configurable manhunt plugin with some twists!
 [1]: https://manifold.systems/
 [2]: https://github.com/PlusMC/PlusLib-Core
 [3]: https://github.com/PlusMC/PlusLib
+
+
+Any other issues contact me on discord (`OakleyCord#3081`)
