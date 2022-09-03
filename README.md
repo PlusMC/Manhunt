@@ -16,11 +16,16 @@ A configurable manhunt plugin with some twists!
 ### Other Notes
 - If the PlusLib dependency is unuploaded or unresolved `git clone` and `maven install` both [PlusLib-Core][2] and [Plus-Lib][3]
 
+## Contributing
+- Just fork this repository and open a pull request I will try to review your pull request as fast as I can!
+
+### Issues, Bugs?
+- Just open a new [issue][4] and I will try to sqwash the bug :D
 
 
 [1]: https://manifold.systems/
 [2]: https://github.com/PlusMC/PlusLib-Core
 [3]: https://github.com/PlusMC/PlusLib
-
+[4]: https://github.com/PlusMC/Manhunt/issues/new/choose
 
 Any other issues contact me on discord (`OakleyCord#3081`)
