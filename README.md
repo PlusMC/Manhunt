@@ -1,6 +1,10 @@
 # ManHunt (Being renamed to speedruns)
 A configurable manhunt plugin with some twists!
 
+
+## Features
+Todo: write features in README LOL
+
 ## Compiling
 
 ### Prerequisites
