@@ -24,7 +24,7 @@ Todo: write features in README LOL
 - Just fork this repository and open a pull request I will try to review your pull request as fast as I can!
 
 ### Issues, Bugs?
-- Just open a new [issue][4] and I will try to sqwash the bug :D
+- Just open a new [issue][4] and I will attempt to sqwash the bug :D
 
 
 [1]: https://manifold.systems/
