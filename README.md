@@ -21,7 +21,7 @@ Todo: write features in README LOL
 - If the PlusLib dependency is unuploaded or unresolved `git clone` and `maven install` both [PlusLib-Core][2] and [Plus-Lib][3]
 
 ## Contributing
-- Just fork this repository and open a pull request I will try to review your pull request as fast as I can!
+- Just fork this repository and open a pull request I will review your pull request as fast as I can!
 
 ### Issues, Bugs?
 - Just open a new [issue][4] and I will attempt to sqwash the bug :D
