@@ -14,7 +14,7 @@ public class GameLoop implements Tickable {
 
     public GameLoop(AbstractRun game) {
         this.game = game;
-        this.keepAlive = 0;
+        this.keepAlive = SpeedRuns.getKeepAliveTimeout();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class GameLoop implements Tickable {
         if (!SpeedRuns.useKeepAlive())
             return;
 
-        if (game.getPlayers(false).size() > 1)
+        if (game.getPlayers(false).size() >  1)
             keepAlive = SpeedRuns.getKeepAliveTimeout();
 
         if (keepAlive == SpeedRuns.getKeepAliveTimeout() - 1)

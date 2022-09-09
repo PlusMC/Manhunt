@@ -2,6 +2,7 @@ package dev.oakleycord.manhunt.extensions.org.bukkit.entity.Player;
 
 import dev.oakleycord.manhunt.SpeedRuns;
 import dev.oakleycord.manhunt.game.AbstractRun;
+import dev.oakleycord.manhunt.game.GameState;
 import dev.oakleycord.manhunt.game.ManHunt;
 import dev.oakleycord.manhunt.game.logic.modes.Mode;
 import manifold.ext.rt.api.Extension;
@@ -75,7 +76,7 @@ public class PlayerExt {
         Bukkit.getBossBars().forEachRemaining(bossBar -> bossBar.removePlayer(thiz));
 
 
-        if (game instanceof ManHunt manHunt) {
+        if (game instanceof ManHunt manHunt && !game.getState().equals(GameState.PREGAME)) {
             if (manHunt.getRunners().hasEntry(thiz.getName()) && wasDeath) {
                 incrementDeaths(thiz, ManHunt.MHTeam.RUNNERS);
                 manHunt.setTeam(thiz, ManHunt.MHTeam.SPECTATORS);

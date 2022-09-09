@@ -58,7 +58,6 @@ public final class SpeedRuns extends JavaPlugin {
     private User host = null;
 
     //config
-    private @ConfigEntry boolean useKeepAlive;
     private @ConfigEntry int keepAliveTimeout;
     private @ConfigEntry String gameType;
     private @ConfigEntry String endGameAction;
@@ -166,7 +165,7 @@ public final class SpeedRuns extends JavaPlugin {
     }
 
     public static boolean useKeepAlive() {
-        return getInstance().useKeepAlive;
+        return getInstance().keepAliveTimeout > 0;
     }
 
     public static String getEndGameAction() {

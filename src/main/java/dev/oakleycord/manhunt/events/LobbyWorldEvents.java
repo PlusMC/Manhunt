@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.plusmc.pluslibcore.mongo.User;
 
 
 public class LobbyWorldEvents implements Listener {
@@ -78,7 +79,7 @@ public class LobbyWorldEvents implements Listener {
         }
 
         if (SpeedRuns.getHost() == null)
-            SpeedRuns.setHost(SpeedRuns.getDatabase().getUserFromCache(player.getUniqueId()));
+            SpeedRuns.setHost(new User(player.getUniqueId().toString(), player.getName(), false)); //why using database object????? todo: use player object
 
         initGame();
     }

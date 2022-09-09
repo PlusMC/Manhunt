@@ -1,13 +1,26 @@
-#Game Types: (Solo, Team, Manhunt-Public, Manhunt-Private)
+# Game Types: (Solo, Race, Manhunt-Public, Manhunt-Private)
+# Solo: Only one player can join just for "speedrunning". Todo: add it so solo can change settings
+# Race: Each player gets their own world and have to race to the end Todo: add this
+# Manhunt-Public: Automatically starts the game with the default modifiers and modes, and picks teams randomly depending on the percentRunners.
+# Manhunt-Private: Picks the first player to join to be the host and host can choose the game modifiers, modes, and teams.
 gameType: "Manhunt-Public"
+
+# The lobby server to send players to when the game ends (BungeeCord only)
 lobbyServer: "SR-Lobby"
+
 # (restart, lobby)
-# restart starts the game again, lobby sends player goes to the lobbyserver
+# "restart" starts the game again, "lobby" sends player goes to the lobbyserver
 endGameAction: "restart"
-#keepAlive in ticks (20 ticks = 1 second)
-useKeepAlive: true
+
+# KeepAlive in ticks (20 ticks = 1 second)
+# Set to 0 to disable
 keepAliveTimeout: 600
 
+# Timelimit in ticks (20 ticks = 1 second)
+# Set to 0 to disable
+timeLimit: 36000 #Todo: Add this
+
+# The settings for Manhunt-Public
 Manhunt-Public:
   maxPlayers: 10
   percentRunners: 0.5
